@@ -1,4 +1,3 @@
-/// Centralized route paths & names. Keep these the single source of truth.
 abstract final class AppRoutes {
   // Auth / onboarding
   static const splash = '/splash';
@@ -14,7 +13,6 @@ abstract final class AppRoutes {
   static const inbox = '/inbox';
   static const profile = '/profile';
 
-  // Pushed detail routes
   static const listingDetail = '/listing'; // /listing/:id
   static const createListing = '/create-listing';
   static const favorites = '/favorites';

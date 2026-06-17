@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-/// 4-pt spacing scale used across Nosiva.
 abstract final class AppSpacing {
   static const double xxs = 4;
   static const double xs = 8;
@@ -10,12 +9,10 @@ abstract final class AppSpacing {
   static const double xl = 32;
   static const double xxl = 48;
 
-  // Common edge insets
   static const screen = EdgeInsets.symmetric(horizontal: md, vertical: md);
   static const screenH = EdgeInsets.symmetric(horizontal: md);
 }
 
-/// Corner radii — rounded and soft (16–24px) per brand.
 abstract final class AppRadii {
   static const double sm = 12;
   static const double md = 16;
@@ -30,7 +27,6 @@ abstract final class AppRadii {
   static const BorderRadius sheet = BorderRadius.vertical(top: Radius.circular(xl));
 }
 
-/// Soft, diffuse shadows.
 abstract final class AppShadows {
   static List<BoxShadow> soft(Color tint) => [
         BoxShadow(

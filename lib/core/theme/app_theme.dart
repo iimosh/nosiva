@@ -4,7 +4,6 @@ import 'app_colors.dart';
 import 'app_spacing.dart';
 import 'app_typography.dart';
 
-/// Builds the Nosiva [ThemeData] for light and dark modes.
 abstract final class AppTheme {
   static ThemeData get light => _build(Brightness.light);
   static ThemeData get dark => _build(Brightness.dark);
@@ -61,7 +60,6 @@ abstract final class AppTheme {
         titleTextStyle: textTheme.headlineSmall,
       ),
 
-      // Buttons
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.hotPink,
@@ -90,7 +88,6 @@ abstract final class AppTheme {
         ),
       ),
 
-      // Inputs
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surfaceMuted,
@@ -122,7 +119,6 @@ abstract final class AppTheme {
         ),
       ),
 
-      // Cards
       cardTheme: CardThemeData(
         color: surface,
         elevation: 0,
@@ -130,7 +126,6 @@ abstract final class AppTheme {
         shape: const RoundedRectangleBorder(borderRadius: AppRadii.card),
       ),
 
-      // Chips
       chipTheme: ChipThemeData(
         backgroundColor: surfaceMuted,
         selectedColor: AppColors.hotPink,
@@ -143,7 +138,6 @@ abstract final class AppTheme {
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       ),
 
-      // Bottom nav
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: surface,
         selectedItemColor: AppColors.hotPink,
@@ -155,7 +149,6 @@ abstract final class AppTheme {
         unselectedLabelStyle: textTheme.labelMedium,
       ),
 
-      // Sheets & dialogs
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: surface,
         modalBackgroundColor: surface,

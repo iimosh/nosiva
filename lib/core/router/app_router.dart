@@ -27,9 +27,7 @@ import 'app_routes.dart';
 final _rootKey = GlobalKey<NavigatorState>();
 final _shellKey = GlobalKey<NavigatorState>();
 
-/// The app router. Redirects based on auth + onboarding state.
 final routerProvider = Provider<GoRouter>((ref) {
-  // Re-run redirects whenever auth or the loaded profile changes.
   final refresh = ValueNotifier(0);
   ref.listen(authStateChangesProvider, (_, __) => refresh.value++);
   ref.listen(currentProfileProvider, (_, __) => refresh.value++);
@@ -46,7 +44,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthRoute = authRoutes.contains(loc);
       final isSplash = loc == AppRoutes.splash;
 
-      // Allow the design-system showcase from anywhere without gating.
       if (loc == AppRoutes.designSystem) return null;
 
       if (user == null) {
@@ -83,7 +80,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const DesignSystemScreen(),
       ),
 
-      // ---- Bottom-nav shell ----
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => MainShell(shell: shell),
         branches: [
@@ -95,7 +91,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (_, __) => const HomeScreen(),
                 routes: [
                   GoRoute(
-                    path: 'listing/:id', // /home/listing/:id
+                    path: 'listing/:id',
                     parentNavigatorKey: _rootKey,
                     builder: (_, state) =>
                         ListingDetailScreen(listingId: state.pathParameters['id']!),
@@ -124,7 +120,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
 
-      // ---- Pushed routes (full-screen, over the shell) ----
       GoRoute(
         path: '${AppRoutes.listingDetail}/:id',
         parentNavigatorKey: _rootKey,

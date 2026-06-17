@@ -109,7 +109,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         SizedBox(height: 80),
                         EmptyStateView(
                           emoji: '🛍️',
-                          title: 'Nothing here yet bestie',
+                          title: 'Nothing here yet',
                           message:
                               'Be the first to list something fabulous, or check back soon ✨',
                         ),

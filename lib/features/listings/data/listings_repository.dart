@@ -8,7 +8,6 @@ import '../../../core/supabase/supabase_providers.dart';
 import '../domain/listing.dart';
 import '../domain/listing_filter.dart';
 
-/// Read/write access to listings, their images, and Storage uploads.
 class ListingsRepository {
   ListingsRepository(this._client);
   final SupabaseClient _client;
@@ -16,14 +15,10 @@ class ListingsRepository {
   static const _table = 'listings';
   static const _imagesTable = 'listing_images';
   static const _bucket = 'listing-images';
-  // Name the FK explicitly: `listings` relates to `profiles` via several paths
-  // (seller_id, plus m2m through favorites/offers/orders), so PostgREST needs
-  // the exact constraint to disambiguate the embed.
   static const _select =
       '*, images:listing_images(*), seller:profiles!listings_seller_id_fkey(*)';
   static const pageSize = 20;
 
-  /// Paginated feed/browse with filters. [page] is zero-based.
   Future<List<Listing>> fetchFeed({
     ListingFilter filter = const ListingFilter(),
     int page = 0,
@@ -51,7 +46,6 @@ class ListingsRepository {
       query = query.contains('style_tags', filter.styleTags);
     }
     if (filter.query != null && filter.query!.trim().isNotEmpty) {
-      // Full-text search across title/description/brand (see SQL: search_doc).
       query = query.textSearch('search_doc', filter.query!.trim(),
           config: 'english', type: TextSearchType.websearch);
     }
@@ -78,7 +72,6 @@ class ListingsRepository {
     return data.map<Listing>((e) => Listing.fromJson(e)).toList();
   }
 
-  /// Creates a listing then uploads its images. Returns the full listing.
   Future<Listing> createListing({
     required String sellerId,
     required Map<String, dynamic> values,

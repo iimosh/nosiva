@@ -9,8 +9,6 @@ final feedFilterProvider =
     StateProvider<ListingFilter>((ref) => const ListingFilter());
 
 /// Paginated, filterable feed with infinite scroll.
-///
-/// Rebuilds from scratch whenever [feedFilterProvider] changes.
 class FeedController extends AsyncNotifier<List<Listing>> {
   int _page = 0;
   bool _hasMore = true;

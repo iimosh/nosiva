@@ -4,8 +4,6 @@ import '../../../core/supabase/supabase_providers.dart';
 import '../data/profile_repository.dart';
 import '../domain/profile.dart';
 
-/// Loads (and lazily creates) the signed-in user's profile.
-/// Rebuilds whenever the auth user changes.
 class CurrentProfile extends AsyncNotifier<Profile?> {
   @override
   Future<Profile?> build() async {
@@ -16,7 +14,6 @@ class CurrentProfile extends AsyncNotifier<Profile?> {
     final existing = await repo.fetchById(user.id);
     if (existing != null) return existing;
 
-    // OAuth / first-run: derive a username from the email and create the row.
     final emailLocal = user.email?.split('@').first ?? 'bestie';
     final username =
         '${_slug(emailLocal)}${user.id.substring(0, 4)}';
@@ -32,7 +29,6 @@ class CurrentProfile extends AsyncNotifier<Profile?> {
     });
   }
 
-  /// Optimistically replace the cached profile (used after edits/onboarding).
   void set(Profile profile) => state = AsyncValue.data(profile);
 
   static String _slug(String input) =>

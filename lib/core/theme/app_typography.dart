@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Typography: a modern display serif for headers (Fraunces) + a clean
-/// sans-serif for body (DM Sans). Loaded via google_fonts (no asset files).
 abstract final class AppTypography {
   static TextTheme textTheme(Color onSurface, Color muted) {
-    final display = GoogleFonts.fraunces; // expressive display serif
-    final body = GoogleFonts.dmSans; // clean, readable body
+    final display = GoogleFonts.fraunces;
+    final body = GoogleFonts.dmSans;
 
     return TextTheme(
       displayLarge: display(
