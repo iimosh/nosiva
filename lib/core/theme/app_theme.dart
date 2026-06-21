@@ -67,7 +67,7 @@ abstract final class AppTheme {
           disabledBackgroundColor: AppColors.hotPink.withValues(alpha: 0.4),
           disabledForegroundColor: Colors.white70,
           elevation: 0,
-          minimumSize: const Size.fromHeight(54),
+          minimumSize: const Size(64, 54),
           textStyle: textTheme.labelLarge,
           shape: const RoundedRectangleBorder(borderRadius: AppRadii.button),
         ),
@@ -75,7 +75,7 @@ abstract final class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.hotPink,
-          minimumSize: const Size.fromHeight(54),
+          minimumSize: const Size(64, 54),
           side: const BorderSide(color: AppColors.hotPink, width: 1.5),
           textStyle: textTheme.labelLarge,
           shape: const RoundedRectangleBorder(borderRadius: AppRadii.button),
