@@ -56,16 +56,22 @@ final adminStatsProvider = Provider<AsyncValue<AdminStats>>((ref) {
   ));
 });
 
-/// Moderation actions an admin can perform on a listing.
 class AdminController {
-  AdminController(this._repo);
-  final ListingsRepository _repo;
+  AdminController(this._listings, this._profiles);
+  final ListingsRepository _listings;
+  final ProfileRepository _profiles;
 
-  Future<void> hide(String id) => _repo.setStatus(id, ListingStatus.hidden);
-  Future<void> unhide(String id) => _repo.setStatus(id, ListingStatus.active);
-  Future<void> delete(String id) => _repo.deleteListing(id);
+  Future<void> hide(String id) => _listings.setStatus(id, ListingStatus.hidden);
+  Future<void> unhide(String id) => _listings.setStatus(id, ListingStatus.active);
+  Future<void> delete(String id) => _listings.deleteListing(id);
+
+  Future<void> promote(String userId) => _profiles.setRole(userId, 'admin');
+  Future<void> demote(String userId) => _profiles.setRole(userId, 'user');
 }
 
 final adminControllerProvider = Provider<AdminController>((ref) {
-  return AdminController(ref.watch(listingsRepositoryProvider));
+  return AdminController(
+    ref.watch(listingsRepositoryProvider),
+    ref.watch(profileRepositoryProvider),
+  );
 });

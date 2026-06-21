@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
@@ -196,12 +197,49 @@ class _UsersTab extends ConsumerWidget {
   }
 }
 
-class _UserTile extends StatelessWidget {
+class _UserTile extends ConsumerWidget {
   const _UserTile({required this.user});
   final Profile user;
 
+  Future<void> _changeRole(BuildContext context, WidgetRef ref, bool makeAdmin) async {
+    final action = makeAdmin ? 'Make admin' : 'Remove admin';
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('$action?'),
+        content: Text(makeAdmin
+            ? '${user.nameOrHandle} will get full moderation powers.'
+            : '${user.nameOrHandle} will lose admin access.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(action),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+
+    try {
+      final admin = ref.read(adminControllerProvider);
+      await (makeAdmin ? admin.promote(user.id) : admin.demote(user.id));
+      ref.invalidate(adminUsersProvider);
+      if (context.mounted) {
+        context.showSuccess(makeAdmin ? 'Promoted to admin 🛡️' : 'Admin removed');
+      }
+    } catch (e) {
+      if (context.mounted) context.showError('Couldn’t update role — $e');
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSelf = ref.watch(currentAuthUserProvider)?.id == user.id;
+
     return ListTile(
       leading: CircleAvatar(
         radius: 22,
@@ -213,9 +251,26 @@ class _UserTile extends StatelessWidget {
             ? const Text('💁‍♀️', style: TextStyle(fontSize: 18))
             : null,
       ),
-      title: Text(user.nameOrHandle),
+      title: Text(isSelf ? '${user.nameOrHandle} (you)' : user.nameOrHandle),
       subtitle: Text(user.handle),
-      trailing: user.isAdmin ? const _RoleBadge() : null,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (user.isAdmin) const _RoleBadge(),
+          // Can't change your own role
+          if (!isSelf)
+            PopupMenuButton<bool>(
+              tooltip: 'Manage role',
+              onSelected: (makeAdmin) => _changeRole(context, ref, makeAdmin),
+              itemBuilder: (_) => [
+                if (user.isAdmin)
+                  const PopupMenuItem(value: false, child: Text('Remove admin'))
+                else
+                  const PopupMenuItem(value: true, child: Text('Make admin 🛡️')),
+              ],
+            ),
+        ],
+      ),
     );
   }
 }

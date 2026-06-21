@@ -16,6 +16,9 @@ class ProfileRepository {
     return data == null ? null : Profile.fromJson(data);
   }
 
+  Future<void> setRole(String userId, String role) async {
+    await _client.from(_table).update({'role': role}).eq('id', userId);
+  }
 
   Future<List<Profile>> fetchAll({int limit = 100}) async {
     final data = await _client
