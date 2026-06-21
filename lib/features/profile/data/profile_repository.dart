@@ -16,7 +16,16 @@ class ProfileRepository {
     return data == null ? null : Profile.fromJson(data);
   }
 
-  /// Creates the row for a freshly signed-up user (id == auth uid).
+
+  Future<List<Profile>> fetchAll({int limit = 100}) async {
+    final data = await _client
+        .from(_table)
+        .select()
+        .order('created_at', ascending: false)
+        .limit(limit);
+    return data.map<Profile>((e) => Profile.fromJson(e)).toList();
+  }
+
   Future<Profile> createInitial({
     required String id,
     required String username,

@@ -29,6 +29,7 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(currentProfileProvider);
+    final isAdmin = ref.watch(isAdminProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -46,14 +47,17 @@ class ProfileScreen extends ConsumerWidget {
           ),
           PopupMenuButton<String>(
             onSelected: (v) async {
+              if (v == 'admin') context.push(AppRoutes.admin);
               if (v == 'design') context.push(AppRoutes.designSystem);
               if (v == 'signout') {
                 await ref.read(authControllerProvider.notifier).signOut();
               }
             },
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'design', child: Text('Design system ✨')),
-              PopupMenuItem(value: 'signout', child: Text('Sign out')),
+            itemBuilder: (_) => [
+              if (isAdmin)
+                const PopupMenuItem(value: 'admin', child: Text('Admin 🛡️')),
+              const PopupMenuItem(value: 'design', child: Text('Design system ✨')),
+              const PopupMenuItem(value: 'signout', child: Text('Sign out')),
             ],
           ),
         ],
@@ -102,7 +106,19 @@ class _ProfileBody extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(profile.nameOrHandle, style: theme.textTheme.headlineSmall),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(profile.nameOrHandle,
+                            style: theme.textTheme.headlineSmall,
+                            overflow: TextOverflow.ellipsis),
+                      ),
+                      if (profile.isAdmin) ...[
+                        const SizedBox(width: AppSpacing.xs),
+                        const _AdminBadge(),
+                      ],
+                    ],
+                  ),
                   Text(profile.handle, style: theme.textTheme.bodyMedium),
                   if (profile.location != null)
                     Row(
@@ -132,6 +148,10 @@ class _ProfileBody extends ConsumerWidget {
                 value: '${profile.ratingAvg.toStringAsFixed(1)} ⭐'),
           ],
         ),
+        if (profile.isAdmin) ...[
+          const SizedBox(height: AppSpacing.md),
+          _AdminEntryCard(onTap: () => context.push(AppRoutes.admin)),
+        ],
         if (profile.vibeTags.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           Wrap(
@@ -195,6 +215,77 @@ class _Stat extends StatelessWidget {
         Text(value, style: theme.textTheme.titleLarge),
         Text(label, style: theme.textTheme.bodySmall),
       ],
+    );
+  }
+}
+
+/// Small gradient "ADMIN" pill shown next to an admin's name.
+class _AdminBadge extends StatelessWidget {
+  const _AdminBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        gradient: AppColors.brandGradient,
+        borderRadius: BorderRadius.circular(99),
+      ),
+      child: const Text(
+        'ADMIN',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+}
+
+/// Prominent entry into the admin dashboard (admins only).
+class _AdminEntryCard extends StatelessWidget {
+  const _AdminEntryCard({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: AppRadii.card,
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          gradient: AppColors.brandGradient,
+          borderRadius: AppRadii.card,
+          boxShadow: AppShadows.soft(AppColors.hotPink),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.shield_rounded, color: Colors.white),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Admin dashboard',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(color: Colors.white)),
+                  Text('Moderate listings, view stats & users',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: Colors.white70)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: Colors.white),
+          ],
+        ),
+      ),
     );
   }
 }

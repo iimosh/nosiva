@@ -3,7 +3,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'profile.freezed.dart';
 part 'profile.g.dart';
 
-/// A Nosiva user profile (1:1 with `auth.users` via the `profiles` table).
 @freezed
 class Profile with _$Profile {
   const Profile._();
@@ -21,6 +20,7 @@ class Profile with _$Profile {
     @Default(0.0) @JsonKey(name: 'rating_avg') double ratingAvg,
     @Default(0) @JsonKey(name: 'rating_count') int ratingCount,
     @Default(false) @JsonKey(name: 'onboarded') bool onboarded,
+    @Default('user') String role,
     @JsonKey(name: 'created_at') DateTime? createdAt,
   }) = _Profile;
 
@@ -28,4 +28,5 @@ class Profile with _$Profile {
 
   String get handle => '@$username';
   String get nameOrHandle => displayName?.isNotEmpty == true ? displayName! : handle;
+  bool get isAdmin => role == 'admin';
 }
