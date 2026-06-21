@@ -1,177 +1,200 @@
-# Nosiva 💖
+# Nosiva
 
-> Buy & sell pre-loved fashion with a community that gets your vibe.
+Nosiva is a cross-platform mobile application for buying and selling pre-owned fashion items. The project is built with Flutter and Supabase, with support for authentication, marketplace listings, favorites, cart and orders, real-time messaging, notifications, and administrator moderation.
+The application is designed as a second-hand fashion marketplace where users can create profiles, list clothing or accessories for sale, browse available products, save favorites, contact sellers, make offers, and manage purchases.
 
-Nosiva is a cross-platform (iOS + Android) second-hand fashion marketplace built
-with **Flutter** and **Supabase** — think Vinted/Depop, but pinker and softer,
-with main-character energy. ✨
+## Project Purpose
 
----
+The purpose of Nosiva is to provide a complete mobile marketplace experience for sustainable fashion shopping. Instead of focusing only on static product browsing, the project includes account management, listing creation, image uploads, search and filtering, user-to-user communication, order tracking, and basic administration tools.
 
-## ✨ Features
+This project demonstrates:
 
-| Area | What's built |
+- Mobile application development with Flutter
+- Feature-based project architecture
+- Authentication and session handling
+- Supabase database integration
+- Supabase Storage for uploaded images
+- Real-time data updates for chat and notifications
+- Role-based access control for normal users and administrators
+- Clean UI components and reusable design system elements
+
+## Main Features
+
+### Authentication and Onboarding
+
+Users can create an account, sign in, and keep their session active across app launches. After registration, users complete onboarding by selecting personal preferences such as categories, sizes, and styles. The application also includes OAuth button scaffolding for Google and Apple sign-in.
+
+### User Profiles
+
+Each user has a profile connected to their authenticated account. Profiles include information such as username, display name, avatar, biography, location, style tags, rating data, follower counts, and onboarding status.
+
+### Listings
+
+Users can create marketplace listings for fashion items. A listing can contain:
+
+- Title and description
+- Category
+- Brand
+- Size
+- Condition
+- Color
+- Price
+- Style tags
+- Location
+- Multiple uploaded images
+
+Listings are stored in Supabase Postgres, while listing images are uploaded to Supabase Storage. Sellers can manage their own listings, and administrators can moderate listings through additional access policies.
+
+### Browse, Search, and Filtering
+
+The home and search screens allow users to browse active listings. The database includes full-text search support over listing title, description, and brand. Listings can also be organized and filtered using categories, price, status, and style tags.
+
+### Listing Details
+
+The listing detail page displays the selected item with its images, product information, price, seller details, favorite control, and buyer actions such as messaging the seller, making an offer, or buying the item.
+
+### Favorites
+
+Users can save listings to a personal favorites list. Favorite data is stored per user, and the listing favorite count is maintained automatically through database triggers.
+
+### Messaging
+
+Nosiva supports one-to-one conversations between buyers and sellers. Conversations are related to listings, and messages are delivered using Supabase Realtime. This allows users to communicate directly before completing a purchase.
+
+### Offers
+
+Buyers can send offers to sellers for specific listings. Offers include the listing, buyer, seller, amount, status, and optional message. The database supports offer states such as pending, accepted, declined, countered, and expired.
+
+### Notifications
+
+The notifications feature stores and displays user-specific notifications such as messages, offers, sales, follows, reviews, and system events. Notifications are protected so users can only view and update their own records.
+
+### Admin Dashboard
+
+The project includes an administrator role system. Administrators can manage user roles and moderate listings. Supabase Row Level Security policies and helper functions prevent normal users from promoting themselves or accessing admin-only actions.
+
+### Design System
+
+Reusable UI elements are located in the core widgets and theme folders. The application includes shared buttons, chips, text fields, heart buttons, loading states, shimmer placeholders, colors, typography, spacing, and light/dark themes.
+
+## Technology Stack
+
+| Area | Technology |
 | --- | --- |
-| **Auth** | Email/password + Google/Apple OAuth scaffolding, persisted session, onboarding (pick categories / sizes / styles) |
-| **Listings** | Create with multiple photos (camera + gallery → Supabase Storage), category, brand, size, condition, color, style tags, price. Edit/delete own listings |
-| **Browse & search** | Home feed, category browsing, full-text search, rich filters, infinite scroll + pagination |
-| **Item detail** | Photo carousel, full info, seller card, favorite (heart), "Make an offer" & "Buy now" |
-| **Favorites** | Save & view wishlist, optimistic likes |
-| **Messaging** | Realtime 1:1 chat per item (Supabase Realtime), optimistic send |
-| **Offers** | Buyer sends offer; seller accepts / declines / counters |
-| **Cart & checkout** | Cart, shipping address, order summary, **stubbed Stripe integration point** |
-| **Orders** | Buyer/seller history, status flow Pending → Shipped → Delivered |
-| **Notifications** | In-app realtime list (messages, offers, sales, follows) |
-| **Design system** | Live component showcase at `/design-system` |
+| Framework | Flutter |
+| Language | Dart |
+| State management | Riverpod |
+| Routing | go_router |
+| Backend | Supabase |
+| Database | Supabase Postgres |
+| Authentication | Supabase Auth |
+| File storage | Supabase Storage |
+| Realtime features | Supabase Realtime |
+| Models and serialization | Freezed, json_serializable |
+| Environment variables | flutter_dotenv |
+| Image handling | image_picker, cached_network_image |
+| Styling | Custom Flutter theme, Google Fonts |
+| Testing | flutter_test |
 
----
+## Architecture
 
-## 🏗️ Architecture
+Nosiva uses a feature-first architecture. Shared application services are placed in the `core` directory, while each main product area is separated into its own feature folder.
 
-- **State management:** Riverpod (`Notifier` / `AsyncNotifier`), used consistently.
-- **Navigation:** `go_router` with an auth-aware redirect + a `StatefulShellRoute`
-  bottom-nav shell.
-- **Backend:** `supabase_flutter` — Postgres, Auth, Storage, Realtime.
-- **Models:** `freezed` + `json_serializable` (run codegen — see below).
-- **Images:** `image_picker` (camera/gallery) + `cached_network_image`.
-- **Feature-first folders:**
-
-```
+```text
 lib/
-├── main.dart                 # bootstrap: load env → init Supabase → runApp
-├── app.dart                  # MaterialApp.router + theme wiring
-├── core/
-│   ├── config/               # env (flutter_dotenv)
-│   ├── supabase/             # Supabase client + auth providers
-│   ├── router/               # go_router config + route constants
-│   ├── theme/                # colors, typography, spacing, theme, theme controller
-│   ├── widgets/              # NosivaButton, chips, text fields, heart, shimmer, states
-│   └── utils/                # validators, formatters, snackbars
-├── shell/                    # bottom-nav shell
-└── features/
-    ├── auth/        {data, domain, presentation}
-    ├── profile/     {data, domain, presentation}
-    ├── listings/    {data, domain, presentation}
-    ├── favorites/   {data, presentation}
-    ├── messaging/   {data, domain, presentation}
-    ├── offers/      {data, domain}
-    ├── cart/        {presentation}
-    ├── orders/      {data, domain, presentation}
-    ├── notifications/{data, domain, presentation}
-    └── design_system/{presentation}
+|-- main.dart
+|-- app.dart
+|-- core/
+|   |-- config/
+|   |-- router/
+|   |-- supabase/
+|   |-- theme/
+|   |-- utils/
+|   `-- widgets/
+|-- shell/
+`-- features/
+    |-- admin/
+    |-- auth/
+    |-- cart/
+    |-- design_system/
+    |-- favorites/
+    |-- listings/
+    |-- messaging/
+    |-- notifications/
+    |-- offers/
+    |-- orders/
+    `-- profile/
 ```
 
-Each feature follows `data` (repositories + Supabase queries) → `domain`
-(freezed models + enums) → `presentation` (Riverpod controllers + screens/widgets).
+Most feature folders follow this structure:
 
----
-
-## 🚀 Setup
-
-### 1. Prerequisites
-- Flutter 3.38+ / Dart 3.10+
-- A free [Supabase](https://supabase.com) project
-
-### 2. Install dependencies & generate code
-```bash
-flutter pub get
-dart run build_runner build --delete-conflicting-outputs
-```
-> `freezed` / `json_serializable` generate the `*.freezed.dart` and `*.g.dart`
-> files. The app **will not compile until you run build_runner.**
-
-### 3. Configure environment
-```bash
-cp .env.example .env
-```
-Fill in from **Supabase → Project Settings → API**:
-```
-SUPABASE_URL=https://YOUR-PROJECT-ref.supabase.co
-SUPABASE_ANON_KEY=your-anon-public-key
+```text
+feature_name/
+|-- data/
+|-- domain/
+`-- presentation/
 ```
 
-### 4. Run the database migrations
-In the Supabase **SQL Editor**, run (in order):
-1. `supabase/migrations/0001_init.sql` — schema, triggers, RLS, seed data
-2. `supabase/migrations/0002_storage.sql` — `listing-images` & `avatars` buckets + policies
+- `data` contains repositories and Supabase queries.
+- `domain` contains models, enums, and business data structures.
+- `presentation` contains screens, widgets, and Riverpod controllers.
 
-Or with the Supabase CLI:
-```bash
-supabase db push
-```
+This structure keeps the code organized and makes each feature easier to maintain independently.
 
-### 5. Auth settings
-- For local dev, **disable "Confirm email"** (Auth → Providers → Email) so sign-up
-  returns a session immediately and the profile row can be created.
-- To enable **Google/Apple**, turn them on under Auth → Providers and set the
-  redirect URL in `auth_repository.dart` (`redirectTo`) + your platform deep link.
+## Application Flow
 
-### 6. Run it
-```bash
-flutter run
-```
+The application starts in `main.dart`, where Flutter bindings are initialized, environment variables are loaded, Supabase is initialized, and the root application widget is started.
 
----
+`app.dart` creates the `MaterialApp.router`, connects the application theme, and uses the router configuration from the core router module.
 
-## 💳 Stripe (stubbed)
+Routing is handled by `go_router`. The router includes authentication-aware redirects:
 
-Checkout creates `pending` orders without charging. The integration point is
-clearly marked in `lib/features/cart/presentation/cart_screen.dart`. To go live:
-1. Add `flutter_stripe` and your **publishable** key to `.env`.
-2. Create a Supabase **Edge Function** that mints a `PaymentIntent` with your
-   **secret** key (never ship the secret in the app).
-3. Confirm the payment client-side, then create the order rows.
+- Unauthenticated users are redirected to the welcome and sign-in/sign-up screens.
+- Authenticated users without a completed profile are redirected to onboarding.
+- Onboarded users are redirected to the main home screen.
+- Admin routes are protected so only users with an admin role can access them.
 
----
+The main application shell uses bottom navigation for the primary sections:
 
-## 🎨 Brand guidelines
+- Home
+- Search
+- Sell
+- Inbox
+- Profile
 
-**Vibe:** feminine, playful, modern — Gen-Z "main character" energy.
+Additional screens such as listing details, favorites, cart, orders, notifications, chat, design system, and admin dashboard are opened through named application routes.
 
-**Palette**
-| Token | Hex | Use |
-| --- | --- | --- |
-| Hot Pink | `#FF4D8D` | primary actions, accents |
-| Soft Blush | `#FFD6E5` | secondary surfaces, avatars |
-| Cream | `#FFF7FA` | light background |
-| Deep Plum | `#3D1F2E` | text, dark surfaces |
-| Lilac | `#C8A2E0` | accent, gradient pair |
-| Mint `#7BD8B0` / Sun `#FFC857` | | success / ratings |
+## Backend and Database
 
-**Type:** Fraunces (display serif headers) + DM Sans (body) via `google_fonts`.
+The backend is implemented with Supabase. Database migrations are stored in the `supabase/migrations` directory.
 
-**Shape & feel:** rounded corners (16–24px), soft diffuse shadows, generous
-whitespace, hearts & sparkle accents. Light theme by default with a polished
-deep-plum dark mode (toggle in the home app bar).
+The main database tables include:
 
-**Microcopy:** friendly and a little playful — *"Your closet is empty bestie ✨"*,
-*"Snatched! Added to favorites 💖"*, *"Time to make that coin 💸"*.
+| Table | Purpose |
+| --- | --- |
+| `profiles` | User profile information linked to Supabase Auth users |
+| `categories` | Reference table for listing categories |
+| `style_tags` | Reference table for style labels |
+| `listings` | Marketplace items created by sellers |
+| `listing_images` | Images connected to listings |
+| `favorites` | User wishlist records |
+| `follows` | User follow relationships |
+| `conversations` | Buyer-seller conversations |
+| `messages` | Chat messages |
+| `offers` | Buyer offers for listings |
+| `orders` | Purchase records |
+| `reviews` | Ratings and reviews between users |
+| `notifications` | User notifications |
 
----
+The database also includes triggers for:
 
-## 🖼️ App icon & splash (asset spec)
+- Updating `updated_at` timestamps
+- Maintaining listing favorite counts
+- Maintaining follower and following counts
+- Updating review rating averages
 
-Generate and drop into `assets/images/` (then wire up `flutter_launcher_icons`
-+ `flutter_native_splash`):
+Row Level Security is enabled on the project tables. Policies are used to make sure that users can only modify their own records, while public data such as active listings and reference tables can be read where appropriate. Admin users receive additional permissions through a secure role helper function.
 
-- **App icon:** 1024×1024. Pink→lilac diagonal gradient (`#FF4D8D → #C8A2E0`)
-  rounded-square, centered white lowercase **"n"** in Fraunces, with a small
-  sparkle (✨) top-right. Provide a flat-pink monochrome variant for adaptive
-  Android foreground.
-- **Splash:** full-bleed `splashGradient` (hot pink → light pink → lilac),
-  centered white **"Nosiva"** wordmark (Fraunces, ~56pt) + tagline
-  *"pre-loved, main character energy ✨"*. Matches `SplashScreen`.
+## Conclusion
 
----
-
-## 🧪 Tests
-```bash
-flutter test
-```
-
-## 📌 Notable TODOs
-- Edit-profile & follow/unfollow wiring
-- Offer accept/decline/counter UI for sellers
-- Image sharing inside chat
-- Persisting cart & theme choice
-- Real Stripe payment flow
+Nosiva is a full-featured Flutter marketplace application focused on second-hand fashion. It combines a structured mobile frontend with a Supabase backend, secure database policies, storage support, real-time communication, and role-based administration. The project demonstrates practical use of modern mobile development tools and backend-as-a-service architecture in one complete application.
