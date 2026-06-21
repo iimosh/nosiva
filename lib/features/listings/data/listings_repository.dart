@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/supabase/supabase_providers.dart';
 import '../domain/listing.dart';
+import '../domain/listing_enums.dart';
 import '../domain/listing_filter.dart';
 
 class ListingsRepository {
@@ -118,8 +119,20 @@ class ListingsRepository {
     await _client.from(_table).update(values).eq('id', id);
   }
 
+  Future<void> setStatus(String id, ListingStatus status) =>
+      updateListing(id, {'status': status.value});
+
   Future<void> deleteListing(String id) async {
     await _client.from(_table).delete().eq('id', id);
+  }
+
+  Future<List<Listing>> fetchAllRecent({int limit = 50}) async {
+    final data = await _client
+        .from(_table)
+        .select(_select)
+        .order('created_at', ascending: false)
+        .limit(limit);
+    return data.map<Listing>((e) => Listing.fromJson(e)).toList();
   }
 }
 

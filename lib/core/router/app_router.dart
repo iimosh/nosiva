@@ -7,6 +7,7 @@ import '../../features/auth/presentation/sign_in_screen.dart';
 import '../../features/auth/presentation/sign_up_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/auth/presentation/welcome_screen.dart';
+import '../../features/admin/presentation/admin_dashboard_screen.dart';
 import '../../features/cart/presentation/cart_screen.dart';
 import '../../features/design_system/design_system_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
@@ -59,6 +60,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           if (!p.onboarded) {
             return loc == AppRoutes.onboarding ? null : AppRoutes.onboarding;
           }
+          if (loc == AppRoutes.admin && !p.isAdmin) return AppRoutes.home;
           if (isAuthRoute || isSplash || loc == AppRoutes.onboarding) {
             return AppRoutes.home;
           }
@@ -156,6 +158,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.notifications,
         parentNavigatorKey: _rootKey,
         builder: (_, __) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.admin,
+        parentNavigatorKey: _rootKey,
+        builder: (_, __) => const AdminDashboardScreen(),
       ),
     ],
   );

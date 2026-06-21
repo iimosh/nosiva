@@ -37,3 +37,7 @@ class CurrentProfile extends AsyncNotifier<Profile?> {
 
 final currentProfileProvider =
     AsyncNotifierProvider<CurrentProfile, Profile?>(CurrentProfile.new);
+
+final isAdminProvider = Provider<bool>((ref) {
+  return ref.watch(currentProfileProvider).valueOrNull?.isAdmin ?? false;
+});

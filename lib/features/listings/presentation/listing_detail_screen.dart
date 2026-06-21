@@ -15,11 +15,15 @@ import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../../core/supabase/supabase_providers.dart';
+import '../../admin/presentation/admin_controller.dart';
 import '../../cart/presentation/cart_controller.dart';
 import '../../favorites/presentation/favorites_controller.dart';
 import '../../messaging/data/messaging_repository.dart';
 import '../../offers/data/offers_repository.dart';
+import '../../profile/presentation/current_profile_provider.dart';
 import '../domain/listing.dart';
+import '../domain/listing_enums.dart';
+import 'controllers/feed_controller.dart';
 import 'controllers/listing_detail_provider.dart';
 
 class ListingDetailScreen extends ConsumerWidget {
@@ -61,6 +65,8 @@ class _DetailBody extends ConsumerWidget {
     final favs = ref.watch(favoritesControllerProvider).valueOrNull ?? const {};
     final liked = favs.contains(listing.id);
     final seller = listing.seller;
+    final isAdmin = ref.watch(isAdminProvider);
+    final isOwn = ref.watch(currentAuthUserProvider)?.id == listing.sellerId;
 
     return CustomScrollView(
       slivers: [
@@ -70,6 +76,11 @@ class _DetailBody extends ConsumerWidget {
           backgroundColor: theme.colorScheme.surface,
           leading: const _CircleBackButton(),
           actions: [
+            if (isAdmin && !isOwn)
+              Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.xs),
+                child: _ModerationButton(listing: listing),
+              ),
             Padding(
               padding: const EdgeInsets.only(right: AppSpacing.sm),
               child: HeartButton(
@@ -379,6 +390,90 @@ class _OfferSheetState extends State<_OfferSheet> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ModerationButton extends ConsumerWidget {
+  const _ModerationButton({required this.listing});
+  final Listing listing;
+
+  Future<void> _run(
+    BuildContext context,
+    WidgetRef ref,
+    Future<void> Function() action,
+    String success, {
+    bool popAfter = false,
+  }) async {
+    try {
+      await action();
+      ref.invalidate(listingDetailProvider(listing.id));
+      ref.invalidate(feedControllerProvider);
+      ref.invalidate(adminListingsProvider);
+      if (context.mounted) {
+        context.showSuccess(success);
+        if (popAfter) context.pop();
+      }
+    } catch (e) {
+      if (context.mounted) context.showError('Action failed — $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final admin = ref.read(adminControllerProvider);
+    final isHidden = listing.statusEnum == ListingStatus.hidden;
+
+    return CircleAvatar(
+      backgroundColor: Colors.white.withValues(alpha: 0.9),
+      child: IconButton(
+        tooltip: 'Moderate',
+        icon: const Icon(Icons.shield_outlined, color: AppColors.plum),
+        onPressed: () {
+          showModalBottomSheet<void>(
+            context: context,
+            builder: (sheetCtx) => SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: Icon(isHidden
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined),
+                    title: Text(isHidden ? 'Unhide listing' : 'Hide listing'),
+                    onTap: () {
+                      Navigator.pop(sheetCtx);
+                      _run(
+                        context,
+                        ref,
+                        () => isHidden
+                            ? admin.unhide(listing.id)
+                            : admin.hide(listing.id),
+                        isHidden ? 'Listing restored' : 'Listing hidden',
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.delete_outline_rounded,
+                        color: AppColors.error),
+                    title: const Text('Delete listing'),
+                    onTap: () {
+                      Navigator.pop(sheetCtx);
+                      _run(
+                        context,
+                        ref,
+                        () => admin.delete(listing.id),
+                        'Listing deleted',
+                        popAfter: true,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
