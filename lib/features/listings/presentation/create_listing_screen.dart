@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/router/app_routes.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -13,6 +14,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
+import '../../../shell/main_shell.dart';
 import '../data/listings_repository.dart';
 import '../domain/listing_enums.dart';
 import 'controllers/feed_controller.dart';
@@ -67,7 +69,10 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
           _images.add((bytes: await f.readAsBytes(), ext: _ext(f.path)));
         }
       }
-      if (mounted) setState(() {});
+      if (mounted) {
+        setState(() {});
+        _syncDirty();
+      }
     } catch (e) {
       if (mounted) context.showError('Couldn’t add photo — $e');
     }
@@ -142,7 +147,12 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
       ref.read(feedControllerProvider.notifier).refresh();
       if (mounted) {
         context.showSuccess('Listed! Time to make that coin 💸');
-        context.pop();
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          _resetForm();
+          context.go(AppRoutes.home);
+        }
       }
     } catch (e) {
       if (mounted) context.showError('Couldn’t list — $e');
@@ -151,8 +161,40 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
     }
   }
 
+  void _resetForm() {
+    _title.clear();
+    _description.clear();
+    _brand.clear();
+    _color.clear();
+    _price.clear();
+    setState(() {
+      _images.clear();
+      _category = null;
+      _condition = ItemCondition.good;
+      _size = null;
+      _styleTags.clear();
+    });
+    _syncDirty();
+  }
+
+  bool get _isDirty =>
+      _title.text.isNotEmpty ||
+      _description.text.isNotEmpty ||
+      _brand.text.isNotEmpty ||
+      _color.text.isNotEmpty ||
+      _price.text.isNotEmpty ||
+      _images.isNotEmpty ||
+      _category != null ||
+      _size != null ||
+      _styleTags.isNotEmpty;
+
+  void _syncDirty() {
+    ref.read(sellFormDirtyProvider.notifier).state = _isDirty;
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.listen(sellResetSignalProvider, (_, __) => _resetForm());
     return Scaffold(
       appBar: AppBar(title: const Text('List an item')),
       body: SafeArea(
@@ -166,7 +208,10 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                 _PhotoStrip(
                   images: _images,
                   onAdd: _showPickerSheet,
-                  onRemove: (i) => setState(() => _images.removeAt(i)),
+                  onRemove: (i) {
+                    setState(() => _images.removeAt(i));
+                    _syncDirty();
+                  },
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 NosivaTextField(
@@ -174,6 +219,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   hint: 'e.g. Y2K butterfly baby tee',
                   controller: _title,
                   validator: (v) => Validators.minLength(v, 3, field: 'Title'),
+                  onChanged: (_) => _syncDirty(),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 NosivaTextField(
@@ -182,6 +228,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   controller: _description,
                   maxLines: 4,
                   maxLength: 1000,
+                  onChanged: (_) => _syncDirty(),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _Label('Category'),
@@ -193,7 +240,10 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       NosivaChip(
                         label: '${c.emoji} ${c.label}',
                         selected: _category == c,
-                        onTap: () => setState(() => _category = c),
+                        onTap: () {
+                          setState(() => _category = c);
+                          _syncDirty();
+                        },
                       ),
                   ],
                 ),
@@ -221,7 +271,10 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       NosivaChip(
                         label: s,
                         selected: _size == s,
-                        onTap: () => setState(() => _size = _size == s ? null : s),
+                        onTap: () {
+                          setState(() => _size = _size == s ? null : s);
+                          _syncDirty();
+                        },
                       ),
                   ],
                 ),
@@ -233,6 +286,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                         label: 'Brand',
                         hint: 'e.g. Brandy Melville',
                         controller: _brand,
+                        onChanged: (_) => _syncDirty(),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
@@ -241,6 +295,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                         label: 'Color',
                         hint: 'e.g. Pink',
                         controller: _color,
+                        onChanged: (_) => _syncDirty(),
                       ),
                     ),
                   ],
@@ -255,9 +310,12 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       NosivaChip(
                         label: tag,
                         selected: _styleTags.contains(tag),
-                        onTap: () => setState(() => _styleTags.contains(tag)
-                            ? _styleTags.remove(tag)
-                            : _styleTags.add(tag)),
+                        onTap: () {
+                          setState(() => _styleTags.contains(tag)
+                              ? _styleTags.remove(tag)
+                              : _styleTags.add(tag));
+                          _syncDirty();
+                        },
                       ),
                   ],
                 ),
@@ -270,6 +328,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       const TextInputType.numberWithOptions(decimal: true),
                   prefixIcon: Icons.attach_money_rounded,
                   validator: Validators.price,
+                  onChanged: (_) => _syncDirty(),
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 NosivaButton(
