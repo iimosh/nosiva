@@ -62,86 +62,96 @@ class _DetailBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final favs = ref.watch(favoritesControllerProvider).valueOrNull ?? const {};
-    final liked = favs.contains(listing.id);
-    final seller = listing.seller;
-    final isAdmin = ref.watch(isAdminProvider);
-    final isOwn = ref.watch(currentAuthUserProvider)?.id == listing.sellerId;
 
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          expandedHeight: 420,
-          pinned: true,
-          backgroundColor: theme.colorScheme.surface,
-          leading: const _CircleBackButton(),
-          actions: [
-            if (isAdmin && !isOwn)
-              Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.xs),
-                child: _ModerationButton(listing: listing),
+    final facts = <({String label, String value})>[
+      (label: 'Category', value: listing.categoryEnum.label),
+      (label: 'Condition', value: listing.conditionEnum.label),
+      if (listing.size != null) (label: 'Size', value: listing.size!),
+      if (listing.color != null) (label: 'Color', value: listing.color!),
+      if (listing.brand != null) (label: 'Brand', value: listing.brand!),
+    ];
+
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        _Gallery(listing: listing),
+        Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      Formatters.price(listing.price),
+                      style: theme.textTheme.headlineMedium
+                          ?.copyWith(color: AppColors.hotPink, fontSize: 30),
+                    ),
+                  ),
+                  _ConditionBadge(condition: listing.conditionEnum),
+                ],
               ),
-            Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.sm),
-              child: HeartButton(
-                liked: liked,
-                onTap: () => ref
-                    .read(favoritesControllerProvider.notifier)
-                    .toggle(listing.id),
-              ),
-            ),
-          ],
-          flexibleSpace: FlexibleSpaceBar(
-            background: _Carousel(urls: listing.images.map((e) => e.imageUrl).toList()),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(Formatters.price(listing.price),
-                    style: theme.textTheme.headlineMedium
-                        ?.copyWith(color: AppColors.hotPink, fontSize: 30)),
+              const SizedBox(height: AppSpacing.xs),
+              Text(listing.title, style: theme.textTheme.headlineSmall),
+              if (listing.brand != null) ...[
+                const SizedBox(height: 2),
+                Text(listing.brand!,
+                    style: theme.textTheme.titleMedium
+                        ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+              ],
+              const SizedBox(height: AppSpacing.sm),
+              _MetaRow(listing: listing),
+              const SizedBox(height: AppSpacing.md),
+              const Divider(),
+              const SizedBox(height: AppSpacing.sm),
+
+              _FactGrid(facts: facts),
+
+              if (listing.styleTags.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.lg),
+                _SectionTitle('Style'),
                 const SizedBox(height: AppSpacing.xs),
-                Text(listing.title, style: theme.textTheme.headlineSmall),
-                const SizedBox(height: AppSpacing.md),
                 Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xs,
                   children: [
-                    NosivaChip(label: '${listing.categoryEnum.emoji} ${listing.categoryEnum.label}'),
-                    NosivaChip(label: listing.conditionEnum.label, icon: Icons.verified_outlined),
-                    if (listing.size != null) NosivaChip(label: 'Size ${listing.size}'),
-                    if (listing.brand != null) NosivaChip(label: listing.brand!),
-                    if (listing.color != null) NosivaChip(label: listing.color!),
+                    for (final tag in listing.styleTags)
+                      NosivaChip(label: '#$tag'),
                   ],
                 ),
-                if (listing.styleTags.isNotEmpty) ...[
-                  const SizedBox(height: AppSpacing.md),
-                  Text('Vibe', style: theme.textTheme.titleMedium),
-                  const SizedBox(height: AppSpacing.xs),
-                  Wrap(
-                    spacing: AppSpacing.xs,
-                    runSpacing: AppSpacing.xs,
-                    children: [
-                      for (final tag in listing.styleTags)
-                        NosivaChip(label: '#$tag'),
-                    ],
-                  ),
-                ],
-                if (listing.description.isNotEmpty) ...[
-                  const SizedBox(height: AppSpacing.lg),
-                  Text('Description', style: theme.textTheme.titleMedium),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(listing.description, style: theme.textTheme.bodyLarge),
-                ],
-                const SizedBox(height: AppSpacing.lg),
-                if (seller != null) _SellerCard(listing: listing),
-                const SizedBox(height: AppSpacing.xl),
               ],
-            ),
+
+              if (listing.description.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.lg),
+                _SectionTitle('Description'),
+                const SizedBox(height: AppSpacing.xs),
+                _ExpandableText(text: listing.description),
+              ],
+
+              const SizedBox(height: AppSpacing.lg),
+              _InfoCard(listing: listing),
+
+              if (listing.seller != null) ...[
+                const SizedBox(height: AppSpacing.lg),
+                _SectionTitle('Seller'),
+                const SizedBox(height: AppSpacing.xs),
+                _SellerCard(listing: listing),
+              ],
+
+              _Rail(
+                title: 'More from this seller',
+                provider: sellerListingsProvider(listing.sellerId),
+                excludeId: listing.id,
+              ),
+              _Rail(
+                title: 'You might also like',
+                provider: similarListingsProvider(listing.categoryEnum),
+                excludeId: listing.id,
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
           ),
         ),
       ],
@@ -149,23 +159,365 @@ class _DetailBody extends ConsumerWidget {
   }
 }
 
-class _Carousel extends StatelessWidget {
-  const _Carousel({required this.urls});
-  final List<String> urls;
+class _Gallery extends ConsumerStatefulWidget {
+  const _Gallery({required this.listing});
+  final Listing listing;
+
+  @override
+  ConsumerState<_Gallery> createState() => _GalleryState();
+}
+
+class _GalleryState extends ConsumerState<_Gallery> {
+  final _controller = PageController();
+  int _index = 0;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _openFullscreen() {
+    if (widget.listing.images.isEmpty) return;
+    final urls = widget.listing.images.map((e) => e.imageUrl).toList();
+    Navigator.of(context).push(MaterialPageRoute(
+      fullscreenDialog: true,
+      builder: (_) => _FullscreenGallery(urls: urls, initial: _index),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (urls.isEmpty) {
-      return Container(
-        color: AppColors.blush,
-        alignment: Alignment.center,
-        child: const Text('👗', style: TextStyle(fontSize: 64)),
+    final listing = widget.listing;
+    final urls = listing.images.map((e) => e.imageUrl).toList();
+    final topPad = MediaQuery.of(context).padding.top;
+
+    final favs = ref.watch(favoritesControllerProvider).valueOrNull ?? const {};
+    final liked = favs.contains(listing.id);
+    final isAdmin = ref.watch(isAdminProvider);
+    final isOwn = ref.watch(currentAuthUserProvider)?.id == listing.sellerId;
+
+    return SizedBox(
+      height: 440,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: _openFullscreen,
+              child: urls.isEmpty
+                  ? Container(
+                      color: AppColors.blush,
+                      alignment: Alignment.center,
+                      child: const Text('👗', style: TextStyle(fontSize: 72)),
+                    )
+                  : PageView.builder(
+                      controller: _controller,
+                      onPageChanged: (i) => setState(() => _index = i),
+                      itemCount: urls.length,
+                      itemBuilder: (_, i) => CachedNetworkImage(
+                        imageUrl: urls[i],
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) =>
+                            const ColoredBox(color: AppColors.blush),
+                        errorWidget: (_, __, ___) => const ColoredBox(
+                          color: AppColors.blush,
+                          child: Icon(Icons.broken_image_outlined),
+                        ),
+                      ),
+                    ),
+            ),
+          ),
+          if (urls.length > 1)
+            Positioned(
+              bottom: 14,
+              right: 14,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(99),
+                ),
+                child: Text('${_index + 1}/${urls.length}',
+                    style: const TextStyle(color: Colors.white, fontSize: 12)),
+              ),
+            ),
+
+          if (urls.length > 1)
+            Positioned(
+              bottom: 16,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(urls.length, (i) {
+                  final active = i == _index;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    height: 7,
+                    width: active ? 20 : 7,
+                    decoration: BoxDecoration(
+                      color: active ? AppColors.hotPink : Colors.white,
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          Positioned(
+            top: topPad + 4,
+            left: 4,
+            right: 4,
+            child: Row(
+              children: [
+                const _CircleBackButton(),
+                const Spacer(),
+                _CircleIcon(
+                  icon: Icons.ios_share_rounded,
+                  onTap: () => context.showSnack('Share — TODO 🔗'),
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                if (isAdmin && !isOwn) ...[
+                  _ModerationButton(listing: listing),
+                  const SizedBox(width: AppSpacing.xs),
+                ],
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: HeartButton(
+                    liked: liked,
+                    onTap: () => ref
+                        .read(favoritesControllerProvider.notifier)
+                        .toggle(listing.id),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FullscreenGallery extends StatelessWidget {
+  const _FullscreenGallery({required this.urls, required this.initial});
+  final List<String> urls;
+  final int initial;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+      ),
+      body: PageView.builder(
+        controller: PageController(initialPage: initial),
+        itemCount: urls.length,
+        itemBuilder: (_, i) => InteractiveViewer(
+          minScale: 1,
+          maxScale: 4,
+          child: Center(
+            child: CachedNetworkImage(imageUrl: urls[i], fit: BoxFit.contain),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.text);
+  final String text;
+  @override
+  Widget build(BuildContext context) =>
+      Text(text, style: Theme.of(context).textTheme.titleMedium);
+}
+
+class _ConditionBadge extends StatelessWidget {
+  const _ConditionBadge({required this.condition});
+  final ItemCondition condition;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.mint.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(99),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.verified_rounded, size: 14, color: AppColors.mint),
+          const SizedBox(width: 4),
+          Text(condition.label,
+              style: theme.textTheme.labelMedium
+                  ?.copyWith(color: theme.colorScheme.onSurface)),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetaRow extends StatelessWidget {
+  const _MetaRow({required this.listing});
+  final Listing listing;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final style = theme.textTheme.bodySmall;
+    final items = <Widget>[
+      _meta(Icons.remove_red_eye_outlined, '${listing.viewCount}', style),
+      _meta(Icons.favorite_border_rounded, '${listing.favoriteCount}', style),
+      if (listing.createdAt != null)
+        _meta(Icons.schedule_rounded, Formatters.timeAgo(listing.createdAt!),
+            style),
+      if (listing.location != null)
+        _meta(Icons.place_outlined, listing.location!, style),
+    ];
+    return Wrap(spacing: AppSpacing.md, runSpacing: 4, children: items);
+  }
+
+  Widget _meta(IconData icon, String text, TextStyle? style) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: style?.color),
+          const SizedBox(width: 3),
+          Text(text, style: style),
+        ],
       );
-    }
-    return PageView(
+}
+
+class _FactGrid extends StatelessWidget {
+  const _FactGrid({required this.facts});
+  final List<({String label, String value})> facts;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: AppRadii.card,
+      ),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+      child: Column(
+        children: [
+          for (var i = 0; i < facts.length; i++) ...[
+            if (i > 0) const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              child: Row(
+                children: [
+                  Text(facts[i].label,
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                  const Spacer(),
+                  Text(facts[i].value, style: theme.textTheme.titleMedium),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ExpandableText extends StatefulWidget {
+  const _ExpandableText({required this.text});
+  final String text;
+
+  @override
+  State<_ExpandableText> createState() => _ExpandableTextState();
+}
+
+class _ExpandableTextState extends State<_ExpandableText> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLong = widget.text.length > 160;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (final url in urls)
-          CachedNetworkImage(imageUrl: url, fit: BoxFit.cover),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 180),
+          alignment: Alignment.topCenter,
+          child: Text(
+            widget.text,
+            style: theme.textTheme.bodyLarge?.copyWith(height: 1.45),
+            maxLines: _expanded ? null : 4,
+            overflow: _expanded ? null : TextOverflow.ellipsis,
+          ),
+        ),
+        if (isLong)
+          TextButton(
+            style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(0, 32),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            onPressed: () => setState(() => _expanded = !_expanded),
+            child: Text(_expanded ? 'Read less' : 'Read more'),
+          ),
+      ],
+    );
+  }
+}
+
+class _InfoCard extends StatelessWidget {
+  const _InfoCard({required this.listing});
+  final Listing listing;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: AppRadii.card,
+      ),
+      child: Column(
+        children: [
+          _row(context, Icons.local_shipping_outlined, 'Shipping',
+              listing.location != null
+                  ? 'Ships from ${listing.location}'
+                  : 'Calculated at checkout'),
+          const SizedBox(height: AppSpacing.sm),
+          _row(context, Icons.shield_outlined, 'Buyer protection',
+              'Your payment is held until you confirm delivery.'),
+          const SizedBox(height: AppSpacing.sm),
+          _row(context, Icons.replay_outlined, 'Returns',
+              'Item as described — returns handled case by case.'),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(BuildContext context, IconData icon, String title, String body) {
+    final theme = Theme.of(context);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: AppColors.hotPink),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: theme.textTheme.titleMedium),
+              Text(body, style: theme.textTheme.bodySmall),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -205,7 +557,8 @@ class _SellerCard extends StatelessWidget {
                 Text(seller.nameOrHandle, style: theme.textTheme.titleMedium),
                 Row(
                   children: [
-                    const Icon(Icons.star_rounded, size: 16, color: AppColors.sun),
+                    const Icon(Icons.star_rounded,
+                        size: 16, color: AppColors.sun),
                     const SizedBox(width: 2),
                     Text(
                       '${seller.ratingAvg.toStringAsFixed(1)} · ${seller.followerCount} followers',
@@ -224,6 +577,100 @@ class _SellerCard extends StatelessWidget {
             onPressed: () {},
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _Rail extends ConsumerWidget {
+  const _Rail({
+    required this.title,
+    required this.provider,
+    required this.excludeId,
+  });
+
+  final String title;
+  final ProviderListenable<AsyncValue<List<Listing>>> provider;
+  final String excludeId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final items = ref.watch(provider).valueOrNull ?? const [];
+    final filtered = items.where((l) => l.id != excludeId).take(10).toList();
+    if (filtered.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: AppSpacing.lg),
+        _SectionTitle(title),
+        const SizedBox(height: AppSpacing.sm),
+        SizedBox(
+          height: 210,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: filtered.length,
+            separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+            itemBuilder: (_, i) => _MiniListingCard(listing: filtered[i]),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MiniListingCard extends StatelessWidget {
+  const _MiniListingCard({required this.listing});
+  final Listing listing;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: () => context.push(AppRoutes.listingDetailPath(listing.id)),
+      child: SizedBox(
+        width: 140,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: AppRadii.field,
+              child: SizedBox(
+                height: 150,
+                width: 140,
+                child: listing.coverImageUrl != null
+                    ? CachedNetworkImage(
+                        imageUrl: listing.coverImageUrl!, fit: BoxFit.cover)
+                    : const ColoredBox(color: AppColors.blush),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(Formatters.price(listing.price),
+                style: theme.textTheme.titleMedium
+                    ?.copyWith(color: AppColors.hotPink)),
+            Text(listing.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CircleIcon extends StatelessWidget {
+  const _CircleIcon({required this.icon, required this.onTap});
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      backgroundColor: Colors.white.withValues(alpha: 0.9),
+      child: IconButton(
+        icon: Icon(icon, color: AppColors.plum, size: 20),
+        onPressed: onTap,
       ),
     );
   }
@@ -294,10 +741,11 @@ class _ActionBar extends ConsumerWidget {
 
   Future<void> _message(BuildContext context, WidgetRef ref) async {
     try {
-      final convo = await ref.read(messagingRepositoryProvider).getOrCreateConversation(
-            listingId: listing.id,
-            sellerId: listing.sellerId,
-          );
+      final convo =
+          await ref.read(messagingRepositoryProvider).getOrCreateConversation(
+                listingId: listing.id,
+                sellerId: listing.sellerId,
+              );
       if (context.mounted) context.push(AppRoutes.chatPath(convo.id));
     } catch (e) {
       if (context.mounted) context.showError('Couldn’t start chat — $e');
