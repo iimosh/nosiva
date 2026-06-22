@@ -113,7 +113,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       ),
       floatingActionButton: activeFilters > 0
           ? FloatingActionButton.extended(
-              backgroundColor: AppColors.plum,
+              backgroundColor: AppColors.hotPink,
+              foregroundColor: Colors.white,
               icon: const Icon(Icons.clear_rounded),
               label: const Text('Clear filters'),
               onPressed: () => ref.read(feedFilterProvider.notifier).state =
@@ -129,6 +130,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     if (f.size != null) n++;
     if (f.condition != null) n++;
     if (f.minPrice != null || f.maxPrice != null) n++;
+    if (f.location != null && f.location!.isNotEmpty) n++;
     if (f.styleTags.isNotEmpty) n++;
     return n;
   }
@@ -145,26 +147,34 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
   late ListingFilter _draft = ref.read(feedFilterProvider);
   final _min = TextEditingController();
   final _max = TextEditingController();
+  final _location = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _min.text = _draft.minPrice?.toStringAsFixed(0) ?? '';
     _max.text = _draft.maxPrice?.toStringAsFixed(0) ?? '';
+    _location.text = _draft.location ?? '';
   }
 
   @override
   void dispose() {
     _min.dispose();
     _max.dispose();
+    _location.dispose();
     super.dispose();
   }
 
   void _apply() {
     final styles = _draft.styleTags;
+    final location = _location.text.trim();
     ref.read(feedFilterProvider.notifier).state = _draft.copyWith(
       minPrice: _min.text.isEmpty ? null : double.tryParse(_min.text),
       maxPrice: _max.text.isEmpty ? null : double.tryParse(_max.text),
+      location: location.isEmpty ? null : location,
+      clearMinPrice: _min.text.isEmpty,
+      clearMaxPrice: _max.text.isEmpty,
+      clearLocation: location.isEmpty,
       styleTags: styles,
     );
     Navigator.pop(context);
@@ -247,6 +257,14 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
                   }),
                 ),
             ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text('Location', style: theme.textTheme.titleMedium),
+          const SizedBox(height: AppSpacing.xs),
+          NosivaTextField(
+            hint: 'City or country',
+            controller: _location,
+            prefixIcon: Icons.place_outlined,
           ),
           const SizedBox(height: AppSpacing.md),
           Text('Price range', style: theme.textTheme.titleMedium),
