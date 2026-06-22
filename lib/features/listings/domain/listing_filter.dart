@@ -52,6 +52,9 @@ class ListingFilter {
     double? minPrice,
     double? maxPrice,
     String? location,
+    bool clearMinPrice = false,
+    bool clearMaxPrice = false,
+    bool clearLocation = false,
     ListingSort? sort,
   }) {
     return ListingFilter(
@@ -62,9 +65,9 @@ class ListingFilter {
       condition: condition ?? this.condition,
       color: color ?? this.color,
       styleTags: styleTags ?? this.styleTags,
-      minPrice: minPrice ?? this.minPrice,
-      maxPrice: maxPrice ?? this.maxPrice,
-      location: location ?? this.location,
+      minPrice: clearMinPrice ? null : (minPrice ?? this.minPrice),
+      maxPrice: clearMaxPrice ? null : (maxPrice ?? this.maxPrice),
+      location: clearLocation ? null : (location ?? this.location),
       sort: sort ?? this.sort,
     );
   }

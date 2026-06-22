@@ -37,6 +37,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
   final _description = TextEditingController();
   final _brand = TextEditingController();
   final _color = TextEditingController();
+  final _location = TextEditingController();
   final _price = TextEditingController();
 
   final _images = <PickedImage>[];
@@ -52,6 +53,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
     _description.dispose();
     _brand.dispose();
     _color.dispose();
+    _location.dispose();
     _price.dispose();
     super.dispose();
   }
@@ -139,6 +141,8 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
           'price': double.parse(_price.text.trim()),
           'brand': _brand.text.trim().isEmpty ? null : _brand.text.trim(),
           'color': _color.text.trim().isEmpty ? null : _color.text.trim(),
+          'location':
+              _location.text.trim().isEmpty ? null : _location.text.trim(),
           'size': _size,
           'style_tags': _styleTags.toList(),
         },
@@ -166,6 +170,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
     _description.clear();
     _brand.clear();
     _color.clear();
+    _location.clear();
     _price.clear();
     setState(() {
       _images.clear();
@@ -182,6 +187,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
       _description.text.isNotEmpty ||
       _brand.text.isNotEmpty ||
       _color.text.isNotEmpty ||
+      _location.text.isNotEmpty ||
       _price.text.isNotEmpty ||
       _images.isNotEmpty ||
       _category != null ||
@@ -299,6 +305,14 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                NosivaTextField(
+                  label: 'Location',
+                  hint: 'City, Country',
+                  controller: _location,
+                  prefixIcon: Icons.place_outlined,
+                  onChanged: (_) => _syncDirty(),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _Label('Style tags'),
