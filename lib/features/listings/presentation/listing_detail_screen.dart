@@ -705,7 +705,8 @@ class _ActionBar extends ConsumerWidget {
                       label: 'Edit listing',
                       icon: Icons.edit_outlined,
                       variant: NosivaButtonVariant.secondary,
-                      onPressed: () => context.showSnack('Edit — TODO ✏️'),
+                      onPressed: () =>
+                          context.push(AppRoutes.editListingPath(listing.id)),
                     ),
                   ),
                 ],

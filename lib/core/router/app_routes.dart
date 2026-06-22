@@ -15,6 +15,7 @@ abstract final class AppRoutes {
 
   static const listingDetail = '/listing'; // /listing/:id
   static const createListing = '/create-listing';
+  static const editListing = '/edit-listing'; // /edit-listing/:id
   static const favorites = '/favorites';
   static const chat = '/chat'; // /chat/:conversationId
   static const cart = '/cart';
@@ -25,5 +26,6 @@ abstract final class AppRoutes {
   static const admin = '/admin';
 
   static String listingDetailPath(String id) => '$listingDetail/$id';
+  static String editListingPath(String id) => '$editListing/$id';
   static String chatPath(String id) => '$chat/$id';
 }

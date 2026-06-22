@@ -12,6 +12,7 @@ import '../../features/cart/presentation/cart_screen.dart';
 import '../../features/design_system/design_system_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
 import '../../features/listings/presentation/create_listing_screen.dart';
+import '../../features/listings/presentation/edit_listing_screen.dart';
 import '../../features/listings/presentation/home_screen.dart';
 import '../../features/listings/presentation/listing_detail_screen.dart';
 import '../../features/listings/presentation/search_screen.dart';
@@ -132,6 +133,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.createListing,
         parentNavigatorKey: _rootKey,
         builder: (_, __) => const CreateListingScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.editListing}/:id',
+        parentNavigatorKey: _rootKey,
+        builder: (_, state) =>
+            EditListingScreen(listingId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.favorites,
