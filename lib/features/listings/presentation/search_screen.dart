@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/location/location_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/nosiva_button.dart';
@@ -13,8 +14,6 @@ import '../domain/listing_filter.dart';
 import 'controllers/feed_controller.dart';
 import 'widgets/listing_card.dart';
 
-/// Full-text search + filters. Drives the shared [feedFilterProvider] so
-/// results reuse the paginated feed query.
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
 
@@ -148,6 +147,21 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
   final _min = TextEditingController();
   final _max = TextEditingController();
   final _location = TextEditingController();
+  bool _detectingLocation = false;
+
+  Future<void> _detectLocation() async {
+    setState(() => _detectingLocation = true);
+    try {
+      _location.text = await ref.read(locationServiceProvider).currentCity();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('$e')));
+      }
+    } finally {
+      if (mounted) setState(() => _detectingLocation = false);
+    }
+  }
 
   @override
   void initState() {
@@ -265,6 +279,22 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
             hint: 'City or country',
             controller: _location,
             prefixIcon: Icons.place_outlined,
+            suffixIcon: _detectingLocation
+                ? const Padding(
+                    padding: EdgeInsets.all(14),
+                    child: SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: AppColors.hotPink),
+                    ),
+                  )
+                : IconButton(
+                    tooltip: 'Use my location',
+                    icon: const Icon(Icons.my_location_rounded,
+                        color: AppColors.hotPink),
+                    onPressed: _detectLocation,
+                  ),
           ),
           const SizedBox(height: AppSpacing.md),
           Text('Price range', style: theme.textTheme.titleMedium),

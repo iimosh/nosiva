@@ -51,5 +51,7 @@
 	<string>Nosiva needs photo access so you can add pictures to your listings.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Nosiva needs permission to save photos to your library.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Nosiva uses your location to auto-fill your city when you list or search for items.</string>
 </dict>
 </plist>
