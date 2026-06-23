@@ -38,8 +38,9 @@ class ListingsRepository {
     }
     if (filter.color != null) query = query.ilike('color', '%${filter.color}%');
     if (filter.brand != null) query = query.ilike('brand', '%${filter.brand}%');
-    if (filter.location != null) {
-      query = query.ilike('location', '%${filter.location}%');
+    if (filter.location != null && filter.location!.trim().isNotEmpty) {
+      final city = filter.location!.split(',').first.trim();
+      query = query.ilike('location', '%$city%');
     }
     if (filter.minPrice != null) query = query.gte('price', filter.minPrice!);
     if (filter.maxPrice != null) query = query.lte('price', filter.maxPrice!);
@@ -95,6 +96,7 @@ class ListingsRepository {
     required String sellerId,
     required String listingId,
     required List<({Uint8List bytes, String ext})> images,
+    int startPosition = 0,
   }) async {
     const uuid = Uuid();
     final rows = <Map<String, dynamic>>[];
@@ -110,9 +112,30 @@ class ListingsRepository {
             ),
           );
       final publicUrl = _client.storage.from(_bucket).getPublicUrl(path);
-      rows.add({'listing_id': listingId, 'image_url': publicUrl, 'position': i});
+      rows.add({
+        'listing_id': listingId,
+        'image_url': publicUrl,
+        'position': startPosition + i,
+      });
     }
     await _client.from(_imagesTable).insert(rows);
+  }
+
+ Future<void> addImages({
+    required String sellerId,
+    required String listingId,
+    required List<({Uint8List bytes, String ext})> images,
+    int startPosition = 0,
+  }) =>
+      _uploadImages(
+        sellerId: sellerId,
+        listingId: listingId,
+        images: images,
+        startPosition: startPosition,
+      );
+
+  Future<void> deleteImage(String imageId) async {
+    await _client.from(_imagesTable).delete().eq('id', imageId);
   }
 
   Future<void> updateListing(String id, Map<String, dynamic> values) async {
