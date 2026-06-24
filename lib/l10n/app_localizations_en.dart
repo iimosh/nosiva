@@ -15,7 +15,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get language => 'Language';
 
   @override
-  String get languageChanged => 'Language changed to English';
+  String get languageChanged => 'Language changed';
 
   @override
   String get english => 'English';

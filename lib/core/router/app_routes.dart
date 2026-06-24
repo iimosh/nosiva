@@ -24,9 +24,12 @@ abstract final class AppRoutes {
   static const editProfile = '/edit-profile';
   static const admin = '/admin';
   static const user = '/user'; // /user/:id (public profile)
+  static const followList = '/follows'; // /follows/:id?tab=followers|following
 
   static String listingDetailPath(String id) => '$listingDetail/$id';
   static String editListingPath(String id) => '$editListing/$id';
   static String chatPath(String id) => '$chat/$id';
   static String userPath(String id) => '$user/$id';
+  static String followListPath(String id, {int tab = 0}) =>
+      '$followList/$id?tab=${tab == 1 ? 'following' : 'followers'}';
 }

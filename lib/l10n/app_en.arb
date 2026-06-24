@@ -2,7 +2,7 @@
   "@@locale": "en",
   "appName": "Nosiva",
   "language": "Language",
-  "languageChanged": "Language changed"
+  "languageChanged": "Language changed",
   "english": "English",
   "macedonian": "Macedonian",
   "systemDefault": "System default",

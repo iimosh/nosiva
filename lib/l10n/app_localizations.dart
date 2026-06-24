@@ -110,6 +110,12 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get language;
 
+  /// No description provided for @languageChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Language changed'**
+  String get languageChanged;
+
   /// No description provided for @english.
   ///
   /// In en, this message translates to:
@@ -1243,8 +1249,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Chat'**
   String get chat;
-
-  String get languageChanged;
 
   /// No description provided for @messageHint.
   ///

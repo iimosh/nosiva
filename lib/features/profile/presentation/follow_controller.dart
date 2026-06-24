@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/follow_repository.dart';
+import 'current_profile_provider.dart';
 import 'user_profile_screen.dart';
 
 class FollowController extends AsyncNotifier<Set<String>> {
@@ -23,6 +24,7 @@ class FollowController extends AsyncNotifier<Set<String>> {
       current.add(userId);
     }
     state = AsyncValue.data(current);
+    _bumpMyFollowingCount(wasFollowing ? -1 : 1);
 
     try {
       if (wasFollowing) {
@@ -39,8 +41,18 @@ class FollowController extends AsyncNotifier<Set<String>> {
         reverted.remove(userId);
       }
       state = AsyncValue.data(reverted);
+      _bumpMyFollowingCount(wasFollowing ? 1 : -1);
       rethrow;
     }
+  }
+
+  void _bumpMyFollowingCount(int delta) {
+    final me = ref.read(currentProfileProvider).valueOrNull;
+    if (me == null) return;
+    final next = (me.followingCount + delta).clamp(0, 1 << 31);
+    ref
+        .read(currentProfileProvider.notifier)
+        .set(me.copyWith(followingCount: next));
   }
 }
 

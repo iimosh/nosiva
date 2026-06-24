@@ -183,10 +183,14 @@ class _ProfileBody extends ConsumerWidget {
             _Stat(
               label: context.l10n.followers,
               value: '${profile.followerCount}',
+              onTap: () =>
+                  context.push(AppRoutes.followListPath(profile.id, tab: 0)),
             ),
             _Stat(
               label: context.l10n.following,
               value: '${profile.followingCount}',
+              onTap: () =>
+                  context.push(AppRoutes.followListPath(profile.id, tab: 1)),
             ),
             _Stat(
               label: context.l10n.rating,
@@ -252,24 +256,32 @@ class _ProfileBody extends ConsumerWidget {
 }
 
 class _Stat extends StatelessWidget {
-  const _Stat({required this.label, required this.value});
+  const _Stat({required this.label, required this.value, this.onTap});
 
   final String label;
   final String value;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      children: [
-        Text(value, style: theme.textTheme.titleLarge),
-        Text(label, style: theme.textTheme.bodySmall),
-      ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadii.md),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+        child: Column(
+          children: [
+            Text(value, style: theme.textTheme.titleLarge),
+            Text(label, style: theme.textTheme.bodySmall),
+          ],
+        ),
+      ),
     );
   }
 }
 
-/// Small gradient "ADMIN" pill shown next to an admin's name.
 class _AdminBadge extends StatelessWidget {
   const _AdminBadge();
 
@@ -294,7 +306,6 @@ class _AdminBadge extends StatelessWidget {
   }
 }
 
-/// Prominent entry into the admin dashboard (admins only).
 class _AdminEntryCard extends StatelessWidget {
   const _AdminEntryCard({required this.onTap});
 

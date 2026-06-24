@@ -2,15 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/supabase/supabase_providers.dart';
+import '../domain/profile.dart';
 
-/// Reads/writes the `follows` graph. Follower/following counts on profiles are
-/// maintained automatically by the DB trigger (sync_follow_counts).
 class FollowRepository {
   FollowRepository(this._client);
   final SupabaseClient _client;
   static const _table = 'follows';
 
-  /// The set of user ids the current user follows.
   Future<Set<String>> fetchFollowingIds() async {
     final uid = _client.auth.currentUser?.id;
     if (uid == null) return {};
@@ -33,6 +31,28 @@ class FollowRepository {
         .delete()
         .eq('follower_id', uid)
         .eq('following_id', userId);
+  }
+
+  Future<List<Profile>> fetchFollowers(String userId) async {
+    final data = await _client
+        .from(_table)
+        .select('follower:profiles!follows_follower_id_fkey(*)')
+        .eq('following_id', userId);
+    return data
+        .map<Profile>(
+            (e) => Profile.fromJson(e['follower'] as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<Profile>> fetchFollowing(String userId) async {
+    final data = await _client
+        .from(_table)
+        .select('following:profiles!follows_following_id_fkey(*)')
+        .eq('follower_id', userId);
+    return data
+        .map<Profile>(
+            (e) => Profile.fromJson(e['following'] as Map<String, dynamic>))
+        .toList();
   }
 }
 
