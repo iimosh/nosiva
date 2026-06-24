@@ -386,6 +386,12 @@ abstract class AppLocalizations {
   /// **'Display name (optional)'**
   String get displayNameOptional;
 
+  /// No description provided for @displayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Display name'**
+  String get displayName;
+
   /// No description provided for @displayNameHint.
   ///
   /// In en, this message translates to:
@@ -1381,6 +1387,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile editing is not available yet.'**
   String get editProfileTodo;
+
+  /// No description provided for @bio.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get bio;
+
+  /// No description provided for @bioHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Short description about you'**
+  String get bioHint;
+
+  /// No description provided for @locationAndStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Location and style'**
+  String get locationAndStyle;
+
+  /// No description provided for @profilePhotoInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo updates can be added later.'**
+  String get profilePhotoInfo;
+
+  /// No description provided for @usernameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Username is required'**
+  String get usernameRequired;
+
+  /// No description provided for @usernameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Username must be at least 3 characters'**
+  String get usernameTooShort;
+
+  /// No description provided for @usernameInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Use only letters, numbers, and underscores'**
+  String get usernameInvalid;
+
+  /// No description provided for @usernameTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'That username is already taken'**
+  String get usernameTaken;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated'**
+  String get profileUpdated;
+
+  /// No description provided for @profileUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update profile - {error}'**
+  String profileUpdateFailed(Object error);
 
   /// No description provided for @myCloset.
   ///

@@ -61,6 +61,29 @@ class ProfileRepository {
     return Profile.fromJson(data);
   }
 
+  Future<Profile> updateProfile({
+    required String id,
+    required String username,
+    String? displayName,
+    String? bio,
+    String? location,
+    required List<String> vibeTags,
+  }) async {
+    final data = await _client
+        .from(_table)
+        .update({
+          'username': username,
+          'display_name': displayName,
+          'bio': bio,
+          'location': location,
+          'vibe_tags': vibeTags,
+        })
+        .eq('id', id)
+        .select()
+        .single();
+    return Profile.fromJson(data);
+  }
+
   Future<Profile> completeOnboarding({
     required String id,
     String? displayName,

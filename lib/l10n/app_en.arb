@@ -53,6 +53,7 @@
   "onboardingTitle": "Set your preferences",
   "onboardingSubtitle": "We will use this to personalize your feed.",
   "displayNameOptional": "Display name (optional)",
+  "displayName": "Display name",
   "displayNameHint": "What should we call you?",
   "locationOptional": "Location (optional)",
   "cityCountry": "City, Country",
@@ -281,6 +282,21 @@
   "listings": "Listings",
   "editProfile": "Edit profile",
   "editProfileTodo": "Profile editing is not available yet.",
+  "bio": "Bio",
+  "bioHint": "Short description about you",
+  "locationAndStyle": "Location and style",
+  "profilePhotoInfo": "Profile photo updates can be added later.",
+  "usernameRequired": "Username is required",
+  "usernameTooShort": "Username must be at least 3 characters",
+  "usernameInvalid": "Use only letters, numbers, and underscores",
+  "usernameTaken": "That username is already taken",
+  "profileUpdated": "Profile updated",
+  "profileUpdateFailed": "Could not update profile - {error}",
+  "@profileUpdateFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
   "myCloset": "My closet",
   "closetEmpty": "Your closet is empty",
   "closetEmptyMessage": "List your first piece and start earning.",

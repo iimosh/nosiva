@@ -160,6 +160,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get displayNameOptional => 'Display name (optional)';
 
   @override
+  String get displayName => 'Display name';
+
+  @override
   String get displayNameHint => 'What should we call you?';
 
   @override
@@ -689,6 +692,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editProfileTodo => 'Profile editing is not available yet.';
+
+  @override
+  String get bio => 'Bio';
+
+  @override
+  String get bioHint => 'Short description about you';
+
+  @override
+  String get locationAndStyle => 'Location and style';
+
+  @override
+  String get profilePhotoInfo => 'Profile photo updates can be added later.';
+
+  @override
+  String get usernameRequired => 'Username is required';
+
+  @override
+  String get usernameTooShort => 'Username must be at least 3 characters';
+
+  @override
+  String get usernameInvalid => 'Use only letters, numbers, and underscores';
+
+  @override
+  String get usernameTaken => 'That username is already taken';
+
+  @override
+  String get profileUpdated => 'Profile updated';
+
+  @override
+  String profileUpdateFailed(Object error) {
+    return 'Could not update profile - $error';
+  }
 
   @override
   String get myCloset => 'My closet';

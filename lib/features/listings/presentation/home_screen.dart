@@ -151,106 +151,88 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         body: TabBarView(
           children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md,
-                    AppSpacing.xs,
-                    AppSpacing.md,
-                    AppSpacing.xs,
-                  ),
-                  child: NosivaTextField(
-                    hint: context.l10n.homeSearchHint,
-                    controller: _search,
-                    prefixIcon: Icons.search_rounded,
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: _setQuery,
-                    onChanged: (v) {
-                      if (v.isEmpty) _setQuery('');
-                    },
-                  ),
-                ),
-                _CategoryBar(
-                  selected: filter.category,
-                  onSelect: (cat) {
+            RefreshIndicator(
+              color: AppColors.hotPink,
+              onRefresh: () =>
+                  ref.read(feedControllerProvider.notifier).refresh(),
+              child: feed.when(
+                loading: () => _ForYouScrollView(
+                  controller: _scroll,
+                  search: _search,
+                  filter: filter,
+                  activeFilters: activeFilters,
+                  onQuery: _setQuery,
+                  onCategory: (cat) {
                     final notifier = ref.read(feedFilterProvider.notifier);
                     notifier.state = filter.category == cat
                         ? filter.copyWith(clearCategory: true)
                         : filter.copyWith(category: cat);
                   },
-                ),
-                _PeopleRail(query: filter.query ?? ''),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md,
-                    AppSpacing.xs,
-                    AppSpacing.md,
-                    0,
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        filter.query?.isNotEmpty == true
-                            ? context.l10n.browseItems
-                            : context.l10n.latestListings,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: AppColors.plum,
-                        ),
-                      ),
-                      const Spacer(),
-                      if (activeFilters > 0)
-                        Text(
-                          '$activeFilters ${context.l10n.filters.toLowerCase()}',
-                          style: theme.textTheme.bodySmall,
-                        ),
-                    ],
+                  sliver: const SliverFillRemaining(
+                    child: ListingGridSkeleton(),
                   ),
                 ),
-                Expanded(
-                  child: RefreshIndicator(
-                    color: AppColors.hotPink,
-                    onRefresh: () =>
-                        ref.read(feedControllerProvider.notifier).refresh(),
-                    child: feed.when(
-                      loading: () => const ListingGridSkeleton(),
-                      error: (e, _) => ErrorStateView(
-                        message: '$e',
-                        onRetry: () =>
-                            ref.read(feedControllerProvider.notifier).refresh(),
-                      ),
-                      data: (listings) {
-                        if (listings.isEmpty) {
-                          return ListView(
-                            children: [
-                              const SizedBox(height: 80),
-                              EmptyStateView(
-                                icon: Icons.inventory_2_outlined,
-                                title: context.l10n.nothingHereYet,
-                                message: context.l10n.nothingHereYetMessage,
-                              ),
-                            ],
-                          );
-                        }
-                        return GridView.builder(
-                          controller: _scroll,
-                          padding: AppSpacing.screen,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                error: (e, _) => _ForYouScrollView(
+                  controller: _scroll,
+                  search: _search,
+                  filter: filter,
+                  activeFilters: activeFilters,
+                  onQuery: _setQuery,
+                  onCategory: (cat) {
+                    final notifier = ref.read(feedFilterProvider.notifier);
+                    notifier.state = filter.category == cat
+                        ? filter.copyWith(clearCategory: true)
+                        : filter.copyWith(category: cat);
+                  },
+                  sliver: SliverFillRemaining(
+                    child: ErrorStateView(
+                      message: '$e',
+                      onRetry: () => ref
+                          .read(feedControllerProvider.notifier)
+                          .refresh(),
+                    ),
+                  ),
+                ),
+                data: (listings) {
+                  return _ForYouScrollView(
+                    controller: _scroll,
+                    search: _search,
+                    filter: filter,
+                    activeFilters: activeFilters,
+                    onQuery: _setQuery,
+                    onCategory: (cat) {
+                      final notifier = ref.read(feedFilterProvider.notifier);
+                      notifier.state = filter.category == cat
+                          ? filter.copyWith(clearCategory: true)
+                          : filter.copyWith(category: cat);
+                    },
+                    sliver: listings.isEmpty
+                        ? SliverFillRemaining(
+                            child: EmptyStateView(
+                              icon: Icons.inventory_2_outlined,
+                              title: context.l10n.nothingHereYet,
+                              message: context.l10n.nothingHereYetMessage,
+                            ),
+                          )
+                        : SliverPadding(
+                            padding: AppSpacing.screen,
+                            sliver: SliverGrid(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                                 crossAxisSpacing: AppSpacing.md,
                                 mainAxisSpacing: AppSpacing.md,
                                 childAspectRatio: 0.54,
                               ),
-                          itemCount: listings.length,
-                          itemBuilder: (_, i) =>
-                              ListingCard(listing: listings[i]),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
+                              delegate: SliverChildBuilderDelegate(
+                                (_, i) => ListingCard(listing: listings[i]),
+                                childCount: listings.length,
+                              ),
+                            ),
+                          ),
+                  );
+                },
+              ),
             ),
             const _FollowingFeed(),
           ],
@@ -266,6 +248,92 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               )
             : null,
       ),
+    );
+  }
+}
+
+class _ForYouScrollView extends StatelessWidget {
+  const _ForYouScrollView({
+    required this.controller,
+    required this.search,
+    required this.filter,
+    required this.activeFilters,
+    required this.onQuery,
+    required this.onCategory,
+    required this.sliver,
+  });
+
+  final ScrollController controller;
+  final TextEditingController search;
+  final ListingFilter filter;
+  final int activeFilters;
+  final ValueChanged<String> onQuery;
+  final ValueChanged<ListingCategory> onCategory;
+  final Widget sliver;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return CustomScrollView(
+      controller: controller,
+      physics: const AlwaysScrollableScrollPhysics(),
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.xs,
+              AppSpacing.md,
+              AppSpacing.xs,
+            ),
+            child: NosivaTextField(
+              hint: context.l10n.homeSearchHint,
+              controller: search,
+              prefixIcon: Icons.search_rounded,
+              textInputAction: TextInputAction.search,
+              onSubmitted: onQuery,
+              onChanged: (v) {
+                if (v.isEmpty) onQuery('');
+              },
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: _CategoryBar(
+            selected: filter.category,
+            onSelect: onCategory,
+          ),
+        ),
+        SliverToBoxAdapter(child: _PeopleRail(query: filter.query ?? '')),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.xs,
+              AppSpacing.md,
+              0,
+            ),
+            child: Row(
+              children: [
+                Text(
+                  filter.query?.isNotEmpty == true
+                      ? context.l10n.browseItems
+                      : context.l10n.latestListings,
+                  style: theme.textTheme.titleLarge
+                      ?.copyWith(color: AppColors.plum),
+                ),
+                const Spacer(),
+                if (activeFilters > 0)
+                  Text(
+                    '$activeFilters ${context.l10n.filters.toLowerCase()}',
+                    style: theme.textTheme.bodySmall,
+                  ),
+              ],
+            ),
+          ),
+        ),
+        sliver,
+      ],
     );
   }
 }

@@ -161,6 +161,9 @@ class AppLocalizationsMk extends AppLocalizations {
   String get displayNameOptional => 'Име за приказ (опционално)';
 
   @override
+  String get displayName => 'Име за приказ';
+
+  @override
   String get displayNameHint => 'Како да те викаме?';
 
   @override
@@ -692,6 +695,40 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get editProfileTodo => 'Уредувањето профил сè уште не е достапно.';
+
+  @override
+  String get bio => 'Био';
+
+  @override
+  String get bioHint => 'Краток опис за тебе';
+
+  @override
+  String get locationAndStyle => 'Локација и стил';
+
+  @override
+  String get profilePhotoInfo =>
+      'Ажурирање профилна фотографија може да се додаде подоцна.';
+
+  @override
+  String get usernameRequired => 'Корисничкото име е задолжително';
+
+  @override
+  String get usernameTooShort =>
+      'Корисничкото име мора да има најмалку 3 карактери';
+
+  @override
+  String get usernameInvalid => 'Користи само букви, бројки и долна црта';
+
+  @override
+  String get usernameTaken => 'Ова корисничко име веќе е зафатено';
+
+  @override
+  String get profileUpdated => 'Профилот е ажуриран';
+
+  @override
+  String profileUpdateFailed(Object error) {
+    return 'Не можевме да го ажурираме профилот - $error';
+  }
 
   @override
   String get myCloset => 'Мој плакар';

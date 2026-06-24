@@ -8,7 +8,6 @@ import '../../../core/l10n/locale_controller.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
@@ -32,7 +31,6 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(currentProfileProvider);
-    final isAdmin = ref.watch(isAdminProvider);
     final isChangingLanguage = ref.watch(languageChangingProvider);
 
     return Scaffold(
@@ -212,7 +210,7 @@ class _ProfileBody extends ConsumerWidget {
         OutlinedButton.icon(
           icon: const Icon(Icons.edit_outlined),
           label: Text(context.l10n.editProfile),
-          onPressed: () => context.showSnack(context.l10n.editProfileTodo),
+          onPressed: () => context.push(AppRoutes.editProfile),
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(context.l10n.myCloset, style: theme.textTheme.titleLarge),
