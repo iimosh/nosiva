@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/l10n/l10n_extensions.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
 
@@ -20,18 +21,19 @@ class MainShell extends ConsumerWidget {
       final discard = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Discard listing?'),
-          content: const Text(
-              'You have unsaved changes. Leave without listing this item?'),
+          title: Text(context.l10n.discardListingTitle),
+          content: Text(context.l10n.discardListingBody),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Keep editing'),
+              child: Text(context.l10n.keepEditing),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Discard',
-                  style: TextStyle(color: AppColors.error)),
+              child: Text(
+                context.l10n.discard,
+                style: const TextStyle(color: AppColors.error),
+              ),
             ),
           ],
         ),
@@ -61,26 +63,26 @@ class MainShell extends ConsumerWidget {
               children: [
                 _NavItem(
                   icon: Icons.home_rounded,
-                  label: 'Home',
+                  label: context.l10n.home,
                   selected: shell.currentIndex == 0,
                   onTap: () => _go(context, ref, 0),
                 ),
                 _NavItem(
                   icon: Icons.search_rounded,
-                  label: 'Search',
+                  label: context.l10n.search,
                   selected: shell.currentIndex == 1,
                   onTap: () => _go(context, ref, 1),
                 ),
                 _SellButton(onTap: () => _go(context, ref, 2)),
                 _NavItem(
                   icon: Icons.chat_bubble_rounded,
-                  label: 'Inbox',
+                  label: context.l10n.inbox,
                   selected: shell.currentIndex == 3,
                   onTap: () => _go(context, ref, 3),
                 ),
                 _NavItem(
                   icon: Icons.person_rounded,
-                  label: 'Me',
+                  label: context.l10n.me,
                   selected: shell.currentIndex == 4,
                   onTap: () => _go(context, ref, 4),
                 ),

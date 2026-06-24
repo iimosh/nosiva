@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/location/location_service.dart';
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/nosiva_button.dart';
@@ -11,6 +12,7 @@ import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
 import '../domain/listing_enums.dart';
 import '../domain/listing_filter.dart';
+import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
 import 'widgets/listing_card.dart';
 
@@ -53,7 +55,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       appBar: AppBar(
         titleSpacing: AppSpacing.md,
         title: NosivaTextField(
-          hint: 'Search for that dream piece…',
+          hint: context.l10n.searchHint,
           controller: _controller,
           prefixIcon: Icons.search_rounded,
           textInputAction: TextInputAction.search,
@@ -91,10 +93,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         error: (e, _) => ErrorStateView(message: '$e'),
         data: (listings) {
           if (listings.isEmpty) {
-            return const EmptyStateView(
+            return EmptyStateView(
               emoji: '🔍',
-              title: 'No matches, bestie',
-              message: 'Try fewer filters or a different search.',
+              title: context.l10n.noMatches,
+              message: context.l10n.noMatchesMessage,
             );
           }
           return GridView.builder(
@@ -115,7 +117,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               backgroundColor: AppColors.hotPink,
               foregroundColor: Colors.white,
               icon: const Icon(Icons.clear_rounded),
-              label: const Text('Clear filters'),
+              label: Text(context.l10n.clearFilters),
               onPressed: () => ref.read(feedFilterProvider.notifier).state =
                   ListingFilter(query: filter.query),
             )
@@ -204,9 +206,9 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
         controller: scroll,
         padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
-          Text('Filters', style: theme.textTheme.headlineSmall),
+          Text(context.l10n.filters, style: theme.textTheme.headlineSmall),
           const SizedBox(height: AppSpacing.lg),
-          Text('Category', style: theme.textTheme.titleMedium),
+          Text(context.l10n.category, style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.xs),
           Wrap(
             spacing: AppSpacing.xs,
@@ -214,7 +216,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
             children: [
               for (final c in ListingCategory.values)
                 NosivaChip(
-                  label: '${c.emoji} ${c.label}',
+                  label: c.localizedWithEmoji(context.l10n),
                   selected: _draft.category == c,
                   onTap: () => setState(() => _draft = _draft.category == c
                       ? _draft.copyWith(clearCategory: true)
@@ -223,7 +225,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Text('Condition', style: theme.textTheme.titleMedium),
+          Text(context.l10n.condition, style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.xs),
           Wrap(
             spacing: AppSpacing.xs,
@@ -231,7 +233,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
             children: [
               for (final c in ItemCondition.values)
                 NosivaChip(
-                  label: c.label,
+                  label: c.localizedLabel(context.l10n),
                   selected: _draft.condition == c,
                   onTap: () =>
                       setState(() => _draft = _draft.copyWith(condition: c)),
@@ -239,7 +241,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Text('Size', style: theme.textTheme.titleMedium),
+          Text(context.l10n.size, style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.xs),
           Wrap(
             spacing: AppSpacing.xs,
@@ -254,7 +256,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Text('Style', style: theme.textTheme.titleMedium),
+          Text(context.l10n.style, style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.xs),
           Wrap(
             spacing: AppSpacing.xs,
@@ -273,10 +275,10 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Text('Location', style: theme.textTheme.titleMedium),
+          Text(context.l10n.location, style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.xs),
           NosivaTextField(
-            hint: 'City or country',
+            hint: context.l10n.cityOrCountry,
             controller: _location,
             prefixIcon: Icons.place_outlined,
             suffixIcon: _detectingLocation
@@ -290,20 +292,20 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
                     ),
                   )
                 : IconButton(
-                    tooltip: 'Use my location',
+                    tooltip: context.l10n.useMyLocation,
                     icon: const Icon(Icons.my_location_rounded,
                         color: AppColors.hotPink),
                     onPressed: _detectLocation,
                   ),
           ),
           const SizedBox(height: AppSpacing.md),
-          Text('Price range', style: theme.textTheme.titleMedium),
+          Text(context.l10n.priceRange, style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.xs),
           Row(
             children: [
               Expanded(
                 child: NosivaTextField(
-                  hint: 'Min',
+                  hint: context.l10n.min,
                   controller: _min,
                   keyboardType: TextInputType.number,
                 ),
@@ -314,7 +316,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
               ),
               Expanded(
                 child: NosivaTextField(
-                  hint: 'Max',
+                  hint: context.l10n.max,
                   controller: _max,
                   keyboardType: TextInputType.number,
                 ),
@@ -323,7 +325,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
           ),
           const SizedBox(height: AppSpacing.xl),
           NosivaButton(
-            label: 'Show results',
+            label: context.l10n.showResults,
             variant: NosivaButtonVariant.gradient,
             onPressed: _apply,
           ),

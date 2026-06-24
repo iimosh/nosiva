@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -35,7 +36,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final items = ref.read(cartControllerProvider);
     if (items.isEmpty) return;
     if (_address.text.trim().isEmpty) {
-      context.showError('Add a shipping address first 📦');
+      context.showError(context.l10n.addShippingAddress);
       return;
     }
 
@@ -48,7 +49,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       // Function using your secret key, confirm it client-side with
       // flutter_stripe, and only then create the order rows below.
       //   final intent = await supabase.functions.invoke('create-payment-intent',
-      //       body: {'amount': total, 'currency': 'usd'});
+      //       body: {'amount': total, 'currency': 'mkd'});
       //   await Stripe.instance.confirmPayment(intent.clientSecret, ...);
       // For now we skip straight to creating "pending" orders.
       // ============================================================
@@ -63,11 +64,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       }
       ref.read(cartControllerProvider.notifier).clear();
       if (mounted) {
-        context.showSuccess('Order placed! You did that 💖');
+        context.showSuccess(context.l10n.orderPlaced);
         context.go(AppRoutes.orders);
       }
     } catch (e) {
-      if (mounted) context.showError('Checkout failed — $e');
+      if (mounted) context.showError(context.l10n.checkoutFailed('$e'));
     } finally {
       if (mounted) setState(() => _placing = false);
     }
@@ -80,12 +81,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cart 🛍️')),
+      appBar: AppBar(title: Text(context.l10n.cart)),
       body: items.isEmpty
-          ? const EmptyStateView(
+          ? EmptyStateView(
               emoji: '🛒',
-              title: 'Your bag is empty',
-              message: 'Add something fabulous and come back ✨',
+              title: context.l10n.bagEmpty,
+              message: context.l10n.bagEmptyMessage,
             )
           : ListView(
               padding: const EdgeInsets.all(AppSpacing.md),
@@ -119,31 +120,31 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   ),
                 const SizedBox(height: AppSpacing.md),
                 NosivaTextField(
-                  label: 'Shipping address',
-                  hint: 'Street, City, ZIP, Country',
+                  label: context.l10n.shippingAddress,
+                  hint: context.l10n.shippingAddressHint,
                   controller: _address,
                   maxLines: 2,
                   prefixIcon: Icons.local_shipping_outlined,
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                _SummaryRow(label: 'Subtotal', value: Formatters.price(total)),
-                _SummaryRow(label: 'Shipping', value: 'Calculated at checkout'),
+                _SummaryRow(label: context.l10n.subtotal, value: Formatters.price(total)),
+                _SummaryRow(label: context.l10n.shipping, value: context.l10n.calculatedAtCheckout),
                 const Divider(height: AppSpacing.lg),
                 _SummaryRow(
-                  label: 'Total',
+                  label: context.l10n.total,
                   value: Formatters.price(total),
                   emphasize: true,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 NosivaButton(
-                  label: 'Checkout · ${Formatters.price(total)}',
+                  label: context.l10n.checkout(Formatters.price(total)),
                   loading: _placing,
                   variant: NosivaButtonVariant.gradient,
                   onPressed: _checkout,
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Center(
-                  child: Text('💳 Payment is stubbed (Stripe integration point)',
+                  child: Text(context.l10n.paymentStubbed,
                       style: theme.textTheme.bodySmall),
                 ),
               ],

@@ -9,7 +9,6 @@ import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/auth/presentation/welcome_screen.dart';
 import '../../features/admin/presentation/admin_dashboard_screen.dart';
 import '../../features/cart/presentation/cart_screen.dart';
-import '../../features/design_system/design_system_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
 import '../../features/listings/presentation/create_listing_screen.dart';
 import '../../features/listings/presentation/edit_listing_screen.dart';
@@ -46,8 +45,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthRoute = authRoutes.contains(loc);
       final isSplash = loc == AppRoutes.splash;
 
-      if (loc == AppRoutes.designSystem) return null;
-
       if (user == null) {
         return isAuthRoute ? null : AppRoutes.welcome;
       }
@@ -78,11 +75,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.onboarding,
         builder: (_, __) => const OnboardingScreen(),
       ),
-      GoRoute(
-        path: AppRoutes.designSystem,
-        builder: (_, __) => const DesignSystemScreen(),
-      ),
-
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => MainShell(shell: shell),
         branches: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_colors.dart';
 
 /// Pink-gradient splash with the Nosiva wordmark. Shown while the session +
@@ -28,8 +29,8 @@ class SplashScreen extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                'pre-loved, main character energy ✨',
-                style: GoogleFonts.dmSans(
+                context.l10n.splashTagline,
+                style: GoogleFonts.notoSans(
                   fontSize: 15,
                   color: Colors.white.withValues(alpha: 0.9),
                 ),

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/l10n/locale_controller.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -33,31 +35,48 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My profile'),
+        title: Text(context.l10n.myProfile),
         actions: [
           IconButton(
             icon: const Icon(Icons.receipt_long_outlined),
-            tooltip: 'Orders',
+            tooltip: context.l10n.orders,
             onPressed: () => context.push(AppRoutes.orders),
           ),
           IconButton(
             icon: const Icon(Icons.shopping_bag_outlined),
-            tooltip: 'Cart',
+            tooltip: context.l10n.cart,
             onPressed: () => context.push(AppRoutes.cart),
           ),
           PopupMenuButton<String>(
             onSelected: (v) async {
               if (v == 'admin') context.push(AppRoutes.admin);
-              if (v == 'design') context.push(AppRoutes.designSystem);
+              if (v == 'lang_en') {
+                await ref
+                    .read(localeControllerProvider.notifier)
+                    .setLocale(LocaleController.english);
+              }
+              if (v == 'lang_mk') {
+                await ref
+                    .read(localeControllerProvider.notifier)
+                    .setLocale(LocaleController.macedonian);
+              }
               if (v == 'signout') {
                 await ref.read(authControllerProvider.notifier).signOut();
               }
             },
             itemBuilder: (_) => [
               if (isAdmin)
-                const PopupMenuItem(value: 'admin', child: Text('Admin 🛡️')),
-              const PopupMenuItem(value: 'design', child: Text('Design system ✨')),
-              const PopupMenuItem(value: 'signout', child: Text('Sign out')),
+                PopupMenuItem(value: 'admin', child: Text(context.l10n.admin)),
+              PopupMenuItem(
+                value: 'lang_en',
+                child: Text('${context.l10n.language}: ${context.l10n.english}'),
+              ),
+              PopupMenuItem(
+                value: 'lang_mk',
+                child:
+                    Text('${context.l10n.language}: ${context.l10n.macedonian}'),
+              ),
+              PopupMenuItem(value: 'signout', child: Text(context.l10n.signOut)),
             ],
           ),
         ],
@@ -68,7 +87,7 @@ class ProfileScreen extends ConsumerWidget {
         error: (e, _) => ErrorStateView(message: '$e'),
         data: (profile) {
           if (profile == null) {
-            return const EmptyStateView(title: 'No profile found');
+            return EmptyStateView(title: context.l10n.noProfileFound);
           }
           return _ProfileBody(profile: profile);
         },
@@ -141,10 +160,10 @@ class _ProfileBody extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _Stat(label: 'Followers', value: '${profile.followerCount}'),
-            _Stat(label: 'Following', value: '${profile.followingCount}'),
+            _Stat(label: context.l10n.followers, value: '${profile.followerCount}'),
+            _Stat(label: context.l10n.following, value: '${profile.followingCount}'),
             _Stat(
-                label: 'Rating',
+                label: context.l10n.rating,
                 value: '${profile.ratingAvg.toStringAsFixed(1)} ⭐'),
           ],
         ),
@@ -165,22 +184,22 @@ class _ProfileBody extends ConsumerWidget {
         const SizedBox(height: AppSpacing.md),
         OutlinedButton.icon(
           icon: const Icon(Icons.edit_outlined),
-          label: const Text('Edit profile'),
+          label: Text(context.l10n.editProfile),
           // TODO: build edit profile screen
-          onPressed: () => context.showSnack('Edit profile — TODO ✏️'),
+          onPressed: () => context.showSnack(context.l10n.editProfileTodo),
         ),
         const SizedBox(height: AppSpacing.lg),
-        Text('My closet', style: theme.textTheme.titleLarge),
+        Text(context.l10n.myCloset, style: theme.textTheme.titleLarge),
         const SizedBox(height: AppSpacing.sm),
         myListings.when(
           loading: () => const SizedBox(height: 200, child: ListingGridSkeleton(itemCount: 2)),
           error: (e, _) => ErrorStateView(message: '$e'),
           data: (listings) {
             if (listings.isEmpty) {
-              return const EmptyStateView(
+              return EmptyStateView(
                 emoji: '🧺',
-                title: 'Your closet is empty bestie ✨',
-                message: 'List your first piece and start earning.',
+                title: context.l10n.closetEmpty,
+                message: context.l10n.closetEmptyMessage,
               );
             }
             return GridView.builder(
@@ -269,12 +288,12 @@ class _AdminEntryCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Admin dashboard',
+                  Text(context.l10n.adminDashboard,
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
                           ?.copyWith(color: Colors.white)),
-                  Text('Moderate listings, view stats & users',
+                  Text(context.l10n.adminDashboardSubtitle,
                       style: Theme.of(context)
                           .textTheme
                           .bodySmall

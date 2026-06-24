@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/formatters.dart';
@@ -24,17 +25,17 @@ class InboxScreen extends ConsumerWidget {
     final uid = ref.watch(currentAuthUserProvider)?.id;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Inbox')),
+      appBar: AppBar(title: Text(context.l10n.inbox)),
       body: convos.when(
         loading: () =>
             const Center(child: CircularProgressIndicator(color: AppColors.hotPink)),
         error: (e, _) => ErrorStateView(message: '$e'),
         data: (list) {
           if (list.isEmpty) {
-            return const EmptyStateView(
+            return EmptyStateView(
               emoji: '💬',
-              title: 'No messages yet',
-              message: 'When you message a seller (or get a buyer), it shows up here.',
+              title: context.l10n.noMessages,
+              message: context.l10n.noMessagesMessage,
             );
           }
           return ListView.separated(
@@ -50,8 +51,8 @@ class InboxScreen extends ConsumerWidget {
                   backgroundColor: AppColors.blush,
                   child: const Text('💁‍♀️', style: TextStyle(fontSize: 22)),
                 ),
-                title: Text(other?.nameOrHandle ?? 'Nosiva user'),
-                subtitle: Text(c.lastMessage ?? 'Say hi 👋',
+                title: Text(other?.nameOrHandle ?? context.l10n.nosivaUser),
+                subtitle: Text(c.lastMessage ?? context.l10n.sayHi,
                     maxLines: 1, overflow: TextOverflow.ellipsis),
                 trailing: c.lastMessageAt != null
                     ? Text(Formatters.timeAgo(c.lastMessageAt!),

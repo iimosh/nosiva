@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -11,6 +12,7 @@ import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
 import '../domain/listing_enums.dart';
+import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
 import 'widgets/listing_card.dart';
 
@@ -62,7 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         actions: [
           IconButton(
-            tooltip: 'Toggle theme',
+            tooltip: context.l10n.toggleTheme,
             icon: Icon(themeMode == ThemeMode.dark
                 ? Icons.light_mode_rounded
                 : Icons.dark_mode_rounded),
@@ -105,13 +107,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 data: (listings) {
                   if (listings.isEmpty) {
                     return ListView(
-                      children: const [
-                        SizedBox(height: 80),
+                      children: [
+                        const SizedBox(height: 80),
                         EmptyStateView(
                           emoji: '🛍️',
-                          title: 'Nothing here yet',
-                          message:
-                              'Be the first to list something fabulous, or check back soon ✨',
+                          title: context.l10n.nothingHereYet,
+                          message: context.l10n.nothingHereYetMessage,
                         ),
                       ],
                     );
@@ -158,7 +159,7 @@ class _CategoryBar extends StatelessWidget {
           final cat = ListingCategory.values[i];
           return Center(
             child: NosivaChip(
-              label: '${cat.emoji} ${cat.label}',
+              label: cat.localizedWithEmoji(context.l10n),
               selected: selected == cat,
               onTap: () => onSelect(cat),
             ),

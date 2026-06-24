@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/location/location_service.dart';
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/theme/app_colors.dart';
@@ -18,6 +19,7 @@ import '../../../core/widgets/nosiva_text_field.dart';
 import '../../../shell/main_shell.dart';
 import '../data/listings_repository.dart';
 import '../domain/listing_enums.dart';
+import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
 
 typedef PickedImage = ({Uint8List bytes, String ext});
@@ -78,7 +80,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
         _syncDirty();
       }
     } catch (e) {
-      if (mounted) context.showError('Couldn’t add photo — $e');
+      if (mounted) context.showError(context.l10n.photoAddFailed('$e'));
     }
   }
 
@@ -97,7 +99,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Choose from gallery'),
+              title: Text(context.l10n.chooseFromGallery),
               onTap: () {
                 Navigator.pop(context);
                 _pick(ImageSource.gallery);
@@ -105,7 +107,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt_outlined),
-              title: const Text('Take a photo'),
+              title: Text(context.l10n.takePhoto),
               onTap: () {
                 Navigator.pop(context);
                 _pick(ImageSource.camera);
@@ -120,11 +122,11 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_category == null) {
-      context.showError('Pick a category bestie');
+      context.showError(context.l10n.pickCategory);
       return;
     }
     if (_images.isEmpty) {
-      context.showError('Add at least one photo 📸');
+      context.showError(context.l10n.addPhoto);
       return;
     }
 
@@ -152,7 +154,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
       );
       ref.read(feedControllerProvider.notifier).refresh();
       if (mounted) {
-        context.showSuccess('Listed! Time to make that coin 💸');
+        context.showSuccess(context.l10n.listedSuccess);
         if (context.canPop()) {
           context.pop();
         } else {
@@ -161,7 +163,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
         }
       }
     } catch (e) {
-      if (mounted) context.showError('Couldn’t list — $e');
+      if (mounted) context.showError(context.l10n.listFailed('$e'));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -217,7 +219,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
   Widget build(BuildContext context) {
     ref.listen(sellResetSignalProvider, (_, __) => _resetForm());
     return Scaffold(
-      appBar: AppBar(title: const Text('List an item')),
+      appBar: AppBar(title: Text(context.l10n.listAnItem)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.lg),
@@ -236,30 +238,30 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 NosivaTextField(
-                  label: 'Title',
-                  hint: 'e.g. Y2K butterfly baby tee',
+                  label: context.l10n.title,
+                  hint: context.l10n.listingTitleHint,
                   controller: _title,
                   validator: (v) => Validators.minLength(v, 3, field: 'Title'),
                   onChanged: (_) => _syncDirty(),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 NosivaTextField(
-                  label: 'Description',
-                  hint: 'Condition details, measurements, fit notes…',
+                  label: context.l10n.description,
+                  hint: context.l10n.listingDescriptionHint,
                   controller: _description,
                   maxLines: 4,
                   maxLength: 1000,
                   onChanged: (_) => _syncDirty(),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                _Label('Category'),
+                _Label(context.l10n.category),
                 Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xs,
                   children: [
                     for (final c in ListingCategory.values)
                       NosivaChip(
-                        label: '${c.emoji} ${c.label}',
+                        label: c.localizedWithEmoji(context.l10n),
                         selected: _category == c,
                         onTap: () {
                           setState(() => _category = c);
@@ -269,21 +271,21 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
-                _Label('Condition'),
+                _Label(context.l10n.condition),
                 Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xs,
                   children: [
                     for (final c in ItemCondition.values)
                       NosivaChip(
-                        label: c.label,
+                        label: c.localizedLabel(context.l10n),
                         selected: _condition == c,
                         onTap: () => setState(() => _condition = c),
                       ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
-                _Label('Size'),
+                _Label(context.l10n.size),
                 Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xs,
@@ -304,8 +306,8 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   children: [
                     Expanded(
                       child: NosivaTextField(
-                        label: 'Brand',
-                        hint: 'e.g. Brandy Melville',
+                        label: context.l10n.brand,
+                        hint: context.l10n.brandHint,
                         controller: _brand,
                         onChanged: (_) => _syncDirty(),
                       ),
@@ -313,8 +315,8 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: NosivaTextField(
-                        label: 'Color',
-                        hint: 'e.g. Pink',
+                        label: context.l10n.color,
+                        hint: context.l10n.colorHint,
                         controller: _color,
                         onChanged: (_) => _syncDirty(),
                       ),
@@ -323,8 +325,8 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 NosivaTextField(
-                  label: 'Location',
-                  hint: 'City, Country',
+                  label: context.l10n.location,
+                  hint: context.l10n.cityCountry,
                   controller: _location,
                   prefixIcon: Icons.place_outlined,
                   onChanged: (_) => _syncDirty(),
@@ -339,14 +341,14 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                           ),
                         )
                       : IconButton(
-                          tooltip: 'Use my location',
+                          tooltip: context.l10n.useMyLocation,
                           icon: const Icon(Icons.my_location_rounded,
                               color: AppColors.hotPink),
                           onPressed: _detectLocation,
                         ),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                _Label('Style tags'),
+                _Label(context.l10n.styleTags),
                 Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xs,
@@ -366,18 +368,18 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 NosivaTextField(
-                  label: 'Price (USD)',
-                  hint: '0.00',
+                  label: context.l10n.priceUsd,
+                  hint: context.l10n.priceHint,
                   controller: _price,
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
-                  prefixIcon: Icons.attach_money_rounded,
+                  prefixIcon: Icons.payments_outlined,
                   validator: Validators.price,
                   onChanged: (_) => _syncDirty(),
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 NosivaButton(
-                  label: 'List it 💖',
+                  label: context.l10n.listIt,
                   loading: _submitting,
                   variant: NosivaButtonVariant.gradient,
                   onPressed: _submit,
@@ -470,12 +472,12 @@ class _AddTile extends StatelessWidget {
           borderRadius: AppRadii.field,
           border: Border.all(color: AppColors.hotPinkSoft),
         ),
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_a_photo_outlined, color: AppColors.hotPink),
-            SizedBox(height: 4),
-            Text('Add', style: TextStyle(color: AppColors.hotPink)),
+            const Icon(Icons.add_a_photo_outlined, color: AppColors.hotPink),
+            const SizedBox(height: 4),
+            Text(context.l10n.add, style: TextStyle(color: AppColors.hotPink)),
           ],
         ),
       ),
