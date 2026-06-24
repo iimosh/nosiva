@@ -640,6 +640,11 @@ class AppLocalizationsMk extends AppLocalizations {
   String get imageSharingTodo => 'Споделувањето слика сè уште не е достапно.';
 
   @override
+  String imageSendFailed(Object error) {
+    return 'Не можевме да ја испратиме сликата - $error';
+  }
+
+  @override
   String get myProfile => 'Мој профил';
 
   @override

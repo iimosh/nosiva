@@ -1286,6 +1286,12 @@ abstract class AppLocalizations {
   /// **'Image sharing is not available yet.'**
   String get imageSharingTodo;
 
+  /// No description provided for @imageSendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send image - {error}'**
+  String imageSendFailed(Object error);
+
   /// No description provided for @myProfile.
   ///
   /// In en, this message translates to:

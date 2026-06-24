@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
@@ -39,6 +40,9 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _controller = TextEditingController();
   final _scroll = ScrollController();
+  final _picker = ImagePicker();
+  int _lastMessageCount = 0;
+  bool _sendingImage = false;
 
   @override
   void dispose() {
@@ -64,6 +68,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       createdAt: DateTime.now(),
     );
     pendingNotifier.state = [...pendingNotifier.state, optimistic];
+    _scrollToBottom();
 
     try {
       await ref.read(messagingRepositoryProvider).sendMessage(
@@ -77,6 +82,77 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           .toList();
       if (mounted) context.showError(context.l10n.messageFailed('$e'));
     }
+  }
+
+  Future<void> _pickAndSendImage(ImageSource source) async {
+    if (_sendingImage) return;
+    try {
+      setState(() => _sendingImage = true);
+      final file = await _picker.pickImage(source: source, imageQuality: 82);
+      if (file == null) return;
+      final repo = ref.read(messagingRepositoryProvider);
+      final url = await repo.uploadChatImage(
+        conversationId: widget.conversationId,
+        bytes: await file.readAsBytes(),
+        ext: _ext(file.path),
+      );
+      await repo.sendMessage(
+        conversationId: widget.conversationId,
+        body: '',
+        imageUrl: url,
+      );
+      _scrollToBottom();
+    } catch (e) {
+      if (mounted) context.showError(context.l10n.imageSendFailed('$e'));
+    } finally {
+      if (mounted) setState(() => _sendingImage = false);
+    }
+  }
+
+  String _ext(String path) {
+    final dot = path.lastIndexOf('.');
+    final ext = dot == -1 ? 'jpg' : path.substring(dot + 1).toLowerCase();
+    return ext == 'jpeg' ? 'jpg' : ext;
+  }
+
+  void _showImagePicker() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(context.l10n.chooseFromGallery),
+              onTap: () {
+                Navigator.pop(context);
+                _pickAndSendImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: Text(context.l10n.takePhoto),
+              onTap: () {
+                Navigator.pop(context);
+                _pickAndSendImage(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scroll.hasClients) return;
+      _scroll.animateTo(
+        _scroll.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
@@ -103,13 +179,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 final merged = [
                   ...messages,
                   ...pending.where((p) => !confirmedBodies.contains(p.body)),
-                ];
+                ]..sort((a, b) {
+                    final aTime = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+                    final bTime = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+                    return aTime.compareTo(bTime);
+                  });
                 if (merged.isEmpty) {
                   return EmptyStateView(
                     icon: Icons.chat_bubble_outline_rounded,
                     title: context.l10n.sayHiTitle,
                     message: context.l10n.chatEmptyMessage,
                   );
+                }
+                if (merged.length != _lastMessageCount) {
+                  _lastMessageCount = merged.length;
+                  _scrollToBottom();
                 }
                 return ListView.builder(
                   controller: _scroll,
@@ -123,7 +207,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               },
             ),
           ),
-          _Composer(controller: _controller, onSend: _send),
+          _Composer(
+            controller: _controller,
+            sendingImage: _sendingImage,
+            onPickImage: _showImagePicker,
+            onSend: _send,
+          ),
         ],
       ),
     );
@@ -202,11 +291,17 @@ class _Bubble extends StatelessWidget {
           crossAxisAlignment:
               isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            Text(
-              message.body,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                  color: isMine ? Colors.white : theme.colorScheme.onSurface),
-            ),
+            if (message.imageUrl != null) ...[
+              _BubbleImage(url: message.imageUrl!),
+              if (message.body.trim().isNotEmpty)
+                const SizedBox(height: AppSpacing.xs),
+            ],
+            if (message.body.trim().isNotEmpty)
+              Text(
+                message.body,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                    color: isMine ? Colors.white : theme.colorScheme.onSurface),
+              ),
             if (message.createdAt != null)
               Text(
                 Formatters.chatTimestamp(message.createdAt!),
@@ -224,10 +319,55 @@ class _Bubble extends StatelessWidget {
   }
 }
 
+class _BubbleImage extends StatelessWidget {
+  const _BubbleImage({required this.url});
+
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppRadii.md),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minHeight: 120,
+          maxHeight: 260,
+          minWidth: 160,
+        ),
+        child: CachedNetworkImage(
+          imageUrl: url,
+          fit: BoxFit.cover,
+          placeholder: (_, __) => const SizedBox(
+            height: 160,
+            width: 200,
+            child: ColoredBox(color: AppColors.blush),
+          ),
+          errorWidget: (_, __, ___) => const SizedBox(
+            height: 160,
+            width: 200,
+            child: ColoredBox(
+              color: AppColors.blush,
+              child: Icon(Icons.broken_image_outlined,
+                  color: AppColors.plumFaint),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _Composer extends StatelessWidget {
-  const _Composer({required this.controller, required this.onSend});
+  const _Composer({
+    required this.controller,
+    required this.onSend,
+    required this.onPickImage,
+    required this.sendingImage,
+  });
   final TextEditingController controller;
   final VoidCallback onSend;
+  final VoidCallback onPickImage;
+  final bool sendingImage;
 
   @override
   Widget build(BuildContext context) {
@@ -237,9 +377,17 @@ class _Composer extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.add_photo_alternate_outlined),
-              onPressed: () =>
-                  context.showSnack(context.l10n.imageSharingTodo),
+              icon: sendingImage
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.hotPink,
+                      ),
+                    )
+                  : const Icon(Icons.add_photo_alternate_outlined),
+              onPressed: sendingImage ? null : onPickImage,
             ),
             Expanded(
               child: TextField(

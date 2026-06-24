@@ -248,6 +248,12 @@
     }
   },
   "imageSharingTodo": "Image sharing is not available yet.",
+  "imageSendFailed": "Could not send image - {error}",
+  "@imageSendFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
   "myProfile": "My profile",
   "profile": "Profile",
   "admin": "Admin",

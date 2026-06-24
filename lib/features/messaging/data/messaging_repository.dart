@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../core/supabase/supabase_providers.dart';
 import '../domain/conversation.dart';
@@ -8,10 +11,12 @@ import '../domain/message.dart';
 class MessagingRepository {
   MessagingRepository(this._client);
   final SupabaseClient _client;
+
   static const _conversations = 'conversations';
   static const _messages = 'messages';
+  static const _chatImagesBucket = 'chat-images';
 
-  /// Finds an existing buyer↔seller conversation for a listing, or creates one.
+  /// Finds an existing buyer-seller conversation for a listing, or creates one.
   Future<Conversation> getOrCreateConversation({
     required String listingId,
     required String sellerId,
@@ -59,13 +64,13 @@ class MessagingRepository {
     return data.map<Conversation>((e) => Conversation.fromJson(e)).toList();
   }
 
-  /// Realtime stream of messages in a conversation (ordered oldest→newest).
+  /// Realtime stream of messages in a conversation, ordered oldest-to-newest.
   Stream<List<Message>> messageStream(String conversationId) {
     return _client
         .from(_messages)
         .stream(primaryKey: ['id'])
         .eq('conversation_id', conversationId)
-        .order('created_at')
+        .order('created_at', ascending: true)
         .map((rows) => rows.map(Message.fromJson).toList());
   }
 
@@ -82,9 +87,32 @@ class MessagingRepository {
       'image_url': imageUrl,
     });
     await _client.from(_conversations).update({
-      'last_message': imageUrl != null ? '📷 Photo' : body,
+      'last_message': imageUrl != null ? 'Photo' : body,
       'last_message_at': DateTime.now().toIso8601String(),
     }).eq('id', conversationId);
+  }
+
+  Future<String> uploadChatImage({
+    required String conversationId,
+    required Uint8List bytes,
+    required String ext,
+  }) async {
+    final uid = _client.auth.currentUser!.id;
+    const uuid = Uuid();
+    final normalizedExt = ext == 'jpeg' ? 'jpg' : ext;
+    final path = '$conversationId/$uid/${uuid.v4()}.$normalizedExt';
+
+    await _client.storage.from(_chatImagesBucket).uploadBinary(
+          path,
+          bytes,
+          fileOptions: FileOptions(
+            contentType:
+                'image/${normalizedExt == 'jpg' ? 'jpeg' : normalizedExt}',
+            upsert: true,
+          ),
+        );
+
+    return _client.storage.from(_chatImagesBucket).getPublicUrl(path);
   }
 }
 

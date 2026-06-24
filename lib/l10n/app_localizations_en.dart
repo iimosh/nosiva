@@ -637,6 +637,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get imageSharingTodo => 'Image sharing is not available yet.';
 
   @override
+  String imageSendFailed(Object error) {
+    return 'Could not send image - $error';
+  }
+
+  @override
   String get myProfile => 'My profile';
 
   @override
