@@ -8,7 +8,7 @@ abstract final class AppRoutes {
 
   // Bottom-nav shell branches
   static const home = '/home';
-  static const search = '/search';
+  static const activity = '/activity';
   static const sell = '/sell';
   static const inbox = '/inbox';
   static const profile = '/profile';
@@ -23,8 +23,10 @@ abstract final class AppRoutes {
   static const notifications = '/notifications';
   static const editProfile = '/edit-profile';
   static const admin = '/admin';
+  static const user = '/user'; // /user/:id (public profile)
 
   static String listingDetailPath(String id) => '$listingDetail/$id';
   static String editListingPath(String id) => '$editListing/$id';
   static String chatPath(String id) => '$chat/$id';
+  static String userPath(String id) => '$user/$id';
 }

@@ -20,6 +20,17 @@ class ProfileRepository {
     await _client.from(_table).update({'role': role}).eq('id', userId);
   }
 
+  Future<List<Profile>> search(String query, {int limit = 20}) async {
+    final q = query.trim();
+    if (q.isEmpty) return [];
+    final data = await _client
+        .from(_table)
+        .select()
+        .or('username.ilike.%$q%,display_name.ilike.%$q%')
+        .limit(limit);
+    return data.map<Profile>((e) => Profile.fromJson(e)).toList();
+  }
+
   Future<List<Profile>> fetchAll({int limit = 100}) async {
     final data = await _client
         .from(_table)
