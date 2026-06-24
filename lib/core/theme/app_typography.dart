@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 abstract final class AppTypography {
   static TextTheme textTheme(Color onSurface, Color muted) {
-    final display = GoogleFonts.fraunces;
-    final body = GoogleFonts.dmSans;
+    final display = GoogleFonts.notoSerif;
+    final body = GoogleFonts.notoSans;
 
     return TextTheme(
       displayLarge: display(

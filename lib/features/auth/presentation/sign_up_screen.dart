@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/snackbars.dart';
@@ -42,10 +43,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         );
     if (!mounted) return;
     if (ok) {
-      context.showSuccess('Account created! Let’s set up your vibe ✨');
+      context.showSuccess(context.l10n.accountCreated);
     } else {
       final err = ref.read(authControllerProvider).error;
-      context.showError('Couldn’t sign you up — ${err ?? 'try again'}');
+      context.showError(context.l10n.signUpFailed(err ?? context.l10n.tryAgain));
     }
   }
 
@@ -64,23 +65,24 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Join Nosiva 💕', style: theme.textTheme.displayMedium),
+                Text(context.l10n.joinNosiva,
+                    style: theme.textTheme.displayMedium),
                 const SizedBox(height: AppSpacing.xs),
-                Text('Your closet, your rules.',
+                Text(context.l10n.yourClosetYourRules,
                     style: theme.textTheme.bodyLarge
                         ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                 const SizedBox(height: AppSpacing.xl),
                 NosivaTextField(
-                  label: 'Username',
-                  hint: 'slaygirl_99',
+                  label: context.l10n.username,
+                  hint: context.l10n.usernameHint,
                   controller: _username,
                   prefixIcon: Icons.tag_rounded,
                   validator: (v) => Validators.minLength(v, 3, field: 'Username'),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 NosivaTextField(
-                  label: 'Email',
-                  hint: 'you@example.com',
+                  label: context.l10n.email,
+                  hint: context.l10n.emailHint,
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.alternate_email_rounded,
@@ -88,8 +90,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 NosivaTextField(
-                  label: 'Password',
-                  hint: 'at least 8 characters',
+                  label: context.l10n.password,
+                  hint: context.l10n.passwordSignupHint,
                   controller: _password,
                   obscureText: _obscure,
                   prefixIcon: Icons.lock_outline_rounded,
@@ -103,7 +105,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 NosivaButton(
-                  label: 'Create account',
+                  label: context.l10n.createAccount,
                   loading: loading,
                   variant: NosivaButtonVariant.gradient,
                   onPressed: _submit,
@@ -117,7 +119,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 Center(
                   child: TextButton(
                     onPressed: () => context.pushReplacement(AppRoutes.signIn),
-                    child: const Text('Already have an account? Sign in'),
+                    child: Text(context.l10n.alreadyHaveAccountSignIn),
                   ),
                 ),
               ],

@@ -22,7 +22,6 @@ abstract final class AppRoutes {
   static const orders = '/orders';
   static const notifications = '/notifications';
   static const editProfile = '/edit-profile';
-  static const designSystem = '/design-system';
   static const admin = '/admin';
 
   static String listingDetailPath(String id) => '$listingDetail/$id';

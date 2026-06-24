@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/theme/app_spacing.dart';
 
 /// Google / Apple sign-in row. Wire these up after enabling the providers in
@@ -20,7 +21,7 @@ class OAuthButtons extends StatelessWidget {
             const Expanded(child: Divider()),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: Text('or continue with',
+              child: Text(context.l10n.orContinueWith,
                   style: theme.textTheme.bodySmall),
             ),
             const Expanded(child: Divider()),

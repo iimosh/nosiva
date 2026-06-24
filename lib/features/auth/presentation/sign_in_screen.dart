@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/snackbars.dart';
@@ -38,9 +39,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         .signIn(_email.text, _password.text);
     if (!mounted) return;
     if (ok) {
-      context.showSuccess('Welcome back bestie 💖');
+      context.showSuccess(context.l10n.welcomeBackSuccess);
     } else {
-      context.showError('Couldn’t sign you in — check your details');
+      context.showError(context.l10n.signInFailed);
     }
   }
 
@@ -59,15 +60,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Welcome back 👋', style: theme.textTheme.displayMedium),
+                Text(context.l10n.welcomeBackTitle,
+                    style: theme.textTheme.displayMedium),
                 const SizedBox(height: AppSpacing.xs),
-                Text('Your closet missed you.',
+                Text(context.l10n.welcomeBackSubtitle,
                     style: theme.textTheme.bodyLarge
                         ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                 const SizedBox(height: AppSpacing.xl),
                 NosivaTextField(
-                  label: 'Email',
-                  hint: 'you@example.com',
+                  label: context.l10n.email,
+                  hint: context.l10n.emailHint,
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.alternate_email_rounded,
@@ -75,8 +77,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 NosivaTextField(
-                  label: 'Password',
-                  hint: '••••••••',
+                  label: context.l10n.password,
+                  hint: context.l10n.passwordDotsHint,
                   controller: _password,
                   obscureText: _obscure,
                   prefixIcon: Icons.lock_outline_rounded,
@@ -90,7 +92,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 NosivaButton(
-                  label: 'Sign in',
+                  label: context.l10n.signIn,
                   loading: loading,
                   variant: NosivaButtonVariant.gradient,
                   onPressed: _submit,
@@ -104,7 +106,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 Center(
                   child: TextButton(
                     onPressed: () => context.pushReplacement(AppRoutes.signUp),
-                    child: const Text('New here? Create an account'),
+                    child: Text(context.l10n.newHereCreateAccount),
                   ),
                 ),
               ],
