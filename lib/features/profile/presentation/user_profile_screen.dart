@@ -2,12 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
+import '../../listings/domain/listing_l10n.dart';
 import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../listings/presentation/widgets/listing_card.dart';
 import '../data/profile_repository.dart';
@@ -30,7 +31,7 @@ class UserProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(userProfileProvider(userId));
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(title: Text(context.l10n.profile)),
       body: profileAsync.when(
         loading: () => const Center(
             child: CircularProgressIndicator(color: AppColors.hotPink)),
@@ -40,7 +41,10 @@ class UserProfileScreen extends ConsumerWidget {
         ),
         data: (profile) {
           if (profile == null) {
-            return const EmptyStateView(emoji: '👻', title: 'User not found');
+            return EmptyStateView(
+              icon: Icons.person_off_outlined,
+              title: context.l10n.userNotFound,
+            );
           }
           return _Body(profile: profile);
         },
@@ -70,7 +74,8 @@ class _Body extends ConsumerWidget {
                   ? CachedNetworkImageProvider(profile.avatarUrl!)
                   : null,
               child: profile.avatarUrl == null
-                  ? const Text('💁‍♀️', style: TextStyle(fontSize: 32))
+                  ? const Icon(Icons.person_outline_rounded,
+                      color: AppColors.hotPink, size: 32)
                   : null,
             ),
             const SizedBox(width: AppSpacing.md),
@@ -103,19 +108,19 @@ class _Body extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _Stat(label: 'Followers', value: '${profile.followerCount}'),
-            _Stat(label: 'Following', value: '${profile.followingCount}'),
             _Stat(
-                label: 'Rating',
-                value: '${profile.ratingAvg.toStringAsFixed(1)} ⭐'),
+              label: context.l10n.followers,
+              value: '${profile.followerCount}',
+            ),
+            _Stat(
+              label: context.l10n.following,
+              value: '${profile.followingCount}',
+            ),
+            _Stat(
+              label: context.l10n.rating,
+              value: profile.ratingAvg.toStringAsFixed(1),
+            ),
           ],
-        ),
-        const SizedBox(height: AppSpacing.md),
-        // TODO: wire follow/unfollow
-        NosivaButton(
-          label: 'Follow',
-          variant: NosivaButtonVariant.gradient,
-          onPressed: () {},
         ),
         if (profile.vibeTags.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
@@ -123,12 +128,13 @@ class _Body extends ConsumerWidget {
             spacing: AppSpacing.xs,
             runSpacing: AppSpacing.xs,
             children: [
-              for (final tag in profile.vibeTags) NosivaChip(label: '#$tag'),
+              for (final tag in profile.vibeTags)
+                NosivaChip(label: '#${localizedStyleTag(tag, context.l10n)}'),
             ],
           ),
         ],
         const SizedBox(height: AppSpacing.lg),
-        Text('Listings', style: theme.textTheme.titleLarge),
+        Text(context.l10n.listings, style: theme.textTheme.titleLarge),
         const SizedBox(height: AppSpacing.sm),
         listings.when(
           loading: () => const SizedBox(
@@ -136,9 +142,9 @@ class _Body extends ConsumerWidget {
           error: (e, _) => ErrorStateView(message: '$e'),
           data: (items) {
             if (items.isEmpty) {
-              return const EmptyStateView(
-                emoji: '🧺',
-                title: 'No listings yet',
+              return EmptyStateView(
+                icon: Icons.inventory_2_outlined,
+                title: context.l10n.noListingsYet,
               );
             }
             return GridView.builder(
@@ -148,7 +154,7 @@ class _Body extends ConsumerWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: AppSpacing.md,
                 mainAxisSpacing: AppSpacing.md,
-                childAspectRatio: 0.62,
+                childAspectRatio: 0.54,
               ),
               itemCount: items.length,
               itemBuilder: (_, i) => ListingCard(listing: items[i]),

@@ -96,7 +96,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ];
                 if (merged.isEmpty) {
                   return EmptyStateView(
-                    emoji: '👋',
+                    icon: Icons.chat_bubble_outline_rounded,
                     title: context.l10n.sayHiTitle,
                     message: context.l10n.chatEmptyMessage,
                   );
@@ -184,7 +184,6 @@ class _Composer extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.sm),
         child: Row(
           children: [
-            // TODO: image sharing via image_picker → Storage → message.image_url
             IconButton(
               icon: const Icon(Icons.add_photo_alternate_outlined),
               onPressed: () =>
@@ -197,7 +196,7 @@ class _Composer extends StatelessWidget {
                 maxLines: 4,
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => onSend(),
-                decoration: const InputDecoration(hintText: 'Message…'),
+                decoration: InputDecoration(hintText: context.l10n.messageHint),
               ),
             ),
             const SizedBox(width: AppSpacing.xs),

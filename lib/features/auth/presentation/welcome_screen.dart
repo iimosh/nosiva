@@ -50,7 +50,19 @@ class WelcomeScreen extends ConsumerWidget {
                   ),
                 ),
                 const Spacer(),
-                Text('💖', style: theme.textTheme.displayLarge),
+                Container(
+                  height: 72,
+                  width: 72,
+                  decoration: BoxDecoration(
+                    color: AppColors.hotPink.withValues(alpha: 0.12),
+                    borderRadius: AppRadii.card,
+                  ),
+                  child: const Icon(
+                    Icons.checkroom_outlined,
+                    color: AppColors.hotPink,
+                    size: 36,
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
                   'Nosiva',

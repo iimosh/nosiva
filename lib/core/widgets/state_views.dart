@@ -5,13 +5,14 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import 'nosiva_button.dart';
 
-/// Friendly, playful empty state. "Your closet is empty bestie ✨"
+/// Standard empty state used across listing, order, and message screens.
 class EmptyStateView extends StatelessWidget {
   const EmptyStateView({
     super.key,
     required this.title,
     this.message,
-    this.emoji = '✨',
+    this.emoji = '',
+    this.icon,
     this.actionLabel,
     this.onAction,
   });
@@ -19,6 +20,7 @@ class EmptyStateView extends StatelessWidget {
   final String title;
   final String? message;
   final String emoji;
+  final IconData? icon;
   final String? actionLabel;
   final VoidCallback? onAction;
 
@@ -39,7 +41,13 @@ class EmptyStateView extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
-              child: Text(emoji, style: const TextStyle(fontSize: 42)),
+              child: emoji.isEmpty
+                  ? Icon(
+                      icon ?? Icons.inventory_2_outlined,
+                      color: AppColors.hotPink,
+                      size: 38,
+                    )
+                  : Text(emoji, style: const TextStyle(fontSize: 42)),
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(title, style: theme.textTheme.headlineSmall, textAlign: TextAlign.center),
@@ -84,7 +92,11 @@ class ErrorStateView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('😵‍💫', style: TextStyle(fontSize: 42)),
+            const Icon(
+              Icons.error_outline_rounded,
+              color: AppColors.error,
+              size: 42,
+            ),
             const SizedBox(height: AppSpacing.md),
             Text(context.l10n.oopsGlitched,
                 style: theme.textTheme.titleLarge, textAlign: TextAlign.center),

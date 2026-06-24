@@ -67,7 +67,7 @@ class OrderListView extends ConsumerWidget {
       data: (list) {
         if (list.isEmpty) {
           return EmptyStateView(
-            emoji: '📦',
+            icon: Icons.receipt_long_outlined,
             title: context.l10n.noOrders,
             message: context.l10n.ordersEmptyMessage,
           );

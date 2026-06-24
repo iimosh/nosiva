@@ -84,7 +84,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       appBar: AppBar(title: Text(context.l10n.cart)),
       body: items.isEmpty
           ? EmptyStateView(
-              emoji: '🛒',
+              icon: Icons.shopping_bag_outlined,
               title: context.l10n.bagEmpty,
               message: context.l10n.bagEmptyMessage,
             )
@@ -175,7 +175,7 @@ class _SummaryRow extends StatelessWidget {
           Text(label, style: style),
           Text(value,
               style: style?.copyWith(
-                  color: emphasize ? AppColors.hotPink : null)),
+                  color: emphasize ? AppColors.berry : null)),
         ],
       ),
     );

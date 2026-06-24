@@ -4,15 +4,15 @@ abstract final class Validators {
 
   static String? email(String? value) {
     final v = value?.trim() ?? '';
-    if (v.isEmpty) return 'We need your email, bestie';
-    if (!_emailRegex.hasMatch(v)) return 'That email looks a little off';
+    if (v.isEmpty) return 'Email is required';
+    if (!_emailRegex.hasMatch(v)) return 'Enter a valid email address';
     return null;
   }
 
   static String? password(String? value) {
     final v = value ?? '';
-    if (v.isEmpty) return 'Pick a password';
-    if (v.length < 8) return 'At least 8 characters please';
+    if (v.isEmpty) return 'Password is required';
+    if (v.length < 8) return 'Use at least 8 characters';
     return null;
   }
 
@@ -23,11 +23,11 @@ abstract final class Validators {
 
   static String? price(String? value) {
     final v = value?.trim() ?? '';
-    if (v.isEmpty) return 'Add a price';
+    if (v.isEmpty) return 'Price is required';
     final parsed = double.tryParse(v);
-    if (parsed == null) return 'Numbers only';
+    if (parsed == null) return 'Enter numbers only';
     if (parsed <= 0) return 'Price must be more than 0';
-    if (parsed > 100000) return 'That seems a bit much 👀';
+    if (parsed > 100000) return 'Enter a lower price';
     return null;
   }
 

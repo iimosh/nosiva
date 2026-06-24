@@ -51,7 +51,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryAgain => 'Try again';
 
   @override
-  String get oopsGlitched => 'Oops, something glitched';
+  String get oopsGlitched => 'Something went wrong';
 
   @override
   String get discardListingTitle => 'Discard listing?';
@@ -70,11 +70,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeTitle => 'Nosiva';
 
   @override
-  String get splashTagline => 'pre-loved, main character energy ✨';
+  String get splashTagline => 'second-hand fashion, thoughtfully listed';
 
   @override
   String get welcomeSubtitle =>
-      'Buy & sell pre-loved fashion with\na community that gets your vibe.';
+      'Buy and sell second-hand clothing and accessories in one simple marketplace.';
 
   @override
   String get createAccount => 'Create account';
@@ -83,10 +83,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alreadyHaveAccount => 'I already have an account';
 
   @override
-  String get welcomeBackTitle => 'Welcome back 👋';
+  String get welcomeBackTitle => 'Welcome back';
 
   @override
-  String get welcomeBackSubtitle => 'Your closet missed you.';
+  String get welcomeBackSubtitle =>
+      'Sign in to continue managing your listings.';
 
   @override
   String get email => 'Email';
@@ -107,7 +108,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get username => 'Username';
 
   @override
-  String get usernameHint => 'slaygirl_99';
+  String get usernameHint => 'username';
 
   @override
   String get signIn => 'Sign in';
@@ -119,10 +120,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newHereCreateAccount => 'New here? Create an account';
 
   @override
-  String get joinNosiva => 'Join Nosiva 💕';
+  String get joinNosiva => 'Join Nosiva';
 
   @override
-  String get yourClosetYourRules => 'Your closet, your rules.';
+  String get yourClosetYourRules =>
+      'Create your account to start buying and selling.';
 
   @override
   String get alreadyHaveAccountSignIn => 'Already have an account? Sign in';
@@ -131,10 +133,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orContinueWith => 'or continue with';
 
   @override
-  String get accountCreated => 'Account created! Let’s set up your vibe ✨';
+  String get accountCreated =>
+      'Account created. Let’s set up your preferences.';
 
   @override
-  String get welcomeBackSuccess => 'Welcome back bestie 💖';
+  String get welcomeBackSuccess => 'Welcome back.';
 
   @override
   String get signInFailed => 'Couldn’t sign you in — check your details';
@@ -145,10 +148,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get onboardingTitle => 'Let’s set your vibe ✨';
+  String get onboardingTitle => 'Set your preferences';
 
   @override
-  String get onboardingSubtitle => 'We’ll use this to curate your feed.';
+  String get onboardingSubtitle => 'We will use this to personalize your feed.';
 
   @override
   String get displayNameOptional => 'Display name (optional)';
@@ -169,10 +172,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yourSizes => 'Your sizes';
 
   @override
-  String get stylesYouLove => 'Styles you love';
+  String get stylesYouLove => 'Preferred styles';
 
   @override
-  String get startSlaying => 'Start slaying 💖';
+  String get startSlaying => 'Continue';
 
   @override
   String couldNotSave(Object error) {
@@ -187,29 +190,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nothingHereYetMessage =>
-      'Be the first to list something fabulous, or check back soon ✨';
+      'Be the first to publish a listing, or check again later.';
 
   @override
-  String get favorites => 'Favorites 💖';
+  String get favorites => 'Favorites';
 
   @override
-  String get wishlistEmpty => 'Your wishlist is empty bestie';
+  String get wishlistEmpty => 'Your wishlist is empty';
 
   @override
   String get wishlistEmptyMessage =>
       'Tap the heart on anything you love to save it here.';
 
   @override
-  String get searchHint => 'Search for that dream piece…';
+  String get searchHint => 'Search listings...';
 
   @override
   String get homeSearchHint => 'Search items & people...';
 
   @override
+  String get latestListings => 'Latest listings';
+
+  @override
+  String get browseItems => 'Browse items';
+
+  @override
   String get people => 'People';
 
   @override
-  String get noMatches => 'No matches, bestie';
+  String get noMatches => 'No matches found';
 
   @override
   String get noMatchesMessage => 'Try fewer filters or a different search.';
@@ -329,6 +338,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get listAnItem => 'List an item';
 
   @override
+  String get photos => 'Photos';
+
+  @override
+  String get basicInfo => 'Basic information';
+
+  @override
+  String get itemDetails => 'Item details';
+
+  @override
+  String get pricingAndLocation => 'Price and location';
+
+  @override
   String get chooseFromGallery => 'Choose from gallery';
 
   @override
@@ -338,7 +359,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get title => 'Title';
 
   @override
-  String get listingTitleHint => 'e.g. Y2K butterfly baby tee';
+  String get listingTitleHint => 'e.g. cotton shirt';
 
   @override
   String get description => 'Description';
@@ -372,13 +393,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get priceHint => '0.00';
 
   @override
-  String get listIt => 'List it 💖';
+  String get listIt => 'Publish listing';
 
   @override
-  String get pickCategory => 'Pick a category bestie';
+  String get pickCategory => 'Choose a category';
 
   @override
-  String get addPhoto => 'Add at least one photo 📸';
+  String get addPhoto => 'Add at least one photo';
 
   @override
   String photoAddFailed(Object error) {
@@ -386,7 +407,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get listedSuccess => 'Listed! Time to make that coin 💸';
+  String get listedSuccess => 'Listing published successfully.';
 
   @override
   String listFailed(Object error) {
@@ -426,7 +447,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hidden => 'Hidden';
 
   @override
-  String get vibe => 'Vibe';
+  String get vibe => 'Style';
 
   @override
   String get seller => 'Seller';
@@ -477,10 +498,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buyNow => 'Buy now';
 
   @override
-  String get addedToCart => 'Added to cart 🛍️';
+  String get addedToCart => 'Added to cart';
 
   @override
-  String get makeOfferTitle => 'Make an offer 💌';
+  String get makeOfferTitle => 'Make an offer';
 
   @override
   String listedAt(Object price) {
@@ -494,16 +515,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendOffer => 'Send offer';
 
   @override
-  String get offerSent => 'Offer sent! Fingers crossed 🤞';
+  String get offerSent => 'Offer sent.';
 
   @override
-  String get cart => 'Cart 🛍️';
+  String get cart => 'Cart';
 
   @override
   String get bagEmpty => 'Your bag is empty';
 
   @override
-  String get bagEmptyMessage => 'Add something fabulous and come back ✨';
+  String get bagEmptyMessage => 'Add an item to continue checkout.';
 
   @override
   String get shippingAddress => 'Shipping address';
@@ -524,13 +545,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paymentStubbed =>
-      '💳 Payment is stubbed (Stripe integration point)';
+      'Payment is currently in demo mode (Stripe integration point)';
 
   @override
-  String get addShippingAddress => 'Add a shipping address first 📦';
+  String get addShippingAddress => 'Add a shipping address first';
 
   @override
-  String get orderPlaced => 'Order placed! You did that 💖';
+  String get orderPlaced => 'Order placed successfully.';
 
   @override
   String checkoutFailed(Object error) {
@@ -580,13 +601,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nosivaUser => 'Nosiva user';
 
   @override
-  String get sayHi => 'Say hi 👋';
+  String get userNotFound => 'User not found';
+
+  @override
+  String get noListingsYet => 'No listings yet';
+
+  @override
+  String get sayHi => 'Send message';
 
   @override
   String get chat => 'Chat';
 
   @override
-  String get sayHiTitle => 'Say hi!';
+  String get messageHint => 'Message...';
+
+  @override
+  String get sayHiTitle => 'Send a message';
 
   @override
   String get chatEmptyMessage =>
@@ -598,13 +628,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get imageSharingTodo => 'Image sharing — TODO 📷';
+  String get imageSharingTodo => 'Image sharing is not available yet.';
 
   @override
   String get myProfile => 'My profile';
 
   @override
-  String get admin => 'Admin 🛡️';
+  String get profile => 'Profile';
+
+  @override
+  String get admin => 'Admin';
 
   @override
   String get noProfileFound => 'No profile found';
@@ -643,16 +676,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rating => 'Rating';
 
   @override
+  String get listings => 'Listings';
+
+  @override
   String get editProfile => 'Edit profile';
 
   @override
-  String get editProfileTodo => 'Edit profile — TODO ✏️';
+  String get editProfileTodo => 'Profile editing is not available yet.';
 
   @override
   String get myCloset => 'My closet';
 
   @override
-  String get closetEmpty => 'Your closet is empty bestie ✨';
+  String get closetEmpty => 'Your closet is empty';
 
   @override
   String get closetEmptyMessage => 'List your first piece and start earning.';

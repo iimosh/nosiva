@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 
-/// Playful, on-brand snackbars. "Snatched! Added to favorites 💖"
+/// Shared snackbar helpers for success, error, and neutral feedback.
 extension NosivaSnackbars on BuildContext {
   void showSnack(String message, {Color? color}) {
     ScaffoldMessenger.of(this)

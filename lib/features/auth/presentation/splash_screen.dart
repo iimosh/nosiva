@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_colors.dart';
 
-/// Pink-gradient splash with the Nosiva wordmark. Shown while the session +
+/// Splash with the Nosiva wordmark. Shown while the session +
 /// profile resolve; the router redirects away once state settles.
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -24,7 +24,7 @@ class SplashScreen extends StatelessWidget {
                   fontSize: 56,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
-                  letterSpacing: -1,
+                  letterSpacing: 0,
                 ),
               ),
               const SizedBox(height: 6),

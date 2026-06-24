@@ -8,26 +8,29 @@ abstract final class AppTypography {
 
     return TextTheme(
       displayLarge: display(
-        fontSize: 44,
+        fontSize: 40,
         fontWeight: FontWeight.w700,
-        height: 1.05,
-        letterSpacing: -0.5,
+        height: 1.08,
+        letterSpacing: 0,
         color: onSurface,
       ),
       displayMedium: display(
-        fontSize: 34,
+        fontSize: 32,
         fontWeight: FontWeight.w700,
         height: 1.1,
+        letterSpacing: 0,
         color: onSurface,
       ),
       headlineMedium: display(
-        fontSize: 26,
+        fontSize: 24,
         fontWeight: FontWeight.w600,
+        letterSpacing: 0,
         color: onSurface,
       ),
       headlineSmall: display(
-        fontSize: 22,
+        fontSize: 21,
         fontWeight: FontWeight.w600,
+        letterSpacing: 0,
         color: onSurface,
       ),
       titleLarge: body(
@@ -46,7 +49,7 @@ abstract final class AppTypography {
       labelLarge: body(
         fontSize: 15,
         fontWeight: FontWeight.w700,
-        letterSpacing: 0.2,
+        letterSpacing: 0,
         color: onSurface,
       ),
       labelMedium: body(fontSize: 13, fontWeight: FontWeight.w600, color: muted),
