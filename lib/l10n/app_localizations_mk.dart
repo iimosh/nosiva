@@ -15,6 +15,9 @@ class AppLocalizationsMk extends AppLocalizations {
   String get language => 'Јазик';
 
   @override
+  String get languageChanged => 'Јазикот е променет во Македонски';
+
+  @override
   String get english => 'Англиски';
 
   @override

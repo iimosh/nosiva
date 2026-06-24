@@ -1244,6 +1244,8 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get chat;
 
+  String get languageChanged;
+
   /// No description provided for @messageHint.
   ///
   /// In en, this message translates to:
