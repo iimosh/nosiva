@@ -10,6 +10,7 @@ import '../../../core/widgets/state_views.dart';
 import '../data/orders_repository.dart';
 import '../domain/order.dart';
 import '../../listings/domain/listing_enums.dart';
+import '../../listings/domain/listing_l10n.dart';
 
 final buyerOrdersProvider =
     FutureProvider<List<Order>>((ref) => ref.watch(ordersRepositoryProvider).fetchAsBuyer());
@@ -102,7 +103,7 @@ class OrderListView extends ConsumerWidget {
                     color: _statusColor(o.statusEnum).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(99),
                   ),
-                  child: Text(o.statusEnum.label,
+                  child: Text(o.statusEnum.localizedLabel(context.l10n),
                       style: theme.textTheme.labelMedium),
                 ),
               ),

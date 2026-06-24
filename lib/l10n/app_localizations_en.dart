@@ -203,6 +203,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchHint => 'Search for that dream piece…';
 
   @override
+  String get homeSearchHint => 'Search items & people...';
+
+  @override
+  String get people => 'People';
+
+  @override
   String get noMatches => 'No matches, bestie';
 
   @override
@@ -261,6 +267,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get style => 'Style';
+
+  @override
+  String get styleTagY2k => 'Y2K';
+
+  @override
+  String get styleTagCoquette => 'Coquette';
+
+  @override
+  String get styleTagStreetwear => 'Streetwear';
+
+  @override
+  String get styleTagVintage => 'Vintage';
+
+  @override
+  String get styleTagMinimalist => 'Minimalist';
+
+  @override
+  String get styleTagCottagecore => 'Cottagecore';
+
+  @override
+  String get styleTagGrunge => 'Grunge';
+
+  @override
+  String get styleTagPreppy => 'Preppy';
+
+  @override
+  String get styleTagBoho => 'Boho';
+
+  @override
+  String get styleTagAcademia => 'Academia';
+
+  @override
+  String get styleTagAthleisure => 'Athleisure';
+
+  @override
+  String get styleTagGorpcore => 'Gorpcore';
 
   @override
   String get location => 'Location';
@@ -571,6 +613,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get followers => 'Followers';
 
   @override
+  String followersCount(int count) {
+    return '$count followers';
+  }
+
+  @override
+  String get shareTodo => 'Sharing is coming soon';
+
+  @override
+  String startChatFailed(Object error) {
+    return 'Could not start chat - $error';
+  }
+
+  @override
+  String sendOfferFailed(Object error) {
+    return 'Could not send offer - $error';
+  }
+
+  @override
+  String get favoriteAdded => 'Added to favorites';
+
+  @override
+  String get favoriteUpdateFailed => 'Could not update favorites';
+
+  @override
   String get following => 'Following';
 
   @override
@@ -592,8 +658,142 @@ class AppLocalizationsEn extends AppLocalizations {
   String get closetEmptyMessage => 'List your first piece and start earning.';
 
   @override
+  String get activity => 'Activity';
+
+  @override
+  String get alerts => 'Alerts';
+
+  @override
   String get adminDashboard => 'Admin dashboard';
 
   @override
   String get adminDashboardSubtitle => 'Moderate listings, view stats & users';
+
+  @override
+  String get orderStatusPending => 'Pending';
+
+  @override
+  String get orderStatusPaid => 'Paid';
+
+  @override
+  String get orderStatusShipped => 'Shipped';
+
+  @override
+  String get orderStatusDelivered => 'Delivered';
+
+  @override
+  String get orderStatusCancelled => 'Cancelled';
+
+  @override
+  String get adminListings => 'Listings';
+
+  @override
+  String get adminReports => 'Reports';
+
+  @override
+  String get adminUsers => 'Users';
+
+  @override
+  String get adminHidden => 'Hidden';
+
+  @override
+  String get adminAdmins => 'Admins';
+
+  @override
+  String get nothingToModerate => 'Nothing to moderate';
+
+  @override
+  String get newListingsWillShow =>
+      'New listings will show up here as they are posted.';
+
+  @override
+  String get reportsComingSoon => 'Reports coming soon';
+
+  @override
+  String get reportsComingSoonBody =>
+      'User reports of listings and sellers will land here for review.';
+
+  @override
+  String get noUsersYet => 'No users yet';
+
+  @override
+  String get makeAdmin => 'Make admin';
+
+  @override
+  String get removeAdmin => 'Remove admin';
+
+  @override
+  String get manageRole => 'Manage role';
+
+  @override
+  String roleChangeQuestion(Object action) {
+    return '$action?';
+  }
+
+  @override
+  String userWillGetModerationPowers(Object user) {
+    return '$user will get full moderation powers.';
+  }
+
+  @override
+  String userWillLoseAdminAccess(Object user) {
+    return '$user will lose admin access.';
+  }
+
+  @override
+  String get youLabel => 'you';
+
+  @override
+  String get promotedToAdmin => 'Promoted to admin';
+
+  @override
+  String get adminRemoved => 'Admin removed';
+
+  @override
+  String updateRoleFailed(Object error) {
+    return 'Could not update role - $error';
+  }
+
+  @override
+  String get adminBadge => 'ADMIN';
+
+  @override
+  String get hide => 'Hide';
+
+  @override
+  String get unhide => 'Unhide';
+
+  @override
+  String get moderate => 'Moderate';
+
+  @override
+  String get hideListing => 'Hide listing';
+
+  @override
+  String get unhideListing => 'Unhide listing';
+
+  @override
+  String get listingRestored => 'Listing restored';
+
+  @override
+  String get listingHidden => 'Listing hidden';
+
+  @override
+  String get deleteListing => 'Delete listing';
+
+  @override
+  String get deleteListingQuestion => 'Delete listing?';
+
+  @override
+  String listingWillBeRemoved(Object title) {
+    return '\"$title\" will be permanently removed.';
+  }
+
+  @override
+  String get listingDeleted => 'Listing deleted';
+
+  @override
+  String actionFailed(Object error) {
+    return 'Action failed - $error';
+  }
 }

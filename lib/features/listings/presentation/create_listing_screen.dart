@@ -355,7 +355,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   children: [
                     for (final tag in kStyleTags)
                       NosivaChip(
-                        label: tag,
+                        label: localizedStyleTag(tag, context.l10n),
                         selected: _styleTags.contains(tag),
                         onTap: () {
                           setState(() => _styleTags.contains(tag)

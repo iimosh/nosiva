@@ -99,7 +99,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
           ),
           IconButton(
-            tooltip: 'Favorites',
+            tooltip: context.l10n.favorites,
             icon: const Icon(Icons.favorite_border_rounded),
             onPressed: () => context.push(AppRoutes.favorites),
           ),
@@ -107,7 +107,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             alignment: Alignment.topRight,
             children: [
               IconButton(
-                tooltip: 'Filters',
+                tooltip: context.l10n.filters,
                 icon: const Icon(Icons.tune_rounded),
                 onPressed: _openFilters,
               ),
@@ -132,7 +132,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             padding: const EdgeInsets.fromLTRB(
                 AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.xs),
             child: NosivaTextField(
-              hint: 'Search items & people…',
+              hint: context.l10n.homeSearchHint,
               controller: _search,
               prefixIcon: Icons.search_rounded,
               textInputAction: TextInputAction.search,
@@ -201,7 +201,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               backgroundColor: AppColors.plum,
               foregroundColor: Colors.white,
               icon: const Icon(Icons.clear_rounded),
-              label: const Text('Clear filters'),
+              label: Text(context.l10n.clearFilters),
               onPressed: () => ref.read(feedFilterProvider.notifier).state =
                   ListingFilter(query: filter.query),
             )
@@ -226,7 +226,7 @@ class _PeopleRail extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(
               AppSpacing.md, AppSpacing.xs, AppSpacing.md, 0),
-          child: Text('People',
+          child: Text(context.l10n.people,
               style: Theme.of(context).textTheme.titleMedium),
         ),
         SizedBox(

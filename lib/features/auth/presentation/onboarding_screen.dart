@@ -131,7 +131,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   children: [
                     for (final tag in kStyleTags)
                       NosivaChip(
-                        label: tag,
+                        label: localizedStyleTag(tag, context.l10n),
                         selected: _styles.contains(tag),
                         onTap: () => setState(() => _styles.toggle(tag)),
                       ),

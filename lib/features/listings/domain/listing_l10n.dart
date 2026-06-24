@@ -30,3 +30,44 @@ extension ItemConditionL10n on ItemCondition {
     };
   }
 }
+
+extension ListingStatusL10n on ListingStatus {
+  String localizedLabel(AppLocalizations l10n) {
+    return switch (this) {
+      ListingStatus.active => l10n.active,
+      ListingStatus.reserved => l10n.reserved,
+      ListingStatus.sold => l10n.sold,
+      ListingStatus.hidden => l10n.hidden,
+    };
+  }
+}
+
+String localizedStyleTag(String tag, AppLocalizations l10n) {
+  return switch (tag) {
+    'Y2K' => l10n.styleTagY2k,
+    'coquette' => l10n.styleTagCoquette,
+    'streetwear' => l10n.styleTagStreetwear,
+    'vintage' => l10n.styleTagVintage,
+    'minimalist' => l10n.styleTagMinimalist,
+    'cottagecore' => l10n.styleTagCottagecore,
+    'grunge' => l10n.styleTagGrunge,
+    'preppy' => l10n.styleTagPreppy,
+    'boho' => l10n.styleTagBoho,
+    'academia' => l10n.styleTagAcademia,
+    'athleisure' => l10n.styleTagAthleisure,
+    'gorpcore' => l10n.styleTagGorpcore,
+    _ => tag,
+  };
+}
+
+extension OrderStatusL10n on OrderStatus {
+  String localizedLabel(AppLocalizations l10n) {
+    return switch (this) {
+      OrderStatus.pending => l10n.orderStatusPending,
+      OrderStatus.paid => l10n.orderStatusPaid,
+      OrderStatus.shipped => l10n.orderStatusShipped,
+      OrderStatus.delivered => l10n.orderStatusDelivered,
+      OrderStatus.cancelled => l10n.orderStatusCancelled,
+    };
+  }
+}

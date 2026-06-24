@@ -276,7 +276,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                 children: [
                   for (final tag in kStyleTags)
                     NosivaChip(
-                      label: tag,
+                      label: localizedStyleTag(tag, context.l10n),
                       selected: _styleTags.contains(tag),
                       onTap: () => setState(() {
                         _styleTags.contains(tag)

@@ -64,11 +64,11 @@ class ListingCard extends ConsumerWidget {
                             .read(favoritesControllerProvider.notifier)
                             .toggle(listing.id);
                         if (context.mounted && !liked) {
-                          context.showSuccess('Snatched! Added to favorites 💖');
+                          context.showSuccess(context.l10n.favoriteAdded);
                         }
                       } catch (_) {
                         if (context.mounted) {
-                          context.showError('Couldn’t update favorites');
+                          context.showError(context.l10n.favoriteUpdateFailed);
                         }
                       }
                     },
