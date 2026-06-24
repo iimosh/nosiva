@@ -470,6 +470,18 @@ abstract class AppLocalizations {
   /// **'Search for that dream piece…'**
   String get searchHint;
 
+  /// No description provided for @homeSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search items & people...'**
+  String get homeSearchHint;
+
+  /// No description provided for @people.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get people;
+
   /// No description provided for @noMatches.
   ///
   /// In en, this message translates to:
@@ -589,6 +601,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Style'**
   String get style;
+
+  /// No description provided for @styleTagY2k.
+  ///
+  /// In en, this message translates to:
+  /// **'Y2K'**
+  String get styleTagY2k;
+
+  /// No description provided for @styleTagCoquette.
+  ///
+  /// In en, this message translates to:
+  /// **'Coquette'**
+  String get styleTagCoquette;
+
+  /// No description provided for @styleTagStreetwear.
+  ///
+  /// In en, this message translates to:
+  /// **'Streetwear'**
+  String get styleTagStreetwear;
+
+  /// No description provided for @styleTagVintage.
+  ///
+  /// In en, this message translates to:
+  /// **'Vintage'**
+  String get styleTagVintage;
+
+  /// No description provided for @styleTagMinimalist.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimalist'**
+  String get styleTagMinimalist;
+
+  /// No description provided for @styleTagCottagecore.
+  ///
+  /// In en, this message translates to:
+  /// **'Cottagecore'**
+  String get styleTagCottagecore;
+
+  /// No description provided for @styleTagGrunge.
+  ///
+  /// In en, this message translates to:
+  /// **'Grunge'**
+  String get styleTagGrunge;
+
+  /// No description provided for @styleTagPreppy.
+  ///
+  /// In en, this message translates to:
+  /// **'Preppy'**
+  String get styleTagPreppy;
+
+  /// No description provided for @styleTagBoho.
+  ///
+  /// In en, this message translates to:
+  /// **'Boho'**
+  String get styleTagBoho;
+
+  /// No description provided for @styleTagAcademia.
+  ///
+  /// In en, this message translates to:
+  /// **'Academia'**
+  String get styleTagAcademia;
+
+  /// No description provided for @styleTagAthleisure.
+  ///
+  /// In en, this message translates to:
+  /// **'Athleisure'**
+  String get styleTagAthleisure;
+
+  /// No description provided for @styleTagGorpcore.
+  ///
+  /// In en, this message translates to:
+  /// **'Gorpcore'**
+  String get styleTagGorpcore;
 
   /// No description provided for @location.
   ///
@@ -1160,6 +1244,42 @@ abstract class AppLocalizations {
   /// **'Followers'**
   String get followers;
 
+  /// No description provided for @followersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} followers'**
+  String followersCount(int count);
+
+  /// No description provided for @shareTodo.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing is coming soon'**
+  String get shareTodo;
+
+  /// No description provided for @startChatFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start chat - {error}'**
+  String startChatFailed(Object error);
+
+  /// No description provided for @sendOfferFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send offer - {error}'**
+  String sendOfferFailed(Object error);
+
+  /// No description provided for @favoriteAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to favorites'**
+  String get favoriteAdded;
+
+  /// No description provided for @favoriteUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update favorites'**
+  String get favoriteUpdateFailed;
+
   /// No description provided for @following.
   ///
   /// In en, this message translates to:
@@ -1202,6 +1322,18 @@ abstract class AppLocalizations {
   /// **'List your first piece and start earning.'**
   String get closetEmptyMessage;
 
+  /// No description provided for @activity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get activity;
+
+  /// No description provided for @alerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get alerts;
+
   /// No description provided for @adminDashboard.
   ///
   /// In en, this message translates to:
@@ -1213,6 +1345,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Moderate listings, view stats & users'**
   String get adminDashboardSubtitle;
+
+  /// No description provided for @orderStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get orderStatusPending;
+
+  /// No description provided for @orderStatusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get orderStatusPaid;
+
+  /// No description provided for @orderStatusShipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipped'**
+  String get orderStatusShipped;
+
+  /// No description provided for @orderStatusDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get orderStatusDelivered;
+
+  /// No description provided for @orderStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get orderStatusCancelled;
+
+  /// No description provided for @adminListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings'**
+  String get adminListings;
+
+  /// No description provided for @adminReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get adminReports;
+
+  /// No description provided for @adminUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get adminUsers;
+
+  /// No description provided for @adminHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden'**
+  String get adminHidden;
+
+  /// No description provided for @adminAdmins.
+  ///
+  /// In en, this message translates to:
+  /// **'Admins'**
+  String get adminAdmins;
+
+  /// No description provided for @nothingToModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to moderate'**
+  String get nothingToModerate;
+
+  /// No description provided for @newListingsWillShow.
+  ///
+  /// In en, this message translates to:
+  /// **'New listings will show up here as they are posted.'**
+  String get newListingsWillShow;
+
+  /// No description provided for @reportsComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports coming soon'**
+  String get reportsComingSoon;
+
+  /// No description provided for @reportsComingSoonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'User reports of listings and sellers will land here for review.'**
+  String get reportsComingSoonBody;
+
+  /// No description provided for @noUsersYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No users yet'**
+  String get noUsersYet;
+
+  /// No description provided for @makeAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Make admin'**
+  String get makeAdmin;
+
+  /// No description provided for @removeAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove admin'**
+  String get removeAdmin;
+
+  /// No description provided for @manageRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage role'**
+  String get manageRole;
+
+  /// No description provided for @roleChangeQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'{action}?'**
+  String roleChangeQuestion(Object action);
+
+  /// No description provided for @userWillGetModerationPowers.
+  ///
+  /// In en, this message translates to:
+  /// **'{user} will get full moderation powers.'**
+  String userWillGetModerationPowers(Object user);
+
+  /// No description provided for @userWillLoseAdminAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{user} will lose admin access.'**
+  String userWillLoseAdminAccess(Object user);
+
+  /// No description provided for @youLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'you'**
+  String get youLabel;
+
+  /// No description provided for @promotedToAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Promoted to admin'**
+  String get promotedToAdmin;
+
+  /// No description provided for @adminRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin removed'**
+  String get adminRemoved;
+
+  /// No description provided for @updateRoleFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update role - {error}'**
+  String updateRoleFailed(Object error);
+
+  /// No description provided for @adminBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'ADMIN'**
+  String get adminBadge;
+
+  /// No description provided for @hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get hide;
+
+  /// No description provided for @unhide.
+  ///
+  /// In en, this message translates to:
+  /// **'Unhide'**
+  String get unhide;
+
+  /// No description provided for @moderate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get moderate;
+
+  /// No description provided for @hideListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide listing'**
+  String get hideListing;
+
+  /// No description provided for @unhideListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Unhide listing'**
+  String get unhideListing;
+
+  /// No description provided for @listingRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing restored'**
+  String get listingRestored;
+
+  /// No description provided for @listingHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing hidden'**
+  String get listingHidden;
+
+  /// No description provided for @deleteListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete listing'**
+  String get deleteListing;
+
+  /// No description provided for @deleteListingQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete listing?'**
+  String get deleteListingQuestion;
+
+  /// No description provided for @listingWillBeRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{title}\" will be permanently removed.'**
+  String listingWillBeRemoved(Object title);
+
+  /// No description provided for @listingDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing deleted'**
+  String get listingDeleted;
+
+  /// No description provided for @actionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Action failed - {error}'**
+  String actionFailed(Object error);
 }
 
 class _AppLocalizationsDelegate

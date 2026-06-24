@@ -72,6 +72,8 @@
   "wishlistEmpty": "Your wishlist is empty bestie",
   "wishlistEmptyMessage": "Tap the heart on anything you love to save it here.",
   "searchHint": "Search for that dream piece…",
+  "homeSearchHint": "Search items & people...",
+  "people": "People",
   "noMatches": "No matches, bestie",
   "noMatchesMessage": "Try fewer filters or a different search.",
   "clearFilters": "Clear filters",
@@ -92,6 +94,18 @@
   "conditionFair": "Fair",
   "size": "Size",
   "style": "Style",
+  "styleTagY2k": "Y2K",
+  "styleTagCoquette": "Coquette",
+  "styleTagStreetwear": "Streetwear",
+  "styleTagVintage": "Vintage",
+  "styleTagMinimalist": "Minimalist",
+  "styleTagCottagecore": "Cottagecore",
+  "styleTagGrunge": "Grunge",
+  "styleTagPreppy": "Preppy",
+  "styleTagBoho": "Boho",
+  "styleTagAcademia": "Academia",
+  "styleTagAthleisure": "Athleisure",
+  "styleTagGorpcore": "Gorpcore",
   "location": "Location",
   "cityOrCountry": "City or country",
   "useMyLocation": "Use my location",
@@ -227,6 +241,29 @@
   "admin": "Admin 🛡️",
   "noProfileFound": "No profile found",
   "followers": "Followers",
+  "followersCount": "{count} followers",
+  "@followersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareTodo": "Sharing is coming soon",
+  "startChatFailed": "Could not start chat - {error}",
+  "@startChatFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "sendOfferFailed": "Could not send offer - {error}",
+  "@sendOfferFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "favoriteAdded": "Added to favorites",
+  "favoriteUpdateFailed": "Could not update favorites",
   "following": "Following",
   "rating": "Rating",
   "editProfile": "Edit profile",
@@ -234,6 +271,76 @@
   "myCloset": "My closet",
   "closetEmpty": "Your closet is empty bestie ✨",
   "closetEmptyMessage": "List your first piece and start earning.",
+  "activity": "Activity",
+  "alerts": "Alerts",
   "adminDashboard": "Admin dashboard",
-  "adminDashboardSubtitle": "Moderate listings, view stats & users"
+  "adminDashboardSubtitle": "Moderate listings, view stats & users",
+  "orderStatusPending": "Pending",
+  "orderStatusPaid": "Paid",
+  "orderStatusShipped": "Shipped",
+  "orderStatusDelivered": "Delivered",
+  "orderStatusCancelled": "Cancelled",
+  "adminListings": "Listings",
+  "adminReports": "Reports",
+  "adminUsers": "Users",
+  "adminHidden": "Hidden",
+  "adminAdmins": "Admins",
+  "nothingToModerate": "Nothing to moderate",
+  "newListingsWillShow": "New listings will show up here as they are posted.",
+  "reportsComingSoon": "Reports coming soon",
+  "reportsComingSoonBody": "User reports of listings and sellers will land here for review.",
+  "noUsersYet": "No users yet",
+  "makeAdmin": "Make admin",
+  "removeAdmin": "Remove admin",
+  "manageRole": "Manage role",
+  "roleChangeQuestion": "{action}?",
+  "@roleChangeQuestion": {
+    "placeholders": {
+      "action": {}
+    }
+  },
+  "userWillGetModerationPowers": "{user} will get full moderation powers.",
+  "@userWillGetModerationPowers": {
+    "placeholders": {
+      "user": {}
+    }
+  },
+  "userWillLoseAdminAccess": "{user} will lose admin access.",
+  "@userWillLoseAdminAccess": {
+    "placeholders": {
+      "user": {}
+    }
+  },
+  "youLabel": "you",
+  "promotedToAdmin": "Promoted to admin",
+  "adminRemoved": "Admin removed",
+  "updateRoleFailed": "Could not update role - {error}",
+  "@updateRoleFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "adminBadge": "ADMIN",
+  "hide": "Hide",
+  "unhide": "Unhide",
+  "moderate": "Moderate",
+  "hideListing": "Hide listing",
+  "unhideListing": "Unhide listing",
+  "listingRestored": "Listing restored",
+  "listingHidden": "Listing hidden",
+  "deleteListing": "Delete listing",
+  "deleteListingQuestion": "Delete listing?",
+  "listingWillBeRemoved": "\"{title}\" will be permanently removed.",
+  "@listingWillBeRemoved": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "listingDeleted": "Listing deleted",
+  "actionFailed": "Action failed - {error}",
+  "@actionFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  }
 }

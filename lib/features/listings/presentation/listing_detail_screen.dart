@@ -121,7 +121,7 @@ class _DetailBody extends ConsumerWidget {
                   runSpacing: AppSpacing.xs,
                   children: [
                     for (final tag in listing.styleTags)
-                      NosivaChip(label: '#$tag'),
+                      NosivaChip(label: '#${localizedStyleTag(tag, context.l10n)}'),
                   ],
                 ),
               ],
@@ -278,7 +278,7 @@ class _GalleryState extends ConsumerState<_Gallery> {
                 const Spacer(),
                 _CircleIcon(
                   icon: Icons.ios_share_rounded,
-                  onTap: () => context.showSnack('Share — TODO 🔗'),
+                  onTap: () => context.showSnack(context.l10n.shareTodo),
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 if (isAdmin && !isOwn) ...[
@@ -755,7 +755,7 @@ class _ActionBar extends ConsumerWidget {
               );
       if (context.mounted) context.push(AppRoutes.chatPath(convo.id));
     } catch (e) {
-      if (context.mounted) context.showError('Couldn’t start chat — $e');
+      if (context.mounted) context.showError(context.l10n.startChatFailed('$e'));
     }
   }
 
@@ -782,7 +782,7 @@ class _ActionBar extends ConsumerWidget {
         context.showSuccess(context.l10n.offerSent);
       }
     } catch (e) {
-      if (context.mounted) context.showError('Couldn’t send offer — $e');
+      if (context.mounted) context.showError(context.l10n.sendOfferFailed('$e'));
     }
   }
 }
@@ -871,7 +871,7 @@ class _ModerationButton extends ConsumerWidget {
         if (popAfter) context.pop();
       }
     } catch (e) {
-      if (context.mounted) context.showError('Action failed — $e');
+      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
     }
   }
 
@@ -883,7 +883,7 @@ class _ModerationButton extends ConsumerWidget {
     return CircleAvatar(
       backgroundColor: Colors.white.withValues(alpha: 0.9),
       child: IconButton(
-        tooltip: 'Moderate',
+        tooltip: context.l10n.moderate,
         icon: const Icon(Icons.shield_outlined, color: AppColors.plum),
         onPressed: () {
           showModalBottomSheet<void>(
@@ -896,7 +896,9 @@ class _ModerationButton extends ConsumerWidget {
                     leading: Icon(isHidden
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined),
-                    title: Text(isHidden ? 'Unhide listing' : 'Hide listing'),
+                    title: Text(isHidden
+                        ? context.l10n.unhideListing
+                        : context.l10n.hideListing),
                     onTap: () {
                       Navigator.pop(sheetCtx);
                       _run(
@@ -905,21 +907,23 @@ class _ModerationButton extends ConsumerWidget {
                         () => isHidden
                             ? admin.unhide(listing.id)
                             : admin.hide(listing.id),
-                        isHidden ? 'Listing restored' : 'Listing hidden',
+                        isHidden
+                            ? context.l10n.listingRestored
+                            : context.l10n.listingHidden,
                       );
                     },
                   ),
                   ListTile(
                     leading: const Icon(Icons.delete_outline_rounded,
                         color: AppColors.error),
-                    title: const Text('Delete listing'),
+                    title: Text(context.l10n.deleteListing),
                     onTap: () {
                       Navigator.pop(sheetCtx);
                       _run(
                         context,
                         ref,
                         () => admin.delete(listing.id),
-                        'Listing deleted',
+                        context.l10n.listingDeleted,
                         popAfter: true,
                       );
                     },

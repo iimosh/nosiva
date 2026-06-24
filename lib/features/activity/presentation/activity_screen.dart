@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../notifications/data/notifications_repository.dart';
 import '../../notifications/presentation/notifications_screen.dart';
@@ -17,21 +18,21 @@ class ActivityScreen extends ConsumerWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Activity'),
+          title: Text(context.l10n.activity),
           actions: [
             TextButton(
               onPressed: () =>
                   ref.read(notificationsRepositoryProvider).markAllRead(),
-              child: const Text('Mark all read'),
+              child: Text(context.l10n.markAllRead),
             ),
           ],
-          bottom: const TabBar(
+          bottom: TabBar(
             labelColor: AppColors.hotPink,
             indicatorColor: AppColors.hotPink,
             tabs: [
-              Tab(text: 'Alerts'),
-              Tab(text: 'Buying'),
-              Tab(text: 'Selling'),
+              Tab(text: context.l10n.alerts),
+              Tab(text: context.l10n.buying),
+              Tab(text: context.l10n.selling),
             ],
           ),
         ),

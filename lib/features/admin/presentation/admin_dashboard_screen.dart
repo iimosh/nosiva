@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -10,6 +11,7 @@ import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../listings/domain/listing.dart';
 import '../../listings/domain/listing_enums.dart';
+import '../../listings/domain/listing_l10n.dart';
 import '../../listings/presentation/controllers/feed_controller.dart';
 import '../../profile/domain/profile.dart';
 import 'admin_controller.dart';
@@ -29,26 +31,26 @@ class AdminDashboardScreen extends ConsumerWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Admin 🛡️'),
+          title: Text(context.l10n.admin),
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh_rounded),
               onPressed: () => _refresh(ref),
             ),
           ],
-          bottom: const TabBar(
+          bottom: TabBar(
             labelColor: AppColors.hotPink,
             indicatorColor: AppColors.hotPink,
             tabs: [
-              Tab(text: 'Listings'),
-              Tab(text: 'Reports'),
-              Tab(text: 'Users'),
+              Tab(text: context.l10n.adminListings),
+              Tab(text: context.l10n.adminReports),
+              Tab(text: context.l10n.adminUsers),
             ],
           ),
         ),
         body: Column(
-          children: const [
-            _StatsHeader(),
+          children: [
+            const _StatsHeader(),
             Expanded(
               child: TabBarView(
                 children: [_ListingsTab(), _ReportsTab(), _UsersTab()],
@@ -73,13 +75,13 @@ class _StatsHeader extends ConsumerWidget {
             AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.xs),
         child: Row(
           children: [
-            _StatCard(label: 'Listings', value: '${s.totalListings}', emoji: '🛍️'),
+            _StatCard(label: context.l10n.adminListings, value: '${s.totalListings}', emoji: '🛍️'),
             const SizedBox(width: AppSpacing.xs),
-            _StatCard(label: 'Hidden', value: '${s.hiddenListings}', emoji: '🚫'),
+            _StatCard(label: context.l10n.adminHidden, value: '${s.hiddenListings}', emoji: '🚫'),
             const SizedBox(width: AppSpacing.xs),
-            _StatCard(label: 'Users', value: '${s.totalUsers}', emoji: '👥'),
+            _StatCard(label: context.l10n.adminUsers, value: '${s.totalUsers}', emoji: '👥'),
             const SizedBox(width: AppSpacing.xs),
-            _StatCard(label: 'Admins', value: '${s.totalAdmins}', emoji: '🛡️'),
+            _StatCard(label: context.l10n.adminAdmins, value: '${s.totalAdmins}', emoji: '🛡️'),
           ],
         ),
       ),
@@ -132,10 +134,10 @@ class _ListingsTab extends ConsumerWidget {
       ),
       data: (items) {
         if (items.isEmpty) {
-          return const EmptyStateView(
+          return EmptyStateView(
             emoji: '🛡️',
-            title: 'Nothing to moderate',
-            message: 'New listings will show up here as they\'re posted.',
+            title: context.l10n.nothingToModerate,
+            message: context.l10n.newListingsWillShow,
           );
         }
         return RefreshIndicator(
@@ -158,10 +160,10 @@ class _ReportsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const EmptyStateView(
+    return EmptyStateView(
       emoji: '🚩',
-      title: 'Reports coming soon',
-      message: 'User reports of listings & sellers will land here for review.',
+      title: context.l10n.reportsComingSoon,
+      message: context.l10n.reportsComingSoonBody,
     );
   }
 }
@@ -181,7 +183,7 @@ class _UsersTab extends ConsumerWidget {
       ),
       data: (items) {
         if (items.isEmpty) {
-          return const EmptyStateView(emoji: '👥', title: 'No users yet');
+          return EmptyStateView(emoji: '👥', title: context.l10n.noUsersYet);
         }
         return RefreshIndicator(
           color: AppColors.hotPink,
@@ -202,18 +204,18 @@ class _UserTile extends ConsumerWidget {
   final Profile user;
 
   Future<void> _changeRole(BuildContext context, WidgetRef ref, bool makeAdmin) async {
-    final action = makeAdmin ? 'Make admin' : 'Remove admin';
+    final action = makeAdmin ? context.l10n.makeAdmin : context.l10n.removeAdmin;
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('$action?'),
+        title: Text(context.l10n.roleChangeQuestion(action)),
         content: Text(makeAdmin
-            ? '${user.nameOrHandle} will get full moderation powers.'
-            : '${user.nameOrHandle} will lose admin access.'),
+            ? context.l10n.userWillGetModerationPowers(user.nameOrHandle)
+            : context.l10n.userWillLoseAdminAccess(user.nameOrHandle)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
@@ -229,10 +231,10 @@ class _UserTile extends ConsumerWidget {
       await (makeAdmin ? admin.promote(user.id) : admin.demote(user.id));
       ref.invalidate(adminUsersProvider);
       if (context.mounted) {
-        context.showSuccess(makeAdmin ? 'Promoted to admin 🛡️' : 'Admin removed');
+        context.showSuccess(makeAdmin ? context.l10n.promotedToAdmin : context.l10n.adminRemoved);
       }
     } catch (e) {
-      if (context.mounted) context.showError('Couldn’t update role — $e');
+      if (context.mounted) context.showError(context.l10n.updateRoleFailed('$e'));
     }
   }
 
@@ -251,7 +253,9 @@ class _UserTile extends ConsumerWidget {
             ? const Text('💁‍♀️', style: TextStyle(fontSize: 18))
             : null,
       ),
-      title: Text(isSelf ? '${user.nameOrHandle} (you)' : user.nameOrHandle),
+      title: Text(isSelf
+          ? '${user.nameOrHandle} (${context.l10n.youLabel})'
+          : user.nameOrHandle),
       subtitle: Text(user.handle),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -260,13 +264,13 @@ class _UserTile extends ConsumerWidget {
           // Can't change your own role
           if (!isSelf)
             PopupMenuButton<bool>(
-              tooltip: 'Manage role',
+              tooltip: context.l10n.manageRole,
               onSelected: (makeAdmin) => _changeRole(context, ref, makeAdmin),
               itemBuilder: (_) => [
                 if (user.isAdmin)
-                  const PopupMenuItem(value: false, child: Text('Remove admin'))
+                  PopupMenuItem(value: false, child: Text(context.l10n.removeAdmin))
                 else
-                  const PopupMenuItem(value: true, child: Text('Make admin 🛡️')),
+                  PopupMenuItem(value: true, child: Text(context.l10n.makeAdmin)),
               ],
             ),
         ],
@@ -286,8 +290,8 @@ class _RoleBadge extends StatelessWidget {
         gradient: AppColors.brandGradient,
         borderRadius: BorderRadius.circular(99),
       ),
-      child: const Text(
-        'ADMIN',
+      child: Text(
+        context.l10n.adminBadge,
         style: TextStyle(
           color: Colors.white,
           fontSize: 11,
@@ -315,7 +319,7 @@ class _AdminListingTile extends ConsumerWidget {
       ref.invalidate(feedControllerProvider);
       if (context.mounted) context.showSuccess(success);
     } catch (e) {
-      if (context.mounted) context.showError('Action failed — $e');
+      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
     }
   }
 
@@ -350,7 +354,7 @@ class _AdminListingTile extends ConsumerWidget {
                       maxLines: 1, overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.titleMedium),
                   Text(
-                    '${Formatters.price(listing.price)} · ${listing.status}',
+                    '${Formatters.price(listing.price)} · ${listing.statusEnum.localizedLabel(context.l10n)}',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: isHidden ? AppColors.error : null,
                     ),
@@ -359,7 +363,7 @@ class _AdminListingTile extends ConsumerWidget {
               ),
             ),
             IconButton(
-              tooltip: isHidden ? 'Unhide' : 'Hide',
+              tooltip: isHidden ? context.l10n.unhide : context.l10n.hide,
               icon: Icon(isHidden
                   ? Icons.visibility_outlined
                   : Icons.visibility_off_outlined),
@@ -367,11 +371,11 @@ class _AdminListingTile extends ConsumerWidget {
                 context,
                 ref,
                 () => isHidden ? admin.unhide(listing.id) : admin.hide(listing.id),
-                isHidden ? 'Listing restored' : 'Listing hidden',
+                isHidden ? context.l10n.listingRestored : context.l10n.listingHidden,
               ),
             ),
             IconButton(
-              tooltip: 'Delete',
+              tooltip: context.l10n.delete,
               icon: const Icon(Icons.delete_outline_rounded, color: AppColors.error),
               onPressed: () => _confirmDelete(context, ref, admin),
             ),
@@ -389,22 +393,22 @@ class _AdminListingTile extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Delete listing?'),
-        content: Text('“${listing.title}” will be permanently removed.'),
+        title: Text(context.l10n.deleteListingQuestion),
+        content: Text(context.l10n.listingWillBeRemoved(listing.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: AppColors.error)),
+            child: Text(context.l10n.delete, style: const TextStyle(color: AppColors.error)),
           ),
         ],
       ),
     );
     if (ok == true && context.mounted) {
-      await _act(context, ref, () => admin.delete(listing.id), 'Listing deleted');
+      await _act(context, ref, () => admin.delete(listing.id), context.l10n.listingDeleted);
     }
   }
 }

@@ -206,6 +206,12 @@ class AppLocalizationsMk extends AppLocalizations {
   String get searchHint => 'Пребарај го совршеното парче…';
 
   @override
+  String get homeSearchHint => 'Пребарај артикли и луѓе...';
+
+  @override
+  String get people => 'Луѓе';
+
+  @override
   String get noMatches => 'Нема резултати';
 
   @override
@@ -265,6 +271,42 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get style => 'Стил';
+
+  @override
+  String get styleTagY2k => 'Y2K';
+
+  @override
+  String get styleTagCoquette => 'Кокетен';
+
+  @override
+  String get styleTagStreetwear => 'Уличен стил';
+
+  @override
+  String get styleTagVintage => 'Винтиџ';
+
+  @override
+  String get styleTagMinimalist => 'Минималистички';
+
+  @override
+  String get styleTagCottagecore => 'Cottagecore';
+
+  @override
+  String get styleTagGrunge => 'Гранџ';
+
+  @override
+  String get styleTagPreppy => 'Preppy';
+
+  @override
+  String get styleTagBoho => 'Бохо';
+
+  @override
+  String get styleTagAcademia => 'Academia';
+
+  @override
+  String get styleTagAthleisure => 'Спортско-лежерен';
+
+  @override
+  String get styleTagGorpcore => 'Gorpcore';
 
   @override
   String get location => 'Локација';
@@ -575,6 +617,30 @@ class AppLocalizationsMk extends AppLocalizations {
   String get followers => 'Следбеници';
 
   @override
+  String followersCount(int count) {
+    return '$count следбеници';
+  }
+
+  @override
+  String get shareTodo => 'Споделувањето ќе биде достапно наскоро';
+
+  @override
+  String startChatFailed(Object error) {
+    return 'Не можевме да го започнеме разговорот - $error';
+  }
+
+  @override
+  String sendOfferFailed(Object error) {
+    return 'Не можевме да ја испратиме понудата - $error';
+  }
+
+  @override
+  String get favoriteAdded => 'Додадено во омилени';
+
+  @override
+  String get favoriteUpdateFailed => 'Не можевме да ги ажурираме омилените';
+
+  @override
   String get following => 'Следи';
 
   @override
@@ -597,9 +663,143 @@ class AppLocalizationsMk extends AppLocalizations {
       'Објави го првото парче и почни со продажба.';
 
   @override
+  String get activity => 'Активност';
+
+  @override
+  String get alerts => 'Известувања';
+
+  @override
   String get adminDashboard => 'Админ панел';
 
   @override
   String get adminDashboardSubtitle =>
       'Модерирај огласи, статистики и корисници';
+
+  @override
+  String get orderStatusPending => 'Во тек';
+
+  @override
+  String get orderStatusPaid => 'Платено';
+
+  @override
+  String get orderStatusShipped => 'Испратено';
+
+  @override
+  String get orderStatusDelivered => 'Доставено';
+
+  @override
+  String get orderStatusCancelled => 'Откажано';
+
+  @override
+  String get adminListings => 'Огласи';
+
+  @override
+  String get adminReports => 'Пријави';
+
+  @override
+  String get adminUsers => 'Корисници';
+
+  @override
+  String get adminHidden => 'Скриени';
+
+  @override
+  String get adminAdmins => 'Админи';
+
+  @override
+  String get nothingToModerate => 'Нема ништо за модерирање';
+
+  @override
+  String get newListingsWillShow =>
+      'Новите огласи ќе се прикажат тука кога ќе бидат објавени.';
+
+  @override
+  String get reportsComingSoon => 'Пријавите доаѓаат наскоро';
+
+  @override
+  String get reportsComingSoonBody =>
+      'Пријавите за огласи и продавачи ќе се прегледуваат тука.';
+
+  @override
+  String get noUsersYet => 'Сè уште нема корисници';
+
+  @override
+  String get makeAdmin => 'Направи админ';
+
+  @override
+  String get removeAdmin => 'Отстрани админ';
+
+  @override
+  String get manageRole => 'Управувај со улога';
+
+  @override
+  String roleChangeQuestion(Object action) {
+    return '$action?';
+  }
+
+  @override
+  String userWillGetModerationPowers(Object user) {
+    return '$user ќе добие целосни модераторски дозволи.';
+  }
+
+  @override
+  String userWillLoseAdminAccess(Object user) {
+    return '$user ќе го изгуби админ пристапот.';
+  }
+
+  @override
+  String get youLabel => 'ти';
+
+  @override
+  String get promotedToAdmin => 'Корисникот е направен админ';
+
+  @override
+  String get adminRemoved => 'Админот е отстранет';
+
+  @override
+  String updateRoleFailed(Object error) {
+    return 'Не можевме да ја ажурираме улогата - $error';
+  }
+
+  @override
+  String get adminBadge => 'АДМИН';
+
+  @override
+  String get hide => 'Скриј';
+
+  @override
+  String get unhide => 'Откриј';
+
+  @override
+  String get moderate => 'Модерирај';
+
+  @override
+  String get hideListing => 'Скриј оглас';
+
+  @override
+  String get unhideListing => 'Откриј оглас';
+
+  @override
+  String get listingRestored => 'Огласот е вратен';
+
+  @override
+  String get listingHidden => 'Огласот е скриен';
+
+  @override
+  String get deleteListing => 'Избриши оглас';
+
+  @override
+  String get deleteListingQuestion => 'Да се избрише огласот?';
+
+  @override
+  String listingWillBeRemoved(Object title) {
+    return '\"$title\" ќе биде трајно избришан.';
+  }
+
+  @override
+  String get listingDeleted => 'Огласот е избришан';
+
+  @override
+  String actionFailed(Object error) {
+    return 'Акцијата не успеа - $error';
+  }
 }
