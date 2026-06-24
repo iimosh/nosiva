@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_spacing.dart';
 
-/// Labeled text field with consistent spacing and validation hookup.
 class NosivaTextField extends StatelessWidget {
   const NosivaTextField({
     super.key,
@@ -17,6 +16,7 @@ class NosivaTextField extends StatelessWidget {
     this.maxLines = 1,
     this.maxLength,
     this.onChanged,
+    this.onSubmitted,
     this.textInputAction,
     this.enabled = true,
   });
@@ -32,6 +32,7 @@ class NosivaTextField extends StatelessWidget {
   final int maxLines;
   final int? maxLength;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
   final TextInputAction? textInputAction;
   final bool enabled;
 
@@ -53,6 +54,7 @@ class NosivaTextField extends StatelessWidget {
           maxLines: obscureText ? 1 : maxLines,
           maxLength: maxLength,
           onChanged: onChanged,
+          onFieldSubmitted: onSubmitted,
           textInputAction: textInputAction,
           enabled: enabled,
           style: theme.textTheme.bodyLarge,

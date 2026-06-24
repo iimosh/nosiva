@@ -1,149 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/nosiva_button.dart';
-import '../../../core/widgets/nosiva_chip.dart';
-import '../../../core/widgets/nosiva_text_field.dart';
-import '../../../core/widgets/shimmer_box.dart';
-import '../../../core/widgets/state_views.dart';
-import '../domain/listing_enums.dart';
-import '../domain/listing_filter.dart';
-import 'controllers/feed_controller.dart';
-import 'widgets/listing_card.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/nosiva_button.dart';
+import '../../../../core/widgets/nosiva_chip.dart';
+import '../../../../core/widgets/nosiva_text_field.dart';
+import '../../domain/listing_enums.dart';
+import '../../domain/listing_filter.dart';
+import '../controllers/feed_controller.dart';
 
-/// Full-text search + filters. Drives the shared [feedFilterProvider] so
-/// results reuse the paginated feed query.
-class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key});
+/// The full listing-filter bottom sheet (category, condition, size, style,
+/// location, price). Drives [feedFilterProvider]. Shown from Home.
+class FilterSheet extends ConsumerStatefulWidget {
+  const FilterSheet({super.key});
 
   @override
-  ConsumerState<SearchScreen> createState() => _SearchScreenState();
+  ConsumerState<FilterSheet> createState() => _FilterSheetState();
 }
 
-class _SearchScreenState extends ConsumerState<SearchScreen> {
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _search(String q) {
-    final f = ref.read(feedFilterProvider);
-    ref.read(feedFilterProvider.notifier).state = f.copyWith(query: q);
-  }
-
-  Future<void> _openFilters() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => const _FilterSheet(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final feed = ref.watch(feedControllerProvider);
-    final filter = ref.watch(feedFilterProvider);
-    final activeFilters = _countFilters(filter);
-
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: AppSpacing.md,
-        title: NosivaTextField(
-          hint: 'Search for that dream piece…',
-          controller: _controller,
-          prefixIcon: Icons.search_rounded,
-          textInputAction: TextInputAction.search,
-          onChanged: (v) {
-            if (v.isEmpty) _search('');
-          },
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(8),
-          child: const SizedBox(height: 8),
-        ),
-        actions: [
-          Stack(
-            alignment: Alignment.topRight,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.tune_rounded),
-                onPressed: _openFilters,
-              ),
-              if (activeFilters > 0)
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                      color: AppColors.hotPink, shape: BoxShape.circle),
-                  child: Text('$activeFilters',
-                      style: const TextStyle(color: Colors.white, fontSize: 10)),
-                ),
-            ],
-          ),
-        ],
-      ),
-      body: feed.when(
-        loading: () => const ListingGridSkeleton(),
-        error: (e, _) => ErrorStateView(message: '$e'),
-        data: (listings) {
-          if (listings.isEmpty) {
-            return const EmptyStateView(
-              emoji: '🔍',
-              title: 'No matches, bestie',
-              message: 'Try fewer filters or a different search.',
-            );
-          }
-          return GridView.builder(
-            padding: AppSpacing.screen,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: AppSpacing.md,
-              mainAxisSpacing: AppSpacing.md,
-              childAspectRatio: 0.62,
-            ),
-            itemCount: listings.length,
-            itemBuilder: (_, i) => ListingCard(listing: listings[i]),
-          );
-        },
-      ),
-      floatingActionButton: activeFilters > 0
-          ? FloatingActionButton.extended(
-              backgroundColor: AppColors.hotPink,
-              foregroundColor: Colors.white,
-              icon: const Icon(Icons.clear_rounded),
-              label: const Text('Clear filters'),
-              onPressed: () => ref.read(feedFilterProvider.notifier).state =
-                  ListingFilter(query: filter.query),
-            )
-          : null,
-    );
-  }
-
-  int _countFilters(ListingFilter f) {
-    var n = 0;
-    if (f.category != null) n++;
-    if (f.size != null) n++;
-    if (f.condition != null) n++;
-    if (f.minPrice != null || f.maxPrice != null) n++;
-    if (f.location != null && f.location!.isNotEmpty) n++;
-    if (f.styleTags.isNotEmpty) n++;
-    return n;
-  }
-}
-
-class _FilterSheet extends ConsumerStatefulWidget {
-  const _FilterSheet();
-
-  @override
-  ConsumerState<_FilterSheet> createState() => _FilterSheetState();
-}
-
-class _FilterSheetState extends ConsumerState<_FilterSheet> {
+class _FilterSheetState extends ConsumerState<FilterSheet> {
   late ListingFilter _draft = ref.read(feedFilterProvider);
   final _min = TextEditingController();
   final _max = TextEditingController();

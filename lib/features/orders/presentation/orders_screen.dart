@@ -33,8 +33,8 @@ class OrdersScreen extends ConsumerWidget {
         ),
         body: TabBarView(
           children: [
-            _OrderList(provider: buyerOrdersProvider),
-            _OrderList(provider: sellerOrdersProvider),
+            OrderListView(provider: buyerOrdersProvider),
+            OrderListView(provider: sellerOrdersProvider),
           ],
         ),
       ),
@@ -42,8 +42,9 @@ class OrdersScreen extends ConsumerWidget {
   }
 }
 
-class _OrderList extends ConsumerWidget {
-  const _OrderList({required this.provider});
+
+class OrderListView extends ConsumerWidget {
+  const OrderListView({super.key, required this.provider});
   final FutureProvider<List<Order>> provider;
 
   Color _statusColor(OrderStatus s) => switch (s) {

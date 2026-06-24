@@ -15,13 +15,14 @@ import '../../features/listings/presentation/create_listing_screen.dart';
 import '../../features/listings/presentation/edit_listing_screen.dart';
 import '../../features/listings/presentation/home_screen.dart';
 import '../../features/listings/presentation/listing_detail_screen.dart';
-import '../../features/listings/presentation/search_screen.dart';
+import '../../features/activity/presentation/activity_screen.dart';
 import '../../features/messaging/presentation/chat_screen.dart';
 import '../../features/messaging/presentation/inbox_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/orders/presentation/orders_screen.dart';
 import '../../features/profile/presentation/current_profile_provider.dart';
 import '../../features/profile/presentation/profile_screen.dart';
+import '../../features/profile/presentation/user_profile_screen.dart';
 import '../../shell/main_shell.dart';
 import '../supabase/supabase_providers.dart';
 import 'app_routes.dart';
@@ -104,7 +105,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
-            routes: [GoRoute(path: AppRoutes.search, builder: (_, __) => const SearchScreen())],
+            routes: [GoRoute(path: AppRoutes.activity, builder: (_, __) => const ActivityScreen())],
           ),
           StatefulShellBranch(
             routes: [
@@ -170,6 +171,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.admin,
         parentNavigatorKey: _rootKey,
         builder: (_, __) => const AdminDashboardScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.user}/:id',
+        parentNavigatorKey: _rootKey,
+        builder: (_, state) =>
+            UserProfileScreen(userId: state.pathParameters['id']!),
       ),
     ],
   );

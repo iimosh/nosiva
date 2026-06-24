@@ -16,6 +16,27 @@ final notificationsStreamProvider =
 class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
 
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Notifications'),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                ref.read(notificationsRepositoryProvider).markAllRead(),
+            child: const Text('Mark all read'),
+          ),
+        ],
+      ),
+      body: const NotificationsListView(),
+    );
+  }
+}
+
+class NotificationsListView extends ConsumerWidget {
+  const NotificationsListView({super.key});
+
   IconData _icon(NotificationType type) => switch (type) {
         NotificationType.message => Icons.chat_bubble_outline_rounded,
         NotificationType.offer => Icons.local_offer_outlined,
@@ -28,56 +49,44 @@ class NotificationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifs = ref.watch(notificationsStreamProvider);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notifications'),
-        actions: [
-          TextButton(
-            onPressed: () =>
-                ref.read(notificationsRepositoryProvider).markAllRead(),
-            child: const Text('Mark all read'),
-          ),
-        ],
-      ),
-      body: notifs.when(
-        loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.hotPink)),
-        error: (e, _) => ErrorStateView(message: '$e'),
-        data: (list) {
-          if (list.isEmpty) {
-            return const EmptyStateView(
-              emoji: '🔔',
-              title: 'All caught up!',
-              message: 'New messages, offers and sales will pop up here.',
-            );
-          }
-          return ListView.separated(
-            itemCount: list.length,
-            separatorBuilder: (_, __) => const Divider(indent: 72),
-            itemBuilder: (_, i) {
-              final n = list[i];
-              return ListTile(
-                onTap: () =>
-                    ref.read(notificationsRepositoryProvider).markRead(n.id),
-                leading: CircleAvatar(
-                  backgroundColor:
-                      n.read ? AppColors.surfaceMutedLight : AppColors.blush,
-                  child: Icon(_icon(n.typeEnum), color: AppColors.hotPink),
-                ),
-                title: Text(n.title,
-                    style: TextStyle(
-                        fontWeight:
-                            n.read ? FontWeight.w400 : FontWeight.w700)),
-                subtitle: n.body != null ? Text(n.body!) : null,
-                trailing: n.createdAt != null
-                    ? Text(Formatters.timeAgo(n.createdAt!),
-                        style: Theme.of(context).textTheme.bodySmall)
-                    : null,
-              );
-            },
+    return notifs.when(
+      loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.hotPink)),
+      error: (e, _) => ErrorStateView(message: '$e'),
+      data: (list) {
+        if (list.isEmpty) {
+          return const EmptyStateView(
+            emoji: '🔔',
+            title: 'All caught up!',
+            message: 'New messages, offers and sales will pop up here.',
           );
-        },
-      ),
+        }
+        return ListView.separated(
+          itemCount: list.length,
+          separatorBuilder: (_, __) => const Divider(indent: 72),
+          itemBuilder: (_, i) {
+            final n = list[i];
+            return ListTile(
+              onTap: () =>
+                  ref.read(notificationsRepositoryProvider).markRead(n.id),
+              leading: CircleAvatar(
+                backgroundColor:
+                    n.read ? AppColors.surfaceMutedLight : AppColors.blush,
+                child: Icon(_icon(n.typeEnum), color: AppColors.hotPink),
+              ),
+              title: Text(n.title,
+                  style: TextStyle(
+                      fontWeight:
+                          n.read ? FontWeight.w400 : FontWeight.w700)),
+              subtitle: n.body != null ? Text(n.body!) : null,
+              trailing: n.createdAt != null
+                  ? Text(Formatters.timeAgo(n.createdAt!),
+                      style: Theme.of(context).textTheme.bodySmall)
+                  : null,
+            );
+          },
+        );
+      },
     );
   }
 }
