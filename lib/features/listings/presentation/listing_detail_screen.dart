@@ -22,6 +22,7 @@ import '../../favorites/presentation/favorites_controller.dart';
 import '../../messaging/data/messaging_repository.dart';
 import '../../offers/data/offers_repository.dart';
 import '../../profile/presentation/current_profile_provider.dart';
+import '../../profile/presentation/widgets/follow_button.dart';
 import '../domain/listing.dart';
 import '../domain/listing_enums.dart';
 import '../domain/listing_l10n.dart';
@@ -534,46 +535,56 @@ class _SellerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final seller = listing.seller!;
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: AppRadii.card,
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 26,
-            backgroundColor: AppColors.blush,
-                backgroundImage: seller.avatarUrl != null
-                    ? CachedNetworkImageProvider(seller.avatarUrl!)
-                    : null,
-                child: seller.avatarUrl == null
-                    ? const Icon(Icons.person_outline_rounded,
-                        color: AppColors.hotPink, size: 24)
-                    : null,
-              ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(seller.nameOrHandle, style: theme.textTheme.titleMedium),
-                Row(
-                  children: [
-                    const Icon(Icons.star_rounded,
-                        size: 16, color: AppColors.sun),
-                    const SizedBox(width: 2),
-                    Text(
-                      '${seller.ratingAvg.toStringAsFixed(1)} · ${context.l10n.followersCount(seller.followerCount)}',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ],
+    return InkWell(
+      onTap: () => context.push(AppRoutes.userPath(seller.id)),
+      borderRadius: AppRadii.card,
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest,
+          borderRadius: AppRadii.card,
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 26,
+              backgroundColor: AppColors.blush,
+              backgroundImage: seller.avatarUrl != null
+                  ? CachedNetworkImageProvider(seller.avatarUrl!)
+                  : null,
+              child: seller.avatarUrl == null
+                  ? const Icon(Icons.person_outline_rounded,
+                  color: AppColors.hotPink, size: 24)
+                  : null,
             ),
-          ),
-        ],
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(seller.nameOrHandle, style: theme.textTheme.titleMedium),
+                  Row(
+                    children: [
+                      const Icon(Icons.star_rounded,
+                          size: 16, color: AppColors.sun),
+                      const SizedBox(width: 2),
+                      Flexible(
+                        child: Text(
+                          '${seller.ratingAvg.toStringAsFixed(1)} · ${context.l10n.followersCount(seller.followerCount)}',
+                          style: theme.textTheme.bodySmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            FollowButton(userId: seller.id, expand: false),
+          ],
+        ),
       ),
     );
   }

@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/nosiva_chip.dart';
@@ -13,6 +15,7 @@ import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../listings/presentation/widgets/listing_card.dart';
 import '../data/profile_repository.dart';
 import '../domain/profile.dart';
+import 'widgets/follow_button.dart';
 
 final userProfileProvider = FutureProvider.family<Profile?, String>((ref, id) {
   return ref.watch(profileRepositoryProvider).fetchById(id);
@@ -111,10 +114,14 @@ class _Body extends ConsumerWidget {
             _Stat(
               label: context.l10n.followers,
               value: '${profile.followerCount}',
+              onTap: () =>
+                  context.push(AppRoutes.followListPath(profile.id, tab: 0)),
             ),
             _Stat(
               label: context.l10n.following,
               value: '${profile.followingCount}',
+              onTap: () =>
+                  context.push(AppRoutes.followListPath(profile.id, tab: 1)),
             ),
             _Stat(
               label: context.l10n.rating,
@@ -122,6 +129,8 @@ class _Body extends ConsumerWidget {
             ),
           ],
         ),
+        const SizedBox(height: AppSpacing.md),
+        FollowButton(userId: profile.id),
         if (profile.vibeTags.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           Wrap(
@@ -167,18 +176,27 @@ class _Body extends ConsumerWidget {
 }
 
 class _Stat extends StatelessWidget {
-  const _Stat({required this.label, required this.value});
+  const _Stat({required this.label, required this.value, this.onTap});
   final String label;
   final String value;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      children: [
-        Text(value, style: theme.textTheme.titleLarge),
-        Text(label, style: theme.textTheme.bodySmall),
-      ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadii.md),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+        child: Column(
+          children: [
+            Text(value, style: theme.textTheme.titleLarge),
+            Text(label, style: theme.textTheme.bodySmall),
+          ],
+        ),
+      ),
     );
   }
 }

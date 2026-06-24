@@ -33,34 +33,51 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(currentProfileProvider);
     final isAdmin = ref.watch(isAdminProvider);
+    final isChangingLanguage = ref.watch(languageChangingProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.myProfile),
         actions: [
           IconButton(
-            icon: const Icon(Icons.receipt_long_outlined),
-            tooltip: context.l10n.orders,
-            onPressed: () => context.push(AppRoutes.orders),
-          ),
-          IconButton(
             icon: const Icon(Icons.shopping_bag_outlined),
             tooltip: context.l10n.cart,
             onPressed: () => context.push(AppRoutes.cart),
           ),
-          PopupMenuButton<String>(
-            onSelected: (v) async {
-              if (v == 'admin') context.push(AppRoutes.admin);
-              if (v == 'lang_en') {
+          IconButton(
+            icon: const Icon(Icons.favorite_border),
+            tooltip: context.l10n.orders,
+            onPressed: () => context.push(AppRoutes.favorites),
+          ),
+          IconButton(
+            icon: const Icon(Icons.language),
+            onPressed: isChangingLanguage ? null : () async {
+              ref.read(languageChangingProvider.notifier).state  = true;
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              var currentLanguage = await ref
+                  .read(localeControllerProvider.notifier)
+                  .getCurrentLocale();
+
+              if (currentLanguage == Locale('en')) {
+                await ref
+                    .read(localeControllerProvider.notifier)
+                    .setLocale(LocaleController.macedonian);
+
+
+              }
+              else if (currentLanguage == Locale('mk')) {
                 await ref
                     .read(localeControllerProvider.notifier)
                     .setLocale(LocaleController.english);
               }
-              if (v == 'lang_mk') {
-                await ref
-                    .read(localeControllerProvider.notifier)
-                    .setLocale(LocaleController.macedonian);
-              }
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.languageChanged)));
+              ref.read(languageChangingProvider.notifier).state = false;
+            },
+          ),
+          PopupMenuButton<String>(
+            onSelected: (v) async {
+              if (v == 'admin') context.push(AppRoutes.admin);
               if (v == 'signout') {
                 await ref.read(authControllerProvider.notifier).signOut();
               }
@@ -69,22 +86,17 @@ class ProfileScreen extends ConsumerWidget {
               if (isAdmin)
                 PopupMenuItem(value: 'admin', child: Text(context.l10n.admin)),
               PopupMenuItem(
-                value: 'lang_en',
-                child: Text('${context.l10n.language}: ${context.l10n.english}'),
+                value: 'signout',
+                child: Text(context.l10n.signOut),
               ),
-              PopupMenuItem(
-                value: 'lang_mk',
-                child:
-                    Text('${context.l10n.language}: ${context.l10n.macedonian}'),
-              ),
-              PopupMenuItem(value: 'signout', child: Text(context.l10n.signOut)),
             ],
           ),
         ],
       ),
       body: profileAsync.when(
         loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.hotPink)),
+          child: CircularProgressIndicator(color: AppColors.hotPink),
+        ),
         error: (e, _) => ErrorStateView(message: '$e'),
         data: (profile) {
           if (profile == null) {
@@ -99,6 +111,7 @@ class ProfileScreen extends ConsumerWidget {
 
 class _ProfileBody extends ConsumerWidget {
   const _ProfileBody({required this.profile});
+
   final Profile profile;
 
   @override
@@ -130,9 +143,11 @@ class _ProfileBody extends ConsumerWidget {
                   Row(
                     children: [
                       Flexible(
-                        child: Text(profile.nameOrHandle,
-                            style: theme.textTheme.headlineSmall,
-                            overflow: TextOverflow.ellipsis),
+                        child: Text(
+                          profile.nameOrHandle,
+                          style: theme.textTheme.headlineSmall,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       if (profile.isAdmin) ...[
                         const SizedBox(width: AppSpacing.xs),
@@ -146,7 +161,10 @@ class _ProfileBody extends ConsumerWidget {
                       children: [
                         const Icon(Icons.place_outlined, size: 14),
                         const SizedBox(width: 2),
-                        Text(profile.location!, style: theme.textTheme.bodySmall),
+                        Text(
+                          profile.location!,
+                          style: theme.textTheme.bodySmall,
+                        ),
                       ],
                     ),
                 ],
@@ -162,11 +180,22 @@ class _ProfileBody extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _Stat(label: context.l10n.followers, value: '${profile.followerCount}'),
-            _Stat(label: context.l10n.following, value: '${profile.followingCount}'),
             _Stat(
-                label: context.l10n.rating,
-                value: '${profile.ratingAvg.toStringAsFixed(1)} ⭐'),
+              label: context.l10n.followers,
+              value: '${profile.followerCount}',
+              onTap: () =>
+                  context.push(AppRoutes.followListPath(profile.id, tab: 0)),
+            ),
+            _Stat(
+              label: context.l10n.following,
+              value: '${profile.followingCount}',
+              onTap: () =>
+                  context.push(AppRoutes.followListPath(profile.id, tab: 1)),
+            ),
+            _Stat(
+              label: context.l10n.rating,
+              value: profile.ratingAvg.toStringAsFixed(1),
+            ),
           ],
         ),
         if (profile.isAdmin) ...[
@@ -194,7 +223,10 @@ class _ProfileBody extends ConsumerWidget {
         Text(context.l10n.myCloset, style: theme.textTheme.titleLarge),
         const SizedBox(height: AppSpacing.sm),
         myListings.when(
-          loading: () => const SizedBox(height: 200, child: ListingGridSkeleton(itemCount: 2)),
+          loading: () => const SizedBox(
+            height: 200,
+            child: ListingGridSkeleton(itemCount: 2),
+          ),
           error: (e, _) => ErrorStateView(message: '$e'),
           data: (listings) {
             if (listings.isEmpty) {
@@ -224,23 +256,32 @@ class _ProfileBody extends ConsumerWidget {
 }
 
 class _Stat extends StatelessWidget {
-  const _Stat({required this.label, required this.value});
+  const _Stat({required this.label, required this.value, this.onTap});
+
   final String label;
   final String value;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      children: [
-        Text(value, style: theme.textTheme.titleLarge),
-        Text(label, style: theme.textTheme.bodySmall),
-      ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadii.md),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+        child: Column(
+          children: [
+            Text(value, style: theme.textTheme.titleLarge),
+            Text(label, style: theme.textTheme.bodySmall),
+          ],
+        ),
+      ),
     );
   }
 }
 
-/// Small gradient "ADMIN" pill shown next to an admin's name.
 class _AdminBadge extends StatelessWidget {
   const _AdminBadge();
 
@@ -265,9 +306,9 @@ class _AdminBadge extends StatelessWidget {
   }
 }
 
-/// Prominent entry into the admin dashboard (admins only).
 class _AdminEntryCard extends StatelessWidget {
   const _AdminEntryCard({required this.onTap});
+
   final VoidCallback onTap;
 
   @override
@@ -290,16 +331,18 @@ class _AdminEntryCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(context.l10n.adminDashboard,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium
-                          ?.copyWith(color: Colors.white)),
-                  Text(context.l10n.adminDashboardSubtitle,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Colors.white70)),
+                  Text(
+                    context.l10n.adminDashboard,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium?.copyWith(color: Colors.white),
+                  ),
+                  Text(
+                    context.l10n.adminDashboardSubtitle,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.white70),
+                  ),
                 ],
               ),
             ),

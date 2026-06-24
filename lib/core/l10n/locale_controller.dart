@@ -20,11 +20,19 @@ class LocaleController extends Notifier<Locale> {
     state = _localeFromCode(code);
   }
 
+  Future<Locale> getCurrentLocale() async {
+    final prefs = await SharedPreferences.getInstance();
+    var code = prefs.getString(_prefsKey);
+    code ??= 'eng';
+    return _localeFromCode(code);
+  }
+
   Future<void> setLocale(Locale locale) async {
     state = locale;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefsKey, locale.languageCode);
   }
+
 
   Locale _localeFromCode(String code) {
     return switch (code) {

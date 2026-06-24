@@ -38,6 +38,16 @@ class MessagingRepository {
     return Conversation.fromJson(created);
   }
 
+  Future<Conversation> fetchConversation(String id) async {
+    final data = await _client
+        .from(_conversations)
+        .select('*, buyer:profiles!conversations_buyer_id_fkey(*), '
+            'seller:profiles!conversations_seller_id_fkey(*)')
+        .eq('id', id)
+        .single();
+    return Conversation.fromJson(data);
+  }
+
   Future<List<Conversation>> fetchConversations() async {
     final uid = _client.auth.currentUser!.id;
     final data = await _client

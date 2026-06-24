@@ -20,6 +20,7 @@ import '../../features/messaging/presentation/inbox_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/orders/presentation/orders_screen.dart';
 import '../../features/profile/presentation/current_profile_provider.dart';
+import '../../features/profile/presentation/follow_list_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/user_profile_screen.dart';
 import '../../shell/main_shell.dart';
@@ -169,6 +170,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootKey,
         builder: (_, state) =>
             UserProfileScreen(userId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '${AppRoutes.followList}/:id',
+        parentNavigatorKey: _rootKey,
+        builder: (_, state) => FollowListScreen(
+          userId: state.pathParameters['id']!,
+          initialTab:
+              state.uri.queryParameters['tab'] == 'following' ? 1 : 0,
+        ),
       ),
     ],
   );

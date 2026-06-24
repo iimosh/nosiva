@@ -2,6 +2,7 @@
   "@@locale": "mk",
   "appName": "Nosiva",
   "language": "Јазик",
+  "languageChanged": "Јазикот е променет",
   "english": "Англиски",
   "macedonian": "Македонски",
   "systemDefault": "Системски јазик",
