@@ -58,10 +58,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _openFilters() => showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        builder: (_) => const FilterSheet(),
-      );
+    context: context,
+    isScrollControlled: true,
+    builder: (_) => const FilterSheet(),
+  );
 
   int _countFilters(ListingFilter f) {
     var n = 0;
@@ -82,160 +82,235 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final activeFilters = _countFilters(filter);
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: AppSpacing.md,
-        title: Text(
-          'Nosiva',
-          style: theme.textTheme.headlineMedium
-              ?.copyWith(color: AppColors.berry, fontWeight: FontWeight.w700),
-        ),
-        actions: [
-          IconButton(
-            tooltip: context.l10n.toggleTheme,
-            icon: Icon(themeMode == ThemeMode.dark
-                ? Icons.light_mode_rounded
-                : Icons.dark_mode_rounded),
-            onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          titleSpacing: AppSpacing.md,
+          title: Text(
+            'Nosiva',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              color: AppColors.berry,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.shopping_bag_outlined),
-            tooltip: context.l10n.cart,
-            onPressed: () => context.push(AppRoutes.cart),
-          ),
-          IconButton(
-            tooltip: context.l10n.favorites,
-            icon: const Icon(Icons.favorite_border_rounded),
-            onPressed: () => context.push(AppRoutes.favorites),
-          ),
-          Stack(
-            alignment: Alignment.topRight,
-            children: [
-              IconButton(
-                tooltip: context.l10n.filters,
-                icon: const Icon(Icons.tune_rounded),
-                onPressed: _openFilters,
+          actions: [
+            IconButton(
+              tooltip: context.l10n.toggleTheme,
+              icon: Icon(
+                themeMode == ThemeMode.dark
+                    ? Icons.light_mode_rounded
+                    : Icons.dark_mode_rounded,
               ),
-              if (activeFilters > 0)
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                      color: AppColors.hotPink, shape: BoxShape.circle),
-                  child: Text('$activeFilters',
-                      style:
-                          const TextStyle(color: Colors.white, fontSize: 10)),
-                ),
-            ],
-          ),
-          const SizedBox(width: AppSpacing.xs),
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.xs),
-            child: NosivaTextField(
-              hint: context.l10n.homeSearchHint,
-              controller: _search,
-              prefixIcon: Icons.search_rounded,
-              textInputAction: TextInputAction.search,
-              onSubmitted: _setQuery,
-              onChanged: (v) {
-                if (v.isEmpty) _setQuery('');
-              },
+              onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
             ),
-          ),
-          _CategoryBar(
-            selected: filter.category,
-            onSelect: (cat) {
-              final notifier = ref.read(feedFilterProvider.notifier);
-              notifier.state = filter.category == cat
-                  ? filter.copyWith(clearCategory: true)
-                  : filter.copyWith(category: cat);
-            },
-          ),
-          _PeopleRail(query: filter.query ?? ''),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.xs,
-              AppSpacing.md,
-              0,
+            IconButton(
+              icon: const Icon(Icons.shopping_bag_outlined),
+              tooltip: context.l10n.cart,
+              onPressed: () => context.push(AppRoutes.cart),
             ),
-            child: Row(
+            IconButton(
+              tooltip: context.l10n.favorites,
+              icon: const Icon(Icons.favorite_border_rounded),
+              onPressed: () => context.push(AppRoutes.favorites),
+            ),
+            Stack(
+              alignment: Alignment.topRight,
               children: [
-                Text(
-                  filter.query?.isNotEmpty == true
-                      ? context.l10n.browseItems
-                      : context.l10n.latestListings,
-                  style: theme.textTheme.titleLarge
-                      ?.copyWith(color: AppColors.plum),
+                IconButton(
+                  tooltip: context.l10n.filters,
+                  icon: const Icon(Icons.tune_rounded),
+                  onPressed: _openFilters,
                 ),
-                const Spacer(),
                 if (activeFilters > 0)
-                  Text(
-                    '$activeFilters ${context.l10n.filters.toLowerCase()}',
-                    style: theme.textTheme.bodySmall,
+                  Container(
+                    margin: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: AppColors.hotPink,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '$activeFilters',
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
+                    ),
                   ),
               ],
             ),
+            const SizedBox(width: AppSpacing.xs),
+          ],
+          bottom: TabBar(
+            labelColor: AppColors.hotPink,
+            unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+            indicatorColor: AppColors.hotPink,
+            tabs: [
+              Tab(text: context.l10n.forYou),
+              Tab(text: context.l10n.following),
+            ],
           ),
-          Expanded(
-            child: RefreshIndicator(
-              color: AppColors.hotPink,
-              onRefresh: () =>
-                  ref.read(feedControllerProvider.notifier).refresh(),
-              child: feed.when(
-                loading: () => const ListingGridSkeleton(),
-                error: (e, _) => ErrorStateView(
-                  message: '$e',
-                  onRetry: () =>
-                      ref.read(feedControllerProvider.notifier).refresh(),
+        ),
+        body: TabBarView(
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md,
+                    AppSpacing.xs,
+                    AppSpacing.md,
+                    AppSpacing.xs,
+                  ),
+                  child: NosivaTextField(
+                    hint: context.l10n.homeSearchHint,
+                    controller: _search,
+                    prefixIcon: Icons.search_rounded,
+                    textInputAction: TextInputAction.search,
+                    onSubmitted: _setQuery,
+                    onChanged: (v) {
+                      if (v.isEmpty) _setQuery('');
+                    },
+                  ),
                 ),
-                data: (listings) {
-                  if (listings.isEmpty) {
-                    return ListView(
-                      children: [
-                        const SizedBox(height: 80),
-                        EmptyStateView(
-                          icon: Icons.inventory_2_outlined,
-                          title: context.l10n.nothingHereYet,
-                          message: context.l10n.nothingHereYetMessage,
+                _CategoryBar(
+                  selected: filter.category,
+                  onSelect: (cat) {
+                    final notifier = ref.read(feedFilterProvider.notifier);
+                    notifier.state = filter.category == cat
+                        ? filter.copyWith(clearCategory: true)
+                        : filter.copyWith(category: cat);
+                  },
+                ),
+                _PeopleRail(query: filter.query ?? ''),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md,
+                    AppSpacing.xs,
+                    AppSpacing.md,
+                    0,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        filter.query?.isNotEmpty == true
+                            ? context.l10n.browseItems
+                            : context.l10n.latestListings,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: AppColors.plum,
                         ),
-                      ],
-                    );
-                  }
-                  return GridView.builder(
-                    controller: _scroll,
-                    padding: AppSpacing.screen,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: AppSpacing.md,
-                      mainAxisSpacing: AppSpacing.md,
-                      childAspectRatio: 0.54,
+                      ),
+                      const Spacer(),
+                      if (activeFilters > 0)
+                        Text(
+                          '$activeFilters ${context.l10n.filters.toLowerCase()}',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: RefreshIndicator(
+                    color: AppColors.hotPink,
+                    onRefresh: () =>
+                        ref.read(feedControllerProvider.notifier).refresh(),
+                    child: feed.when(
+                      loading: () => const ListingGridSkeleton(),
+                      error: (e, _) => ErrorStateView(
+                        message: '$e',
+                        onRetry: () =>
+                            ref.read(feedControllerProvider.notifier).refresh(),
+                      ),
+                      data: (listings) {
+                        if (listings.isEmpty) {
+                          return ListView(
+                            children: [
+                              const SizedBox(height: 80),
+                              EmptyStateView(
+                                icon: Icons.inventory_2_outlined,
+                                title: context.l10n.nothingHereYet,
+                                message: context.l10n.nothingHereYetMessage,
+                              ),
+                            ],
+                          );
+                        }
+                        return GridView.builder(
+                          controller: _scroll,
+                          padding: AppSpacing.screen,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: AppSpacing.md,
+                                mainAxisSpacing: AppSpacing.md,
+                                childAspectRatio: 0.54,
+                              ),
+                          itemCount: listings.length,
+                          itemBuilder: (_, i) =>
+                              ListingCard(listing: listings[i]),
+                        );
+                      },
                     ),
-                    itemCount: listings.length,
-                    itemBuilder: (_, i) => ListingCard(listing: listings[i]),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+            const _FollowingFeed(),
+          ],
+        ),
+        floatingActionButton: activeFilters > 0
+            ? FloatingActionButton.extended(
+                backgroundColor: AppColors.plum,
+                foregroundColor: Colors.white,
+                icon: const Icon(Icons.clear_rounded),
+                label: Text(context.l10n.clearFilters),
+                onPressed: () => ref.read(feedFilterProvider.notifier).state =
+                    ListingFilter(query: filter.query),
+              )
+            : null,
       ),
-      floatingActionButton: activeFilters > 0
-          ? FloatingActionButton.extended(
-              backgroundColor: AppColors.plum,
-              foregroundColor: Colors.white,
-              icon: const Icon(Icons.clear_rounded),
-              label: Text(context.l10n.clearFilters),
-              onPressed: () => ref.read(feedFilterProvider.notifier).state =
-                  ListingFilter(query: filter.query),
-            )
-          : null,
+    );
+  }
+}
+
+class _FollowingFeed extends ConsumerWidget {
+  const _FollowingFeed();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final feed = ref.watch(followingFeedProvider);
+    return RefreshIndicator(
+      color: AppColors.hotPink,
+      onRefresh: () async => ref.invalidate(followingFeedProvider),
+      child: feed.when(
+        loading: () => const ListingGridSkeleton(),
+        error: (e, _) => ErrorStateView(
+          message: '$e',
+          onRetry: () => ref.invalidate(followingFeedProvider),
+        ),
+        data: (listings) {
+          if (listings.isEmpty) {
+            return ListView(
+              children: [
+                const SizedBox(height: 80),
+                EmptyStateView(
+                  icon: Icons.group_outlined,
+                  title: context.l10n.nothingHereYet,
+                  message: context.l10n.nothingHereYetMessage,
+                ),
+              ],
+            );
+          }
+          return GridView.builder(
+            padding: AppSpacing.screen,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: AppSpacing.md,
+              mainAxisSpacing: AppSpacing.md,
+              childAspectRatio: 0.54,
+            ),
+            itemCount: listings.length,
+            itemBuilder: (_, i) => ListingCard(listing: listings[i]),
+          );
+        },
+      ),
     );
   }
 }
@@ -247,7 +322,8 @@ class _PeopleRail extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (query.trim().isEmpty) return const SizedBox.shrink();
-    final people = ref.watch(peopleSearchProvider(query)).valueOrNull ?? const [];
+    final people =
+        ref.watch(peopleSearchProvider(query)).valueOrNull ?? const [];
     if (people.isEmpty) return const SizedBox.shrink();
 
     return Column(
@@ -255,9 +331,15 @@ class _PeopleRail extends ConsumerWidget {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md, AppSpacing.xs, AppSpacing.md, 0),
-          child: Text(context.l10n.people,
-              style: Theme.of(context).textTheme.titleMedium),
+            AppSpacing.md,
+            AppSpacing.xs,
+            AppSpacing.md,
+            0,
+          ),
+          child: Text(
+            context.l10n.people,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
         ),
         SizedBox(
           height: 96,
@@ -294,8 +376,11 @@ class _PersonCard extends StatelessWidget {
                   ? CachedNetworkImageProvider(person.avatarUrl!)
                   : null,
               child: person.avatarUrl == null
-                  ? const Icon(Icons.person_outline_rounded,
-                      color: AppColors.hotPink, size: 24)
+                  ? const Icon(
+                      Icons.person_outline_rounded,
+                      color: AppColors.hotPink,
+                      size: 24,
+                    )
                   : null,
             ),
             const SizedBox(height: 4),
