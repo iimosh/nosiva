@@ -1352,6 +1352,12 @@ abstract class AppLocalizations {
   /// **'Following'**
   String get following;
 
+  /// No description provided for @forYou.
+  ///
+  /// In en, this message translates to:
+  /// **'For You'**
+  String get forYou;
+
   /// No description provided for @rating.
   ///
   /// In en, this message translates to:

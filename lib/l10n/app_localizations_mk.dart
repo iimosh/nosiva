@@ -679,6 +679,9 @@ class AppLocalizationsMk extends AppLocalizations {
   String get following => 'Следи';
 
   @override
+  String get forYou => 'За тебе';
+
+  @override
   String get rating => 'Оцена';
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../profile/presentation/follow_controller.dart';
 import '../../data/listings_repository.dart';
 import '../../domain/listing.dart';
 import '../../domain/listing_filter.dart';
@@ -51,3 +52,9 @@ class FeedController extends AsyncNotifier<List<Listing>> {
 
 final feedControllerProvider =
     AsyncNotifierProvider<FeedController, List<Listing>>(FeedController.new);
+
+final followingFeedProvider = FutureProvider<List<Listing>>((ref) {
+  final ids = ref.watch(followControllerProvider).valueOrNull ?? const <String>{};
+  if (ids.isEmpty) return Future.value(const <Listing>[]);
+  return ref.watch(listingsRepositoryProvider).fetchBySellers(ids.toList());
+});

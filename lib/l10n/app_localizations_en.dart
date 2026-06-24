@@ -676,6 +676,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get following => 'Following';
 
   @override
+  String get forYou => 'For You';
+
+  @override
   String get rating => 'Rating';
 
   @override

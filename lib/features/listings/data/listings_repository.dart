@@ -29,6 +29,9 @@ class ListingsRepository {
 
     var query = _client.from(_table).select(_select).eq('status', 'active');
 
+    final uid = _client.auth.currentUser?.id;
+    if (uid != null) query = query.neq('seller_id', uid);
+
     if (filter.category != null) {
       query = query.eq('category', filter.category!.value);
     }
@@ -63,6 +66,20 @@ class ListingsRepository {
     final data =
         await _client.from(_table).select(_select).eq('id', id).single();
     return Listing.fromJson(data);
+  }
+
+  /// Active listings from a set of sellers (the "Following" home feed).
+  Future<List<Listing>> fetchBySellers(List<String> sellerIds,
+      {int limit = 50}) async {
+    if (sellerIds.isEmpty) return [];
+    final data = await _client
+        .from(_table)
+        .select(_select)
+        .eq('status', 'active')
+        .inFilter('seller_id', sellerIds)
+        .order('created_at', ascending: false)
+        .limit(limit);
+    return data.map<Listing>((e) => Listing.fromJson(e)).toList();
   }
 
   Future<List<Listing>> fetchBySeller(String sellerId) async {

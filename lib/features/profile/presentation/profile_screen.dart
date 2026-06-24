@@ -51,45 +51,37 @@ class ProfileScreen extends ConsumerWidget {
           ),
           IconButton(
             icon: const Icon(Icons.language),
-            onPressed: isChangingLanguage ? null : () async {
-              ref.read(languageChangingProvider.notifier).state  = true;
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              var currentLanguage = await ref
-                  .read(localeControllerProvider.notifier)
-                  .getCurrentLocale();
+            onPressed: isChangingLanguage
+                ? null
+                : () async {
+                    ref.read(languageChangingProvider.notifier).state = true;
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    var currentLanguage = await ref
+                        .read(localeControllerProvider.notifier)
+                        .getCurrentLocale();
 
-              if (currentLanguage == Locale('en')) {
-                await ref
-                    .read(localeControllerProvider.notifier)
-                    .setLocale(LocaleController.macedonian);
-
-
-              }
-              else if (currentLanguage == Locale('mk')) {
-                await ref
-                    .read(localeControllerProvider.notifier)
-                    .setLocale(LocaleController.english);
-              }
-              if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.languageChanged)));
-              ref.read(languageChangingProvider.notifier).state = false;
-            },
+                    if (currentLanguage == Locale('en')) {
+                      await ref
+                          .read(localeControllerProvider.notifier)
+                          .setLocale(LocaleController.macedonian);
+                    } else if (currentLanguage == Locale('mk')) {
+                      await ref
+                          .read(localeControllerProvider.notifier)
+                          .setLocale(LocaleController.english);
+                    }
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(context.l10n.languageChanged)),
+                    );
+                    ref.read(languageChangingProvider.notifier).state = false;
+                  },
           ),
-          PopupMenuButton<String>(
-            onSelected: (v) async {
-              if (v == 'admin') context.push(AppRoutes.admin);
-              if (v == 'signout') {
-                await ref.read(authControllerProvider.notifier).signOut();
-              }
+          IconButton(
+            tooltip: context.l10n.signOut,
+            onPressed: () async {
+              await ref.read(authControllerProvider.notifier).signOut();
             },
-            itemBuilder: (_) => [
-              if (isAdmin)
-                PopupMenuItem(value: 'admin', child: Text(context.l10n.admin)),
-              PopupMenuItem(
-                value: 'signout',
-                child: Text(context.l10n.signOut),
-              ),
-            ],
+            icon: Icon(Icons.logout),
           ),
         ],
       ),
@@ -131,8 +123,11 @@ class _ProfileBody extends ConsumerWidget {
                   ? CachedNetworkImageProvider(profile.avatarUrl!)
                   : null,
               child: profile.avatarUrl == null
-                  ? const Icon(Icons.person_outline_rounded,
-                      color: AppColors.hotPink, size: 32)
+                  ? const Icon(
+                      Icons.person_outline_rounded,
+                      color: AppColors.hotPink,
+                      size: 32,
+                    )
                   : null,
             ),
             const SizedBox(width: AppSpacing.md),
@@ -270,7 +265,9 @@ class _Stat extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppRadii.md),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.xs,
+        ),
         child: Column(
           children: [
             Text(value, style: theme.textTheme.titleLarge),
