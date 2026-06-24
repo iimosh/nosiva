@@ -57,7 +57,7 @@ class NotificationsListView extends ConsumerWidget {
       data: (list) {
         if (list.isEmpty) {
           return EmptyStateView(
-            emoji: '🔔',
+            icon: Icons.notifications_none_rounded,
             title: context.l10n.allCaughtUp,
             message: context.l10n.notificationsEmptyMessage,
           );

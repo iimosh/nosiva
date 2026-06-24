@@ -14,7 +14,7 @@ class CurrentProfile extends AsyncNotifier<Profile?> {
     final existing = await repo.fetchById(user.id);
     if (existing != null) return existing;
 
-    final emailLocal = user.email?.split('@').first ?? 'bestie';
+    final emailLocal = user.email?.split('@').first ?? 'user';
     final username =
         '${_slug(emailLocal)}${user.id.substring(0, 4)}';
     return repo.createInitial(id: user.id, username: username);

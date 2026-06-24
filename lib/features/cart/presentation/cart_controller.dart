@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../listings/domain/listing.dart';
 
 /// Local, in-memory cart. Since listings are unique items, the cart is a set
-/// of listings keyed by id. (Persisting across sessions is a TODO.)
+/// of listings keyed by id.
 class CartController extends Notifier<List<Listing>> {
   @override
   List<Listing> build() => [];

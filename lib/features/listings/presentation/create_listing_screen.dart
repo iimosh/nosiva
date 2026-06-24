@@ -228,6 +228,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _SectionTitle(context.l10n.photos),
                 _PhotoStrip(
                   images: _images,
                   onAdd: _showPickerSheet,
@@ -237,6 +238,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   },
                 ),
                 const SizedBox(height: AppSpacing.lg),
+                _SectionTitle(context.l10n.basicInfo),
                 NosivaTextField(
                   label: context.l10n.title,
                   hint: context.l10n.listingTitleHint,
@@ -254,6 +256,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   onChanged: (_) => _syncDirty(),
                 ),
                 const SizedBox(height: AppSpacing.md),
+                _SectionTitle(context.l10n.itemDetails),
                 _Label(context.l10n.category),
                 Wrap(
                   spacing: AppSpacing.xs,
@@ -323,7 +326,26 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                     ),
                   ],
                 ),
+                _Label(context.l10n.styleTags),
+                Wrap(
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  children: [
+                    for (final tag in kStyleTags)
+                      NosivaChip(
+                        label: localizedStyleTag(tag, context.l10n),
+                        selected: _styleTags.contains(tag),
+                        onTap: () {
+                          setState(() => _styleTags.contains(tag)
+                              ? _styleTags.remove(tag)
+                              : _styleTags.add(tag));
+                          _syncDirty();
+                        },
+                      ),
+                  ],
+                ),
                 const SizedBox(height: AppSpacing.md),
+                _SectionTitle(context.l10n.pricingAndLocation),
                 NosivaTextField(
                   label: context.l10n.location,
                   hint: context.l10n.cityCountry,
@@ -348,25 +370,6 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                         ),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                _Label(context.l10n.styleTags),
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    for (final tag in kStyleTags)
-                      NosivaChip(
-                        label: localizedStyleTag(tag, context.l10n),
-                        selected: _styleTags.contains(tag),
-                        onTap: () {
-                          setState(() => _styleTags.contains(tag)
-                              ? _styleTags.remove(tag)
-                              : _styleTags.add(tag));
-                          _syncDirty();
-                        },
-                      ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
                 NosivaTextField(
                   label: context.l10n.priceUsd,
                   hint: context.l10n.priceHint,
@@ -389,6 +392,23 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Text(
+        text,
+        style: theme.textTheme.titleLarge?.copyWith(color: AppColors.berry),
       ),
     );
   }

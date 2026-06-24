@@ -88,7 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: Text(
           'Nosiva',
           style: theme.textTheme.headlineMedium
-              ?.copyWith(color: AppColors.hotPink, fontWeight: FontWeight.w700),
+              ?.copyWith(color: AppColors.berry, fontWeight: FontWeight.w700),
         ),
         actions: [
           IconButton(
@@ -152,6 +152,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             },
           ),
           _PeopleRail(query: filter.query ?? ''),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.xs,
+              AppSpacing.md,
+              0,
+            ),
+            child: Row(
+              children: [
+                Text(
+                  filter.query?.isNotEmpty == true
+                      ? context.l10n.browseItems
+                      : context.l10n.latestListings,
+                  style: theme.textTheme.titleLarge
+                      ?.copyWith(color: AppColors.plum),
+                ),
+                const Spacer(),
+                if (activeFilters > 0)
+                  Text(
+                    '$activeFilters ${context.l10n.filters.toLowerCase()}',
+                    style: theme.textTheme.bodySmall,
+                  ),
+              ],
+            ),
+          ),
           Expanded(
             child: RefreshIndicator(
               color: AppColors.hotPink,
@@ -170,7 +195,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         const SizedBox(height: 80),
                         EmptyStateView(
-                          emoji: '🛍️',
+                          icon: Icons.inventory_2_outlined,
                           title: context.l10n.nothingHereYet,
                           message: context.l10n.nothingHereYetMessage,
                         ),
@@ -185,7 +210,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       crossAxisCount: 2,
                       crossAxisSpacing: AppSpacing.md,
                       mainAxisSpacing: AppSpacing.md,
-                      childAspectRatio: 0.62,
+                      childAspectRatio: 0.54,
                     ),
                     itemCount: listings.length,
                     itemBuilder: (_, i) => ListingCard(listing: listings[i]),
@@ -264,7 +289,8 @@ class _PersonCard extends StatelessWidget {
                   ? CachedNetworkImageProvider(person.avatarUrl!)
                   : null,
               child: person.avatarUrl == null
-                  ? const Text('💁‍♀️', style: TextStyle(fontSize: 22))
+                  ? const Icon(Icons.person_outline_rounded,
+                      color: AppColors.hotPink, size: 24)
                   : null,
             ),
             const SizedBox(height: 4),

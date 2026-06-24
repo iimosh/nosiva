@@ -33,7 +33,7 @@ class InboxScreen extends ConsumerWidget {
         data: (list) {
           if (list.isEmpty) {
             return EmptyStateView(
-              emoji: '💬',
+              icon: Icons.chat_bubble_outline_rounded,
               title: context.l10n.noMessages,
               message: context.l10n.noMessagesMessage,
             );
@@ -49,7 +49,8 @@ class InboxScreen extends ConsumerWidget {
                 leading: CircleAvatar(
                   radius: 26,
                   backgroundColor: AppColors.blush,
-                  child: const Text('💁‍♀️', style: TextStyle(fontSize: 22)),
+                  child: const Icon(Icons.person_outline_rounded,
+                      color: AppColors.hotPink),
                 ),
                 title: Text(other?.nameOrHandle ?? context.l10n.nosivaUser),
                 subtitle: Text(c.lastMessage ?? context.l10n.sayHi,

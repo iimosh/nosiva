@@ -89,7 +89,7 @@ class _DetailBody extends ConsumerWidget {
                     child: Text(
                       Formatters.price(listing.price),
                       style: theme.textTheme.headlineMedium
-                          ?.copyWith(color: AppColors.hotPink, fontSize: 30),
+                          ?.copyWith(color: AppColors.berry, fontSize: 30),
                     ),
                   ),
                   _ConditionBadge(condition: listing.conditionEnum),
@@ -210,7 +210,8 @@ class _GalleryState extends ConsumerState<_Gallery> {
                   ? Container(
                       color: AppColors.blush,
                       alignment: Alignment.center,
-                      child: const Text('👗', style: TextStyle(fontSize: 72)),
+                      child: const Icon(Icons.checkroom_outlined,
+                          color: AppColors.hotPink, size: 72),
                     )
                   : PageView.builder(
                       controller: _controller,
@@ -544,13 +545,14 @@ class _SellerCard extends StatelessWidget {
           CircleAvatar(
             radius: 26,
             backgroundColor: AppColors.blush,
-            backgroundImage: seller.avatarUrl != null
-                ? CachedNetworkImageProvider(seller.avatarUrl!)
-                : null,
-            child: seller.avatarUrl == null
-                ? const Text('💁‍♀️', style: TextStyle(fontSize: 22))
-                : null,
-          ),
+                backgroundImage: seller.avatarUrl != null
+                    ? CachedNetworkImageProvider(seller.avatarUrl!)
+                    : null,
+                child: seller.avatarUrl == null
+                    ? const Icon(Icons.person_outline_rounded,
+                        color: AppColors.hotPink, size: 24)
+                    : null,
+              ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
@@ -570,13 +572,6 @@ class _SellerCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          // TODO: wire follow/unfollow
-          NosivaButton(
-            label: context.l10n.follow,
-            variant: NosivaButtonVariant.secondary,
-            expand: false,
-            onPressed: () {},
           ),
         ],
       ),
@@ -649,7 +644,7 @@ class _MiniListingCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(Formatters.price(listing.price),
                 style: theme.textTheme.titleMedium
-                    ?.copyWith(color: AppColors.hotPink)),
+                    ?.copyWith(color: AppColors.berry)),
             Text(listing.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
