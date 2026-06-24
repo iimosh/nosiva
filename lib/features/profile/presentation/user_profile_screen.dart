@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
@@ -12,6 +11,7 @@ import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../listings/presentation/widgets/listing_card.dart';
 import '../data/profile_repository.dart';
 import '../domain/profile.dart';
+import 'widgets/follow_button.dart';
 
 final userProfileProvider = FutureProvider.family<Profile?, String>((ref, id) {
   return ref.watch(profileRepositoryProvider).fetchById(id);
@@ -111,12 +111,7 @@ class _Body extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        // TODO: wire follow/unfollow
-        NosivaButton(
-          label: 'Follow',
-          variant: NosivaButtonVariant.gradient,
-          onPressed: () {},
-        ),
+        FollowButton(userId: profile.id),
         if (profile.vibeTags.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           Wrap(

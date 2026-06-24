@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
@@ -9,15 +12,19 @@ import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../data/messaging_repository.dart';
+import '../domain/conversation.dart';
 import '../domain/message.dart';
 
-/// Realtime messages for a conversation (oldest→newest).
+final conversationProvider =
+    FutureProvider.family<Conversation, String>((ref, id) {
+  return ref.watch(messagingRepositoryProvider).fetchConversation(id);
+});
+
 final messagesStreamProvider =
     StreamProvider.family<List<Message>, String>((ref, conversationId) {
   return ref.watch(messagingRepositoryProvider).messageStream(conversationId);
 });
 
-/// Locally-held optimistic messages not yet confirmed by the realtime stream.
 final _pendingProvider =
     StateProvider.family<List<Message>, String>((ref, _) => []);
 
@@ -79,7 +86,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final pending = ref.watch(_pendingProvider(widget.conversationId));
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.chat)),
+      appBar: AppBar(
+        titleSpacing: 0,
+        title: _ChatHeader(conversationId: widget.conversationId),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -115,6 +125,48 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
           _Composer(controller: _controller, onSend: _send),
         ],
+      ),
+    );
+  }
+}
+
+class _ChatHeader extends ConsumerWidget {
+  const _ChatHeader({required this.conversationId});
+  final String conversationId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final convo = ref.watch(conversationProvider(conversationId)).valueOrNull;
+    final myId = ref.watch(currentAuthUserProvider)?.id;
+    final other = convo == null
+        ? null
+        : (convo.buyerId == myId ? convo.seller : convo.buyer);
+
+    if (other == null) return Text(context.l10n.chat);
+
+    return InkWell(
+      onTap: () => context.push(AppRoutes.userPath(other.id)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: AppColors.blush,
+              backgroundImage: other.avatarUrl != null
+                  ? CachedNetworkImageProvider(other.avatarUrl!)
+                  : null,
+              child: other.avatarUrl == null
+                  ? const Text('💁‍♀️', style: TextStyle(fontSize: 16))
+                  : null,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Flexible(
+              child: Text(other.nameOrHandle, overflow: TextOverflow.ellipsis),
+            ),
+          ],
+        ),
       ),
     );
   }
