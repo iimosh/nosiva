@@ -68,7 +68,7 @@ class MainShell extends ConsumerWidget {
                   onTap: () => _go(context, ref, 0),
                 ),
                 _NavItem(
-                  icon: Icons.search_rounded,
+                  icon: Icons.notifications_rounded,
                   label: context.l10n.activity,
                   selected: shell.currentIndex == 1,
                   onTap: () => _go(context, ref, 1),

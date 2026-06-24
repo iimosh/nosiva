@@ -185,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @oopsGlitched.
   ///
   /// In en, this message translates to:
-  /// **'Oops, something glitched'**
+  /// **'Something went wrong'**
   String get oopsGlitched;
 
   /// No description provided for @discardListingTitle.
@@ -221,13 +221,13 @@ abstract class AppLocalizations {
   /// No description provided for @splashTagline.
   ///
   /// In en, this message translates to:
-  /// **'pre-loved, main character energy ✨'**
+  /// **'second-hand fashion, thoughtfully listed'**
   String get splashTagline;
 
   /// No description provided for @welcomeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Buy & sell pre-loved fashion with\na community that gets your vibe.'**
+  /// **'Buy and sell second-hand clothing and accessories in one simple marketplace.'**
   String get welcomeSubtitle;
 
   /// No description provided for @createAccount.
@@ -245,13 +245,13 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeBackTitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome back 👋'**
+  /// **'Welcome back'**
   String get welcomeBackTitle;
 
   /// No description provided for @welcomeBackSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Your closet missed you.'**
+  /// **'Sign in to continue managing your listings.'**
   String get welcomeBackSubtitle;
 
   /// No description provided for @email.
@@ -293,7 +293,7 @@ abstract class AppLocalizations {
   /// No description provided for @usernameHint.
   ///
   /// In en, this message translates to:
-  /// **'slaygirl_99'**
+  /// **'username'**
   String get usernameHint;
 
   /// No description provided for @signIn.
@@ -317,13 +317,13 @@ abstract class AppLocalizations {
   /// No description provided for @joinNosiva.
   ///
   /// In en, this message translates to:
-  /// **'Join Nosiva 💕'**
+  /// **'Join Nosiva'**
   String get joinNosiva;
 
   /// No description provided for @yourClosetYourRules.
   ///
   /// In en, this message translates to:
-  /// **'Your closet, your rules.'**
+  /// **'Create your account to start buying and selling.'**
   String get yourClosetYourRules;
 
   /// No description provided for @alreadyHaveAccountSignIn.
@@ -341,13 +341,13 @@ abstract class AppLocalizations {
   /// No description provided for @accountCreated.
   ///
   /// In en, this message translates to:
-  /// **'Account created! Let’s set up your vibe ✨'**
+  /// **'Account created. Let’s set up your preferences.'**
   String get accountCreated;
 
   /// No description provided for @welcomeBackSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Welcome back bestie 💖'**
+  /// **'Welcome back.'**
   String get welcomeBackSuccess;
 
   /// No description provided for @signInFailed.
@@ -365,13 +365,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingTitle.
   ///
   /// In en, this message translates to:
-  /// **'Let’s set your vibe ✨'**
+  /// **'Set your preferences'**
   String get onboardingTitle;
 
   /// No description provided for @onboardingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'We’ll use this to curate your feed.'**
+  /// **'We will use this to personalize your feed.'**
   String get onboardingSubtitle;
 
   /// No description provided for @displayNameOptional.
@@ -413,13 +413,13 @@ abstract class AppLocalizations {
   /// No description provided for @stylesYouLove.
   ///
   /// In en, this message translates to:
-  /// **'Styles you love'**
+  /// **'Preferred styles'**
   String get stylesYouLove;
 
   /// No description provided for @startSlaying.
   ///
   /// In en, this message translates to:
-  /// **'Start slaying 💖'**
+  /// **'Continue'**
   String get startSlaying;
 
   /// No description provided for @couldNotSave.
@@ -443,19 +443,19 @@ abstract class AppLocalizations {
   /// No description provided for @nothingHereYetMessage.
   ///
   /// In en, this message translates to:
-  /// **'Be the first to list something fabulous, or check back soon ✨'**
+  /// **'Be the first to publish a listing, or check again later.'**
   String get nothingHereYetMessage;
 
   /// No description provided for @favorites.
   ///
   /// In en, this message translates to:
-  /// **'Favorites 💖'**
+  /// **'Favorites'**
   String get favorites;
 
   /// No description provided for @wishlistEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Your wishlist is empty bestie'**
+  /// **'Your wishlist is empty'**
   String get wishlistEmpty;
 
   /// No description provided for @wishlistEmptyMessage.
@@ -467,7 +467,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search for that dream piece…'**
+  /// **'Search listings...'**
   String get searchHint;
 
   /// No description provided for @homeSearchHint.
@@ -475,6 +475,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search items & people...'**
   String get homeSearchHint;
+
+  /// No description provided for @latestListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest listings'**
+  String get latestListings;
+
+  /// No description provided for @browseItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse items'**
+  String get browseItems;
 
   /// No description provided for @people.
   ///
@@ -485,7 +497,7 @@ abstract class AppLocalizations {
   /// No description provided for @noMatches.
   ///
   /// In en, this message translates to:
-  /// **'No matches, bestie'**
+  /// **'No matches found'**
   String get noMatches;
 
   /// No description provided for @noMatchesMessage.
@@ -722,6 +734,30 @@ abstract class AppLocalizations {
   /// **'List an item'**
   String get listAnItem;
 
+  /// No description provided for @photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get photos;
+
+  /// No description provided for @basicInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic information'**
+  String get basicInfo;
+
+  /// No description provided for @itemDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Item details'**
+  String get itemDetails;
+
+  /// No description provided for @pricingAndLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Price and location'**
+  String get pricingAndLocation;
+
   /// No description provided for @chooseFromGallery.
   ///
   /// In en, this message translates to:
@@ -743,7 +779,7 @@ abstract class AppLocalizations {
   /// No description provided for @listingTitleHint.
   ///
   /// In en, this message translates to:
-  /// **'e.g. Y2K butterfly baby tee'**
+  /// **'e.g. cotton shirt'**
   String get listingTitleHint;
 
   /// No description provided for @description.
@@ -809,19 +845,19 @@ abstract class AppLocalizations {
   /// No description provided for @listIt.
   ///
   /// In en, this message translates to:
-  /// **'List it 💖'**
+  /// **'Publish listing'**
   String get listIt;
 
   /// No description provided for @pickCategory.
   ///
   /// In en, this message translates to:
-  /// **'Pick a category bestie'**
+  /// **'Choose a category'**
   String get pickCategory;
 
   /// No description provided for @addPhoto.
   ///
   /// In en, this message translates to:
-  /// **'Add at least one photo 📸'**
+  /// **'Add at least one photo'**
   String get addPhoto;
 
   /// No description provided for @photoAddFailed.
@@ -833,7 +869,7 @@ abstract class AppLocalizations {
   /// No description provided for @listedSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Listed! Time to make that coin 💸'**
+  /// **'Listing published successfully.'**
   String get listedSuccess;
 
   /// No description provided for @listFailed.
@@ -905,7 +941,7 @@ abstract class AppLocalizations {
   /// No description provided for @vibe.
   ///
   /// In en, this message translates to:
-  /// **'Vibe'**
+  /// **'Style'**
   String get vibe;
 
   /// No description provided for @seller.
@@ -1001,13 +1037,13 @@ abstract class AppLocalizations {
   /// No description provided for @addedToCart.
   ///
   /// In en, this message translates to:
-  /// **'Added to cart 🛍️'**
+  /// **'Added to cart'**
   String get addedToCart;
 
   /// No description provided for @makeOfferTitle.
   ///
   /// In en, this message translates to:
-  /// **'Make an offer 💌'**
+  /// **'Make an offer'**
   String get makeOfferTitle;
 
   /// No description provided for @listedAt.
@@ -1031,13 +1067,13 @@ abstract class AppLocalizations {
   /// No description provided for @offerSent.
   ///
   /// In en, this message translates to:
-  /// **'Offer sent! Fingers crossed 🤞'**
+  /// **'Offer sent.'**
   String get offerSent;
 
   /// No description provided for @cart.
   ///
   /// In en, this message translates to:
-  /// **'Cart 🛍️'**
+  /// **'Cart'**
   String get cart;
 
   /// No description provided for @bagEmpty.
@@ -1049,7 +1085,7 @@ abstract class AppLocalizations {
   /// No description provided for @bagEmptyMessage.
   ///
   /// In en, this message translates to:
-  /// **'Add something fabulous and come back ✨'**
+  /// **'Add an item to continue checkout.'**
   String get bagEmptyMessage;
 
   /// No description provided for @shippingAddress.
@@ -1085,19 +1121,19 @@ abstract class AppLocalizations {
   /// No description provided for @paymentStubbed.
   ///
   /// In en, this message translates to:
-  /// **'💳 Payment is stubbed (Stripe integration point)'**
+  /// **'Payment is currently in demo mode (Stripe integration point)'**
   String get paymentStubbed;
 
   /// No description provided for @addShippingAddress.
   ///
   /// In en, this message translates to:
-  /// **'Add a shipping address first 📦'**
+  /// **'Add a shipping address first'**
   String get addShippingAddress;
 
   /// No description provided for @orderPlaced.
   ///
   /// In en, this message translates to:
-  /// **'Order placed! You did that 💖'**
+  /// **'Order placed successfully.'**
   String get orderPlaced;
 
   /// No description provided for @checkoutFailed.
@@ -1184,10 +1220,22 @@ abstract class AppLocalizations {
   /// **'Nosiva user'**
   String get nosivaUser;
 
+  /// No description provided for @userNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'User not found'**
+  String get userNotFound;
+
+  /// No description provided for @noListingsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No listings yet'**
+  String get noListingsYet;
+
   /// No description provided for @sayHi.
   ///
   /// In en, this message translates to:
-  /// **'Say hi 👋'**
+  /// **'Send message'**
   String get sayHi;
 
   /// No description provided for @chat.
@@ -1196,10 +1244,16 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get chat;
 
+  /// No description provided for @messageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Message...'**
+  String get messageHint;
+
   /// No description provided for @sayHiTitle.
   ///
   /// In en, this message translates to:
-  /// **'Say hi!'**
+  /// **'Send a message'**
   String get sayHiTitle;
 
   /// No description provided for @chatEmptyMessage.
@@ -1217,7 +1271,7 @@ abstract class AppLocalizations {
   /// No description provided for @imageSharingTodo.
   ///
   /// In en, this message translates to:
-  /// **'Image sharing — TODO 📷'**
+  /// **'Image sharing is not available yet.'**
   String get imageSharingTodo;
 
   /// No description provided for @myProfile.
@@ -1226,10 +1280,16 @@ abstract class AppLocalizations {
   /// **'My profile'**
   String get myProfile;
 
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
   /// No description provided for @admin.
   ///
   /// In en, this message translates to:
-  /// **'Admin 🛡️'**
+  /// **'Admin'**
   String get admin;
 
   /// No description provided for @noProfileFound.
@@ -1292,6 +1352,12 @@ abstract class AppLocalizations {
   /// **'Rating'**
   String get rating;
 
+  /// No description provided for @listings.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings'**
+  String get listings;
+
   /// No description provided for @editProfile.
   ///
   /// In en, this message translates to:
@@ -1301,7 +1367,7 @@ abstract class AppLocalizations {
   /// No description provided for @editProfileTodo.
   ///
   /// In en, this message translates to:
-  /// **'Edit profile — TODO ✏️'**
+  /// **'Profile editing is not available yet.'**
   String get editProfileTodo;
 
   /// No description provided for @myCloset.
@@ -1313,7 +1379,7 @@ abstract class AppLocalizations {
   /// No description provided for @closetEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Your closet is empty bestie ✨'**
+  /// **'Your closet is empty'**
   String get closetEmpty;
 
   /// No description provided for @closetEmptyMessage.

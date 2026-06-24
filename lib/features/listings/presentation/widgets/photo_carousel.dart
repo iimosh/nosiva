@@ -29,7 +29,8 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
         height: 380,
         color: AppColors.blush,
         alignment: Alignment.center,
-        child: const Text('👗', style: TextStyle(fontSize: 64)),
+        child: const Icon(Icons.checkroom_outlined,
+            color: AppColors.hotPink, size: 56),
       );
     }
 

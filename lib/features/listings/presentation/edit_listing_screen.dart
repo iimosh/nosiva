@@ -168,8 +168,10 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _SectionTitle(context.l10n.photos),
               _ExistingPhotos(listing: listing),
               const SizedBox(height: AppSpacing.lg),
+              _SectionTitle(context.l10n.basicInfo),
               NosivaTextField(
                 label: context.l10n.title,
                 hint: context.l10n.listingTitleHint,
@@ -185,6 +187,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                 maxLength: 1000,
               ),
               const SizedBox(height: AppSpacing.md),
+              _SectionTitle(context.l10n.itemDetails),
               _Label(context.l10n.category),
               Wrap(
                 spacing: AppSpacing.xs,
@@ -261,14 +264,6 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.md),
-              NosivaTextField(
-                label: context.l10n.location,
-                hint: context.l10n.cityCountry,
-                controller: _location,
-                prefixIcon: Icons.place_outlined,
-              ),
-              const SizedBox(height: AppSpacing.md),
               _Label(context.l10n.styleTags),
               Wrap(
                 spacing: AppSpacing.xs,
@@ -283,8 +278,16 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                             ? _styleTags.remove(tag)
                             : _styleTags.add(tag);
                       }),
-                    ),
+                  ),
                 ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _SectionTitle(context.l10n.pricingAndLocation),
+              NosivaTextField(
+                label: context.l10n.location,
+                hint: context.l10n.cityCountry,
+                controller: _location,
+                prefixIcon: Icons.place_outlined,
               ),
               const SizedBox(height: AppSpacing.md),
               NosivaTextField(
@@ -350,6 +353,24 @@ class _ExistingPhotos extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Text(
+        text,
+        style: theme.textTheme.titleLarge?.copyWith(color: AppColors.berry),
       ),
     );
   }

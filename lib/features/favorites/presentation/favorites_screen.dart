@@ -30,7 +30,7 @@ class FavoritesScreen extends ConsumerWidget {
         data: (listings) {
           if (listings.isEmpty) {
             return EmptyStateView(
-              emoji: '💝',
+              icon: Icons.favorite_border_rounded,
               title: context.l10n.wishlistEmpty,
               message: context.l10n.wishlistEmptyMessage,
             );

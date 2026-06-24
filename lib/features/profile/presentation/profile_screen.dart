@@ -15,6 +15,7 @@ import '../../../core/widgets/state_views.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../listings/data/listings_repository.dart';
 import '../../listings/domain/listing.dart';
+import '../../listings/domain/listing_l10n.dart';
 import '../../listings/presentation/widgets/listing_card.dart';
 import '../domain/profile.dart';
 import 'current_profile_provider.dart';
@@ -117,7 +118,8 @@ class _ProfileBody extends ConsumerWidget {
                   ? CachedNetworkImageProvider(profile.avatarUrl!)
                   : null,
               child: profile.avatarUrl == null
-                  ? const Text('💁‍♀️', style: TextStyle(fontSize: 32))
+                  ? const Icon(Icons.person_outline_rounded,
+                      color: AppColors.hotPink, size: 32)
                   : null,
             ),
             const SizedBox(width: AppSpacing.md),
@@ -177,7 +179,8 @@ class _ProfileBody extends ConsumerWidget {
             spacing: AppSpacing.xs,
             runSpacing: AppSpacing.xs,
             children: [
-              for (final tag in profile.vibeTags) NosivaChip(label: '#$tag'),
+              for (final tag in profile.vibeTags)
+                NosivaChip(label: '#${localizedStyleTag(tag, context.l10n)}'),
             ],
           ),
         ],
@@ -185,7 +188,6 @@ class _ProfileBody extends ConsumerWidget {
         OutlinedButton.icon(
           icon: const Icon(Icons.edit_outlined),
           label: Text(context.l10n.editProfile),
-          // TODO: build edit profile screen
           onPressed: () => context.showSnack(context.l10n.editProfileTodo),
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -197,7 +199,7 @@ class _ProfileBody extends ConsumerWidget {
           data: (listings) {
             if (listings.isEmpty) {
               return EmptyStateView(
-                emoji: '🧺',
+                icon: Icons.inventory_2_outlined,
                 title: context.l10n.closetEmpty,
                 message: context.l10n.closetEmptyMessage,
               );
@@ -209,7 +211,7 @@ class _ProfileBody extends ConsumerWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: AppSpacing.md,
                 mainAxisSpacing: AppSpacing.md,
-                childAspectRatio: 0.62,
+                childAspectRatio: 0.54,
               ),
               itemCount: listings.length,
               itemBuilder: (_, i) => ListingCard(listing: listings[i]),
@@ -256,7 +258,7 @@ class _AdminBadge extends StatelessWidget {
           color: Colors.white,
           fontSize: 10,
           fontWeight: FontWeight.w800,
-          letterSpacing: 0.5,
+          letterSpacing: 0,
         ),
       ),
     );

@@ -51,7 +51,7 @@ class AppLocalizationsMk extends AppLocalizations {
   String get tryAgain => 'Обиди се повторно';
 
   @override
-  String get oopsGlitched => 'Упс, нешто се случи';
+  String get oopsGlitched => 'Настана грешка';
 
   @override
   String get discardListingTitle => 'Да се отфрли огласот?';
@@ -70,11 +70,11 @@ class AppLocalizationsMk extends AppLocalizations {
   String get welcomeTitle => 'Nosiva';
 
   @override
-  String get splashTagline => 'претходно носено, со твој стил ✨';
+  String get splashTagline => 'половна мода, внимателно објавена';
 
   @override
   String get welcomeSubtitle =>
-      'Купувај и продавај претходно носена мода\nсо заедница што го разбира твојот стил.';
+      'Купувај и продавај половна облека и додатоци на едно место.';
 
   @override
   String get createAccount => 'Креирај профил';
@@ -83,10 +83,11 @@ class AppLocalizationsMk extends AppLocalizations {
   String get alreadyHaveAccount => 'Веќе имам профил';
 
   @override
-  String get welcomeBackTitle => 'Добредојде назад 👋';
+  String get welcomeBackTitle => 'Добредојде назад';
 
   @override
-  String get welcomeBackSubtitle => 'Твојот плакар те чекаше.';
+  String get welcomeBackSubtitle =>
+      'Најави се за да продолжиш со користење на апликацијата.';
 
   @override
   String get email => 'Е-пошта';
@@ -107,7 +108,7 @@ class AppLocalizationsMk extends AppLocalizations {
   String get username => 'Корисничко име';
 
   @override
-  String get usernameHint => 'slaygirl_99';
+  String get usernameHint => 'korisnik';
 
   @override
   String get signIn => 'Најави се';
@@ -119,10 +120,10 @@ class AppLocalizationsMk extends AppLocalizations {
   String get newHereCreateAccount => 'Нов/а си тука? Креирај профил';
 
   @override
-  String get joinNosiva => 'Придружи се на Nosiva 💕';
+  String get joinNosiva => 'Придружи се на Nosiva';
 
   @override
-  String get yourClosetYourRules => 'Твој плакар, твои правила.';
+  String get yourClosetYourRules => 'Креирај профил за да купуваш и продаваш.';
 
   @override
   String get alreadyHaveAccountSignIn => 'Веќе имаш профил? Најави се';
@@ -132,10 +133,10 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get accountCreated =>
-      'Профилот е креиран! Ајде да го наместиме твојот стил ✨';
+      'Профилот е креиран. Постави ги твоите преференции.';
 
   @override
-  String get welcomeBackSuccess => 'Добредојде назад 💖';
+  String get welcomeBackSuccess => 'Добредојде назад.';
 
   @override
   String get signInFailed =>
@@ -147,11 +148,11 @@ class AppLocalizationsMk extends AppLocalizations {
   }
 
   @override
-  String get onboardingTitle => 'Да го наместиме твојот стил ✨';
+  String get onboardingTitle => 'Постави преференции';
 
   @override
   String get onboardingSubtitle =>
-      'Ова ќе ни помогне да ти прикажеме подобри огласи.';
+      'Ова ќе ни помогне да ти прикажеме порелевантни огласи.';
 
   @override
   String get displayNameOptional => 'Име за приказ (опционално)';
@@ -172,10 +173,10 @@ class AppLocalizationsMk extends AppLocalizations {
   String get yourSizes => 'Твои големини';
 
   @override
-  String get stylesYouLove => 'Стилови што ги сакаш';
+  String get stylesYouLove => 'Омилени стилови';
 
   @override
-  String get startSlaying => 'Започни 💖';
+  String get startSlaying => 'Продолжи';
 
   @override
   String couldNotSave(Object error) {
@@ -190,10 +191,10 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get nothingHereYetMessage =>
-      'Биди прв/а што ќе објави нешто прекрасно, или провери подоцна ✨';
+      'Биди прв/а што ќе објави оглас, или провери подоцна.';
 
   @override
-  String get favorites => 'Омилени 💖';
+  String get favorites => 'Омилени';
 
   @override
   String get wishlistEmpty => 'Листата со желби е празна';
@@ -203,10 +204,16 @@ class AppLocalizationsMk extends AppLocalizations {
       'Допрете на срцето на нешто што ти се допаѓа за да го зачуваш тука.';
 
   @override
-  String get searchHint => 'Пребарај го совршеното парче…';
+  String get searchHint => 'Пребарај огласи...';
 
   @override
   String get homeSearchHint => 'Пребарај артикли и луѓе...';
+
+  @override
+  String get latestListings => 'Најнови огласи';
+
+  @override
+  String get browseItems => 'Прегледај артикли';
 
   @override
   String get people => 'Луѓе';
@@ -333,6 +340,18 @@ class AppLocalizationsMk extends AppLocalizations {
   String get listAnItem => 'Објави артикл';
 
   @override
+  String get photos => 'Фотографии';
+
+  @override
+  String get basicInfo => 'Основни информации';
+
+  @override
+  String get itemDetails => 'Детали за артиклот';
+
+  @override
+  String get pricingAndLocation => 'Цена и локација';
+
+  @override
   String get chooseFromGallery => 'Избери од галерија';
 
   @override
@@ -342,7 +361,7 @@ class AppLocalizationsMk extends AppLocalizations {
   String get title => 'Наслов';
 
   @override
-  String get listingTitleHint => 'пр. Y2K маичка';
+  String get listingTitleHint => 'пр. памучна кошула';
 
   @override
   String get description => 'Опис';
@@ -375,13 +394,13 @@ class AppLocalizationsMk extends AppLocalizations {
   String get priceHint => '0.00';
 
   @override
-  String get listIt => 'Објави 💖';
+  String get listIt => 'Објави оглас';
 
   @override
   String get pickCategory => 'Избери категорија';
 
   @override
-  String get addPhoto => 'Додај барем една фотографија 📸';
+  String get addPhoto => 'Додај барем една фотографија';
 
   @override
   String photoAddFailed(Object error) {
@@ -389,7 +408,7 @@ class AppLocalizationsMk extends AppLocalizations {
   }
 
   @override
-  String get listedSuccess => 'Објавено! Време е за продажба 💸';
+  String get listedSuccess => 'Огласот е успешно објавен.';
 
   @override
   String listFailed(Object error) {
@@ -482,10 +501,10 @@ class AppLocalizationsMk extends AppLocalizations {
   String get buyNow => 'Купи сега';
 
   @override
-  String get addedToCart => 'Додадено во кошничка 🛍️';
+  String get addedToCart => 'Додадено во кошничка';
 
   @override
-  String get makeOfferTitle => 'Испрати понуда 💌';
+  String get makeOfferTitle => 'Испрати понуда';
 
   @override
   String listedAt(Object price) {
@@ -499,16 +518,16 @@ class AppLocalizationsMk extends AppLocalizations {
   String get sendOffer => 'Испрати понуда';
 
   @override
-  String get offerSent => 'Понудата е испратена 🤞';
+  String get offerSent => 'Понудата е испратена.';
 
   @override
-  String get cart => 'Кошничка 🛍️';
+  String get cart => 'Кошничка';
 
   @override
   String get bagEmpty => 'Кошничката е празна';
 
   @override
-  String get bagEmptyMessage => 'Додај нешто прекрасно и врати се ✨';
+  String get bagEmptyMessage => 'Додај артикл за да продолжиш со наплата.';
 
   @override
   String get shippingAddress => 'Адреса за испорака';
@@ -528,13 +547,14 @@ class AppLocalizationsMk extends AppLocalizations {
   }
 
   @override
-  String get paymentStubbed => '💳 Плаќањето е демо (Stripe integration point)';
+  String get paymentStubbed =>
+      'Плаќањето е моментално во демо режим (Stripe integration point)';
 
   @override
-  String get addShippingAddress => 'Прво внеси адреса за испорака 📦';
+  String get addShippingAddress => 'Прво внеси адреса за испорака';
 
   @override
-  String get orderPlaced => 'Нарачката е направена 💖';
+  String get orderPlaced => 'Нарачката е успешно направена.';
 
   @override
   String checkoutFailed(Object error) {
@@ -584,13 +604,22 @@ class AppLocalizationsMk extends AppLocalizations {
   String get nosivaUser => 'Nosiva корисник';
 
   @override
-  String get sayHi => 'Поздрави 👋';
+  String get userNotFound => 'Корисникот не е пронајден';
+
+  @override
+  String get noListingsYet => 'Сè уште нема огласи';
+
+  @override
+  String get sayHi => 'Испрати порака';
 
   @override
   String get chat => 'Разговор';
 
   @override
-  String get sayHiTitle => 'Поздрави!';
+  String get messageHint => 'Порака...';
+
+  @override
+  String get sayHiTitle => 'Испрати порака';
 
   @override
   String get chatEmptyMessage =>
@@ -602,13 +631,16 @@ class AppLocalizationsMk extends AppLocalizations {
   }
 
   @override
-  String get imageSharingTodo => 'Споделување слика — TODO 📷';
+  String get imageSharingTodo => 'Споделувањето слика сè уште не е достапно.';
 
   @override
   String get myProfile => 'Мој профил';
 
   @override
-  String get admin => 'Админ 🛡️';
+  String get profile => 'Профил';
+
+  @override
+  String get admin => 'Админ';
 
   @override
   String get noProfileFound => 'Не е пронајден профил';
@@ -647,16 +679,19 @@ class AppLocalizationsMk extends AppLocalizations {
   String get rating => 'Оцена';
 
   @override
+  String get listings => 'Огласи';
+
+  @override
   String get editProfile => 'Уреди профил';
 
   @override
-  String get editProfileTodo => 'Уредување профил — TODO ✏️';
+  String get editProfileTodo => 'Уредувањето профил сè уште не е достапно.';
 
   @override
   String get myCloset => 'Мој плакар';
 
   @override
-  String get closetEmpty => 'Твојот плакар е празен ✨';
+  String get closetEmpty => 'Твојот плакар е празен';
 
   @override
   String get closetEmptyMessage =>

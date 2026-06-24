@@ -75,13 +75,29 @@ class _StatsHeader extends ConsumerWidget {
             AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.xs),
         child: Row(
           children: [
-            _StatCard(label: context.l10n.adminListings, value: '${s.totalListings}', emoji: '🛍️'),
+            _StatCard(
+              label: context.l10n.adminListings,
+              value: '${s.totalListings}',
+              icon: Icons.inventory_2_outlined,
+            ),
             const SizedBox(width: AppSpacing.xs),
-            _StatCard(label: context.l10n.adminHidden, value: '${s.hiddenListings}', emoji: '🚫'),
+            _StatCard(
+              label: context.l10n.adminHidden,
+              value: '${s.hiddenListings}',
+              icon: Icons.visibility_off_outlined,
+            ),
             const SizedBox(width: AppSpacing.xs),
-            _StatCard(label: context.l10n.adminUsers, value: '${s.totalUsers}', emoji: '👥'),
+            _StatCard(
+              label: context.l10n.adminUsers,
+              value: '${s.totalUsers}',
+              icon: Icons.people_outline_rounded,
+            ),
             const SizedBox(width: AppSpacing.xs),
-            _StatCard(label: context.l10n.adminAdmins, value: '${s.totalAdmins}', emoji: '🛡️'),
+            _StatCard(
+              label: context.l10n.adminAdmins,
+              value: '${s.totalAdmins}',
+              icon: Icons.admin_panel_settings_outlined,
+            ),
           ],
         ),
       ),
@@ -91,10 +107,14 @@ class _StatsHeader extends ConsumerWidget {
 }
 
 class _StatCard extends StatelessWidget {
-  const _StatCard({required this.label, required this.value, required this.emoji});
+  const _StatCard({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
   final String label;
   final String value;
-  final String emoji;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +128,7 @@ class _StatCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 18)),
+            Icon(icon, size: 18, color: AppColors.hotPink),
             const SizedBox(height: 2),
             Text(value, style: theme.textTheme.titleLarge),
             Text(label, style: theme.textTheme.bodySmall),
@@ -135,7 +155,7 @@ class _ListingsTab extends ConsumerWidget {
       data: (items) {
         if (items.isEmpty) {
           return EmptyStateView(
-            emoji: '🛡️',
+            icon: Icons.admin_panel_settings_outlined,
             title: context.l10n.nothingToModerate,
             message: context.l10n.newListingsWillShow,
           );
@@ -161,7 +181,7 @@ class _ReportsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyStateView(
-      emoji: '🚩',
+      icon: Icons.flag_outlined,
       title: context.l10n.reportsComingSoon,
       message: context.l10n.reportsComingSoonBody,
     );
@@ -183,7 +203,10 @@ class _UsersTab extends ConsumerWidget {
       ),
       data: (items) {
         if (items.isEmpty) {
-          return EmptyStateView(emoji: '👥', title: context.l10n.noUsersYet);
+          return EmptyStateView(
+            icon: Icons.people_outline_rounded,
+            title: context.l10n.noUsersYet,
+          );
         }
         return RefreshIndicator(
           color: AppColors.hotPink,
@@ -250,7 +273,8 @@ class _UserTile extends ConsumerWidget {
             ? CachedNetworkImageProvider(user.avatarUrl!)
             : null,
         child: user.avatarUrl == null
-            ? const Text('💁‍♀️', style: TextStyle(fontSize: 18))
+            ? const Icon(Icons.person_outline_rounded,
+                color: AppColors.hotPink, size: 22)
             : null,
       ),
       title: Text(isSelf
@@ -296,7 +320,7 @@ class _RoleBadge extends StatelessWidget {
           color: Colors.white,
           fontSize: 11,
           fontWeight: FontWeight.w700,
-          letterSpacing: 0.5,
+          letterSpacing: 0,
         ),
       ),
     );

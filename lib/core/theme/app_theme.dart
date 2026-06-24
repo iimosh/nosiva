@@ -90,7 +90,7 @@ abstract final class AppTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surfaceMuted,
+        fillColor: surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.md,
@@ -107,7 +107,7 @@ abstract final class AppTheme {
         ),
         focusedBorder: const OutlineInputBorder(
           borderRadius: AppRadii.field,
-          borderSide: BorderSide(color: AppColors.hotPink, width: 1.8),
+          borderSide: BorderSide(color: AppColors.hotPink, width: 1.4),
         ),
         errorBorder: const OutlineInputBorder(
           borderRadius: AppRadii.field,
@@ -123,7 +123,10 @@ abstract final class AppTheme {
         color: surface,
         elevation: 0,
         margin: EdgeInsets.zero,
-        shape: const RoundedRectangleBorder(borderRadius: AppRadii.card),
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadii.card,
+          side: BorderSide(color: border),
+        ),
       ),
 
       chipTheme: ChipThemeData(

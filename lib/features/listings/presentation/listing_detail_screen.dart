@@ -90,7 +90,7 @@ class _DetailBody extends ConsumerWidget {
                     child: Text(
                       Formatters.price(listing.price),
                       style: theme.textTheme.headlineMedium
-                          ?.copyWith(color: AppColors.hotPink, fontSize: 30),
+                          ?.copyWith(color: AppColors.berry, fontSize: 30),
                     ),
                   ),
                   _ConditionBadge(condition: listing.conditionEnum),
@@ -211,7 +211,8 @@ class _GalleryState extends ConsumerState<_Gallery> {
                   ? Container(
                       color: AppColors.blush,
                       alignment: Alignment.center,
-                      child: const Text('👗', style: TextStyle(fontSize: 72)),
+                      child: const Icon(Icons.checkroom_outlined,
+                          color: AppColors.hotPink, size: 72),
                     )
                   : PageView.builder(
                       controller: _controller,
@@ -552,7 +553,8 @@ class _SellerCard extends StatelessWidget {
                   ? CachedNetworkImageProvider(seller.avatarUrl!)
                   : null,
               child: seller.avatarUrl == null
-                  ? const Text('💁‍♀️', style: TextStyle(fontSize: 22))
+                  ? const Icon(Icons.person_outline_rounded,
+                  color: AppColors.hotPink, size: 24)
                   : null,
             ),
             const SizedBox(width: AppSpacing.sm),
@@ -568,7 +570,7 @@ class _SellerCard extends StatelessWidget {
                       const SizedBox(width: 2),
                       Flexible(
                         child: Text(
-                          '${seller.ratingAvg.toStringAsFixed(1)} · ${seller.followerCount} followers',
+                          '${seller.ratingAvg.toStringAsFixed(1)} · ${context.l10n.followersCount(seller.followerCount)}',
                           style: theme.textTheme.bodySmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -653,7 +655,7 @@ class _MiniListingCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(Formatters.price(listing.price),
                 style: theme.textTheme.titleMedium
-                    ?.copyWith(color: AppColors.hotPink)),
+                    ?.copyWith(color: AppColors.berry)),
             Text(listing.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

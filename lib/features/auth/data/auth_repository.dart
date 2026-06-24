@@ -30,7 +30,7 @@ class AuthRepository {
   Future<bool> signInWithOAuth(OAuthProvider provider) {
     return _client.auth.signInWithOAuth(
       provider,
-      // TODO: set your deep-link redirect, e.g. 'io.nosiva.app://login-callback'
+      // Configure a platform redirect URL when enabling OAuth in production.
       redirectTo: null,
     );
   }
