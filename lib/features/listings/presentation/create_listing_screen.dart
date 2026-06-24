@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/location/location_service.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/theme/app_colors.dart';
@@ -46,6 +47,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
   String? _size;
   final _styleTags = <String>{};
   bool _submitting = false;
+  bool _detectingLocation = false;
 
   @override
   void dispose() {
@@ -198,6 +200,19 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
     ref.read(sellFormDirtyProvider.notifier).state = _isDirty;
   }
 
+  Future<void> _detectLocation() async {
+    setState(() => _detectingLocation = true);
+    try {
+      final loc = await ref.read(locationServiceProvider).currentCity();
+      _location.text = loc;
+      _syncDirty();
+    } catch (e) {
+      if (mounted) context.showError('$e');
+    } finally {
+      if (mounted) setState(() => _detectingLocation = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen(sellResetSignalProvider, (_, __) => _resetForm());
@@ -313,6 +328,22 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   controller: _location,
                   prefixIcon: Icons.place_outlined,
                   onChanged: (_) => _syncDirty(),
+                  suffixIcon: _detectingLocation
+                      ? const Padding(
+                          padding: EdgeInsets.all(14),
+                          child: SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: AppColors.hotPink),
+                          ),
+                        )
+                      : IconButton(
+                          tooltip: 'Use my location',
+                          icon: const Icon(Icons.my_location_rounded,
+                              color: AppColors.hotPink),
+                          onPressed: _detectLocation,
+                        ),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _Label('Style tags'),
