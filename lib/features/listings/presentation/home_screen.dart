@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
 import '../../profile/domain/profile.dart';
 import '../../profile/presentation/user_profile_screen.dart';
@@ -90,7 +91,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         actions: [
           IconButton(
-            tooltip: 'Toggle theme',
+            tooltip: context.l10n.toggleTheme,
             icon: Icon(themeMode == ThemeMode.dark
                 ? Icons.light_mode_rounded
                 : Icons.dark_mode_rounded),
@@ -165,13 +166,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 data: (listings) {
                   if (listings.isEmpty) {
                     return ListView(
-                      children: const [
-                        SizedBox(height: 80),
+                      children: [
+                        const SizedBox(height: 80),
                         EmptyStateView(
                           emoji: '🛍️',
-                          title: 'Nothing here yet',
-                          message:
-                              'Try a different search or filter, or check back soon ✨',
+                          title: context.l10n.nothingHereYet,
+                          message: context.l10n.nothingHereYetMessage,
                         ),
                       ],
                     );
@@ -299,7 +299,7 @@ class _CategoryBar extends StatelessWidget {
           final cat = ListingCategory.values[i];
           return Center(
             child: NosivaChip(
-              label: '${cat.emoji} ${cat.label}',
+              label: cat.localizedWithEmoji(context.l10n),
               selected: selected == cat,
               onTap: () => onSelect(cat),
             ),

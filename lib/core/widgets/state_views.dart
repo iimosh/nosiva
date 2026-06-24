@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n_extensions.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import 'nosiva_button.dart';
@@ -85,7 +86,7 @@ class ErrorStateView extends StatelessWidget {
           children: [
             const Text('😵‍💫', style: TextStyle(fontSize: 42)),
             const SizedBox(height: AppSpacing.md),
-            Text('Oops, something glitched',
+            Text(context.l10n.oopsGlitched,
                 style: theme.textTheme.titleLarge, textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.xs),
             Text(
@@ -96,7 +97,7 @@ class ErrorStateView extends StatelessWidget {
             if (onRetry != null) ...[
               const SizedBox(height: AppSpacing.lg),
               NosivaButton(
-                label: 'Try again',
+                label: context.l10n.tryAgain,
                 icon: Icons.refresh_rounded,
                 onPressed: onRetry,
                 expand: false,

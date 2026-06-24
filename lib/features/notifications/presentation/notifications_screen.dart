@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/state_views.dart';
@@ -20,12 +21,12 @@ class NotificationsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: Text(context.l10n.notifications),
         actions: [
           TextButton(
             onPressed: () =>
                 ref.read(notificationsRepositoryProvider).markAllRead(),
-            child: const Text('Mark all read'),
+            child: Text(context.l10n.markAllRead),
           ),
         ],
       ),
@@ -55,10 +56,10 @@ class NotificationsListView extends ConsumerWidget {
       error: (e, _) => ErrorStateView(message: '$e'),
       data: (list) {
         if (list.isEmpty) {
-          return const EmptyStateView(
+          return EmptyStateView(
             emoji: '🔔',
-            title: 'All caught up!',
-            message: 'New messages, offers and sales will pop up here.',
+            title: context.l10n.allCaughtUp,
+            message: context.l10n.notificationsEmptyMessage,
           );
         }
         return ListView.separated(

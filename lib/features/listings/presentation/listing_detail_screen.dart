@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -23,6 +24,7 @@ import '../../offers/data/offers_repository.dart';
 import '../../profile/presentation/current_profile_provider.dart';
 import '../domain/listing.dart';
 import '../domain/listing_enums.dart';
+import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
 import 'controllers/listing_detail_provider.dart';
 
@@ -64,11 +66,11 @@ class _DetailBody extends ConsumerWidget {
     final theme = Theme.of(context);
 
     final facts = <({String label, String value})>[
-      (label: 'Category', value: listing.categoryEnum.label),
-      (label: 'Condition', value: listing.conditionEnum.label),
-      if (listing.size != null) (label: 'Size', value: listing.size!),
-      if (listing.color != null) (label: 'Color', value: listing.color!),
-      if (listing.brand != null) (label: 'Brand', value: listing.brand!),
+      (label: context.l10n.category, value: listing.categoryEnum.localizedLabel(context.l10n)),
+      (label: context.l10n.condition, value: listing.conditionEnum.localizedLabel(context.l10n)),
+      if (listing.size != null) (label: context.l10n.size, value: listing.size!),
+      if (listing.color != null) (label: context.l10n.color, value: listing.color!),
+      if (listing.brand != null) (label: context.l10n.brand, value: listing.brand!),
     ];
 
     return ListView(
@@ -111,7 +113,7 @@ class _DetailBody extends ConsumerWidget {
 
               if (listing.styleTags.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.lg),
-                _SectionTitle('Style'),
+                _SectionTitle(context.l10n.style),
                 const SizedBox(height: AppSpacing.xs),
                 Wrap(
                   spacing: AppSpacing.xs,
@@ -125,7 +127,7 @@ class _DetailBody extends ConsumerWidget {
 
               if (listing.description.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.lg),
-                _SectionTitle('Description'),
+                _SectionTitle(context.l10n.description),
                 const SizedBox(height: AppSpacing.xs),
                 _ExpandableText(text: listing.description),
               ],
@@ -135,18 +137,18 @@ class _DetailBody extends ConsumerWidget {
 
               if (listing.seller != null) ...[
                 const SizedBox(height: AppSpacing.lg),
-                _SectionTitle('Seller'),
+                _SectionTitle(context.l10n.seller),
                 const SizedBox(height: AppSpacing.xs),
                 _SellerCard(listing: listing),
               ],
 
               _Rail(
-                title: 'More from this seller',
+                title: context.l10n.moreFromSeller,
                 provider: sellerListingsProvider(listing.sellerId),
                 excludeId: listing.id,
               ),
               _Rail(
-                title: 'You might also like',
+                title: context.l10n.youMightAlsoLike,
                 provider: similarListingsProvider(listing.categoryEnum),
                 excludeId: listing.id,
               ),
@@ -354,7 +356,7 @@ class _ConditionBadge extends StatelessWidget {
         children: [
           const Icon(Icons.verified_rounded, size: 14, color: AppColors.mint),
           const SizedBox(width: 4),
-          Text(condition.label,
+          Text(condition.localizedLabel(context.l10n),
               style: theme.textTheme.labelMedium
                   ?.copyWith(color: theme.colorScheme.onSurface)),
         ],
@@ -465,7 +467,7 @@ class _ExpandableTextState extends State<_ExpandableText> {
                 minimumSize: const Size(0, 32),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap),
             onPressed: () => setState(() => _expanded = !_expanded),
-            child: Text(_expanded ? 'Read less' : 'Read more'),
+            child: Text(_expanded ? context.l10n.readLess : context.l10n.readMore),
           ),
       ],
     );
@@ -487,16 +489,16 @@ class _InfoCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _row(context, Icons.local_shipping_outlined, 'Shipping',
+          _row(context, Icons.local_shipping_outlined, context.l10n.shipping,
               listing.location != null
-                  ? 'Ships from ${listing.location}'
-                  : 'Calculated at checkout'),
+                  ? context.l10n.shipsFrom(listing.location!)
+                  : context.l10n.calculatedAtCheckout),
           const SizedBox(height: AppSpacing.sm),
-          _row(context, Icons.shield_outlined, 'Buyer protection',
-              'Your payment is held until you confirm delivery.'),
+          _row(context, Icons.shield_outlined, context.l10n.buyerProtection,
+              context.l10n.buyerProtectionBody),
           const SizedBox(height: AppSpacing.sm),
-          _row(context, Icons.replay_outlined, 'Returns',
-              'Item as described — returns handled case by case.'),
+          _row(context, Icons.replay_outlined, context.l10n.returns,
+              context.l10n.returnsBody),
         ],
       ),
     );
@@ -571,7 +573,7 @@ class _SellerCard extends StatelessWidget {
           ),
           // TODO: wire follow/unfollow
           NosivaButton(
-            label: 'Follow',
+            label: context.l10n.follow,
             variant: NosivaButtonVariant.secondary,
             expand: false,
             onPressed: () {},
@@ -702,7 +704,7 @@ class _ActionBar extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: NosivaButton(
-                      label: 'Edit listing',
+                      label: context.l10n.editListing,
                       icon: Icons.edit_outlined,
                       variant: NosivaButtonVariant.secondary,
                       onPressed: () =>
@@ -721,7 +723,7 @@ class _ActionBar extends ConsumerWidget {
                   const SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: NosivaButton(
-                      label: 'Make offer',
+                      label: context.l10n.makeOffer,
                       variant: NosivaButtonVariant.secondary,
                       onPressed: () => _makeOffer(context, ref),
                     ),
@@ -729,7 +731,7 @@ class _ActionBar extends ConsumerWidget {
                   const SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: NosivaButton(
-                      label: 'Buy now',
+                      label: context.l10n.buyNow,
                       variant: NosivaButtonVariant.gradient,
                       onPressed: () => _buyNow(context, ref),
                     ),
@@ -755,7 +757,7 @@ class _ActionBar extends ConsumerWidget {
 
   void _buyNow(BuildContext context, WidgetRef ref) {
     ref.read(cartControllerProvider.notifier).add(listing);
-    context.showSuccess('Added to cart 🛍️');
+    context.showSuccess(context.l10n.addedToCart);
     context.push(AppRoutes.cart);
   }
 
@@ -773,7 +775,7 @@ class _ActionBar extends ConsumerWidget {
             amount: amount,
           );
       if (context.mounted) {
-        context.showSuccess('Offer sent! Fingers crossed 🤞');
+        context.showSuccess(context.l10n.offerSent);
       }
     } catch (e) {
       if (context.mounted) context.showError('Couldn’t send offer — $e');
@@ -815,22 +817,22 @@ class _OfferSheetState extends State<_OfferSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Make an offer 💌', style: theme.textTheme.headlineSmall),
+            Text(context.l10n.makeOfferTitle, style: theme.textTheme.headlineSmall),
             const SizedBox(height: AppSpacing.xs),
-            Text('Listed at ${Formatters.price(widget.listing.price)}',
+            Text(context.l10n.listedAt(Formatters.price(widget.listing.price)),
                 style: theme.textTheme.bodyMedium),
             const SizedBox(height: AppSpacing.md),
             NosivaTextField(
-              label: 'Your offer',
-              hint: '0.00',
+              label: context.l10n.yourOffer,
+              hint: context.l10n.priceHint,
               controller: _controller,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              prefixIcon: Icons.attach_money_rounded,
+              prefixIcon: Icons.payments_outlined,
               validator: Validators.price,
             ),
             const SizedBox(height: AppSpacing.lg),
             NosivaButton(
-              label: 'Send offer',
+              label: context.l10n.sendOffer,
               variant: NosivaButtonVariant.gradient,
               onPressed: () {
                 if (!_formKey.currentState!.validate()) return;

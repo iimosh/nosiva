@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
 import '../../listings/domain/listing_enums.dart';
+import '../../listings/domain/listing_l10n.dart';
 import '../../profile/data/profile_repository.dart';
 import '../../profile/presentation/current_profile_provider.dart';
 
@@ -54,7 +56,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       ref.read(currentProfileProvider.notifier).set(updated);
       // Router redirect picks up `onboarded == true` and lands on home.
     } catch (e) {
-      if (mounted) context.showError('Couldn’t save — $e');
+      if (mounted) context.showError(context.l10n.couldNotSave('$e'));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -71,35 +73,35 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: AppSpacing.md),
-              Text('Let’s set your vibe ✨',
+              Text(context.l10n.onboardingTitle,
                   style: theme.textTheme.displayMedium),
               const SizedBox(height: AppSpacing.xs),
-              Text('We’ll use this to curate your feed.',
+              Text(context.l10n.onboardingSubtitle,
                   style: theme.textTheme.bodyLarge
                       ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
               const SizedBox(height: AppSpacing.xl),
               NosivaTextField(
-                label: 'Display name (optional)',
-                hint: 'What should we call you?',
+                label: context.l10n.displayNameOptional,
+                hint: context.l10n.displayNameHint,
                 controller: _displayName,
               ),
               const SizedBox(height: AppSpacing.md),
               NosivaTextField(
-                label: 'Location (optional)',
-                hint: 'City, Country',
+                label: context.l10n.locationOptional,
+                hint: context.l10n.cityCountry,
                 controller: _location,
                 prefixIcon: Icons.place_outlined,
               ),
               const SizedBox(height: AppSpacing.xl),
               _Section(
-                title: 'Favorite categories',
+                title: context.l10n.favoriteCategories,
                 child: Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xs,
                   children: [
                     for (final c in ListingCategory.values)
                       NosivaChip(
-                        label: '${c.emoji} ${c.label}',
+                        label: c.localizedWithEmoji(context.l10n),
                         selected: _categories.contains(c),
                         onTap: () => setState(() => _categories.toggle(c)),
                       ),
@@ -107,7 +109,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
               ),
               _Section(
-                title: 'Your sizes',
+                title: context.l10n.yourSizes,
                 child: Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xs,
@@ -122,7 +124,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
               ),
               _Section(
-                title: 'Styles you love',
+                title: context.l10n.stylesYouLove,
                 child: Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xs,
@@ -138,7 +140,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
               NosivaButton(
-                label: 'Start slaying 💖',
+                label: context.l10n.startSlaying,
                 loading: _saving,
                 variant: NosivaButtonVariant.gradient,
                 onPressed: _finish,

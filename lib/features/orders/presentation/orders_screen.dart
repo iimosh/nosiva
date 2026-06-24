@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
@@ -24,11 +25,11 @@ class OrdersScreen extends ConsumerWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Orders'),
-          bottom: const TabBar(
+          title: Text(context.l10n.orders),
+          bottom: TabBar(
             labelColor: AppColors.hotPink,
             indicatorColor: AppColors.hotPink,
-            tabs: [Tab(text: 'Buying'), Tab(text: 'Selling')],
+            tabs: [Tab(text: context.l10n.buying), Tab(text: context.l10n.selling)],
           ),
         ),
         body: TabBarView(
@@ -64,10 +65,10 @@ class OrderListView extends ConsumerWidget {
       error: (e, _) => ErrorStateView(message: '$e'),
       data: (list) {
         if (list.isEmpty) {
-          return const EmptyStateView(
+          return EmptyStateView(
             emoji: '📦',
-            title: 'No orders yet',
-            message: 'Your purchases and sales will show up here.',
+            title: context.l10n.noOrders,
+            message: context.l10n.ordersEmptyMessage,
           );
         }
         return ListView.separated(
@@ -91,7 +92,7 @@ class OrderListView extends ConsumerWidget {
                         : const ColoredBox(color: AppColors.blush),
                   ),
                 ),
-                title: Text(o.listing?.title ?? 'Item',
+                title: Text(o.listing?.title ?? context.l10n.item,
                     maxLines: 1, overflow: TextOverflow.ellipsis),
                 subtitle: Text(Formatters.price(o.total)),
                 trailing: Container(

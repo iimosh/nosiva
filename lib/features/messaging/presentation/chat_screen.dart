@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
@@ -67,7 +68,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       pendingNotifier.state = pendingNotifier.state
           .where((m) => m.id != optimistic.id)
           .toList();
-      if (mounted) context.showError('Message failed — $e');
+      if (mounted) context.showError(context.l10n.messageFailed('$e'));
     }
   }
 
@@ -78,7 +79,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final pending = ref.watch(_pendingProvider(widget.conversationId));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Chat')),
+      appBar: AppBar(title: Text(context.l10n.chat)),
       body: Column(
         children: [
           Expanded(
@@ -94,10 +95,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ...pending.where((p) => !confirmedBodies.contains(p.body)),
                 ];
                 if (merged.isEmpty) {
-                  return const EmptyStateView(
+                  return EmptyStateView(
                     emoji: '👋',
-                    title: 'Say hi!',
-                    message: 'Start the conversation — ask about size, fit, anything.',
+                    title: context.l10n.sayHiTitle,
+                    message: context.l10n.chatEmptyMessage,
                   );
                 }
                 return ListView.builder(
@@ -187,7 +188,7 @@ class _Composer extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.add_photo_alternate_outlined),
               onPressed: () =>
-                  context.showSnack('Image sharing — TODO 📷'),
+                  context.showSnack(context.l10n.imageSharingTodo),
             ),
             Expanded(
               child: TextField(

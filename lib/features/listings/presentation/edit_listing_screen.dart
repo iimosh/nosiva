@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -15,6 +16,7 @@ import '../../../core/widgets/state_views.dart';
 import '../data/listings_repository.dart';
 import '../domain/listing.dart';
 import '../domain/listing_enums.dart';
+import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
 import 'controllers/listing_detail_provider.dart';
 
@@ -28,7 +30,7 @@ class EditListingScreen extends ConsumerWidget {
     final listingAsync = ref.watch(listingDetailProvider(listingId));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit listing')),
+      appBar: AppBar(title: Text(context.l10n.editListing)),
       body: listingAsync.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.hotPink),
@@ -40,9 +42,9 @@ class EditListingScreen extends ConsumerWidget {
         data: (listing) {
           final uid = ref.watch(currentAuthUserProvider)?.id;
           if (uid != listing.sellerId) {
-            return const EmptyStateView(
-              title: 'This listing is not yours',
-              message: 'Only the seller can edit this item.',
+            return EmptyStateView(
+              title: context.l10n.listingNotYours,
+              message: context.l10n.onlySellerCanEdit,
             );
           }
           return _EditListingForm(
@@ -139,11 +141,11 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
       ref.invalidate(feedControllerProvider);
 
       if (mounted) {
-        context.showSuccess('Listing updated');
+        context.showSuccess(context.l10n.listingUpdated);
         context.pop();
       }
     } catch (e) {
-      if (mounted) context.showError('Could not update listing - $e');
+      if (mounted) context.showError(context.l10n.updateListingFailed('$e'));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -169,49 +171,49 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
               _ExistingPhotos(listing: listing),
               const SizedBox(height: AppSpacing.lg),
               NosivaTextField(
-                label: 'Title',
-                hint: 'e.g. Y2K butterfly baby tee',
+                label: context.l10n.title,
+                hint: context.l10n.listingTitleHint,
                 controller: _title,
                 validator: (v) => Validators.minLength(v, 3, field: 'Title'),
               ),
               const SizedBox(height: AppSpacing.md),
               NosivaTextField(
-                label: 'Description',
-                hint: 'Condition details, measurements, fit notes...',
+                label: context.l10n.description,
+                hint: context.l10n.listingDescriptionHint,
                 controller: _description,
                 maxLines: 4,
                 maxLength: 1000,
               ),
               const SizedBox(height: AppSpacing.md),
-              _Label('Category'),
+              _Label(context.l10n.category),
               Wrap(
                 spacing: AppSpacing.xs,
                 runSpacing: AppSpacing.xs,
                 children: [
                   for (final c in ListingCategory.values)
                     NosivaChip(
-                      label: '${c.emoji} ${c.label}',
+                      label: c.localizedWithEmoji(context.l10n),
                       selected: _category == c,
                       onTap: () => setState(() => _category = c),
                     ),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              _Label('Condition'),
+              _Label(context.l10n.condition),
               Wrap(
                 spacing: AppSpacing.xs,
                 runSpacing: AppSpacing.xs,
                 children: [
                   for (final c in ItemCondition.values)
                     NosivaChip(
-                      label: c.label,
+                      label: c.localizedLabel(context.l10n),
                       selected: _condition == c,
                       onTap: () => setState(() => _condition = c),
                     ),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              _Label('Status'),
+              _Label(context.l10n.status),
               Wrap(
                 spacing: AppSpacing.xs,
                 runSpacing: AppSpacing.xs,
@@ -225,7 +227,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              _Label('Size'),
+              _Label(context.l10n.size),
               Wrap(
                 spacing: AppSpacing.xs,
                 runSpacing: AppSpacing.xs,
@@ -244,16 +246,16 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                 children: [
                   Expanded(
                     child: NosivaTextField(
-                      label: 'Brand',
-                      hint: 'e.g. Brandy Melville',
+                      label: context.l10n.brand,
+                      hint: context.l10n.brandHint,
                       controller: _brand,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: NosivaTextField(
-                      label: 'Color',
-                      hint: 'e.g. Pink',
+                      label: context.l10n.color,
+                      hint: context.l10n.colorHint,
                       controller: _color,
                     ),
                   ),
@@ -261,13 +263,13 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
               ),
               const SizedBox(height: AppSpacing.md),
               NosivaTextField(
-                label: 'Location',
-                hint: 'City, Country',
+                label: context.l10n.location,
+                hint: context.l10n.cityCountry,
                 controller: _location,
                 prefixIcon: Icons.place_outlined,
               ),
               const SizedBox(height: AppSpacing.md),
-              _Label('Style tags'),
+              _Label(context.l10n.styleTags),
               Wrap(
                 spacing: AppSpacing.xs,
                 runSpacing: AppSpacing.xs,
@@ -286,17 +288,17 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
               ),
               const SizedBox(height: AppSpacing.md),
               NosivaTextField(
-                label: 'Price (USD)',
-                hint: '0.00',
+                label: context.l10n.priceUsd,
+                hint: context.l10n.priceHint,
                 controller: _price,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                prefixIcon: Icons.attach_money_rounded,
+                prefixIcon: Icons.payments_outlined,
                 validator: Validators.price,
               ),
               const SizedBox(height: AppSpacing.xl),
               NosivaButton(
-                label: 'Save changes',
+                label: context.l10n.saveChanges,
                 loading: _saving,
                 variant: NosivaButtonVariant.gradient,
                 onPressed: _save,
@@ -311,10 +313,10 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
 
   String _statusLabel(ListingStatus status) {
     return switch (status) {
-      ListingStatus.active => 'Active',
-      ListingStatus.reserved => 'Reserved',
-      ListingStatus.sold => 'Sold',
-      ListingStatus.hidden => 'Hidden',
+      ListingStatus.active => context.l10n.active,
+      ListingStatus.reserved => context.l10n.reserved,
+      ListingStatus.sold => context.l10n.sold,
+      ListingStatus.hidden => context.l10n.hidden,
     };
   }
 }

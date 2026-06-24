@@ -1,13 +1,11 @@
 import 'package:intl/intl.dart';
 
 abstract final class Formatters {
-  static final _currency = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
-  static final _currencyWhole = NumberFormat.currency(symbol: '\$', decimalDigits: 0);
+  static final _denar = NumberFormat.decimalPattern('mk');
 
   static String price(num value) {
-    return value == value.roundToDouble()
-        ? _currencyWhole.format(value)
-        : _currency.format(value);
+    final rounded = value.round();
+    return '${_denar.format(rounded)} ден';
   }
 
   /// "just now", "5m", "3h", "2d", or a date for older items.

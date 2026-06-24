@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -44,7 +45,7 @@ class ListingCard extends ConsumerWidget {
                       child: ColoredBox(
                         color: Colors.black.withValues(alpha: 0.45),
                         child: Center(
-                          child: Text('SOLD',
+                          child: Text(context.l10n.sold.toUpperCase(),
                               style: theme.textTheme.titleLarge
                                   ?.copyWith(color: Colors.white)),
                         ),
