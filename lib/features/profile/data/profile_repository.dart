@@ -11,8 +11,9 @@ class ProfileRepository {
   static const _table = 'profiles';
 
   Future<Profile?> fetchById(String id) async {
-    final data =
-        await _client.from(_table).select().eq('id', id).maybeSingle();
+    final data = await _withTransientRetry(
+      () => _client.from(_table).select().eq('id', id).maybeSingle(),
+    );
     return data == null ? null : Profile.fromJson(data);
   }
 
@@ -44,11 +45,13 @@ class ProfileRepository {
     required String id,
     required String username,
   }) async {
-    final data = await _client
-        .from(_table)
-        .insert({'id': id, 'username': username})
-        .select()
-        .single();
+    final data = await _withTransientRetry(
+      () => _client
+          .from(_table)
+          .upsert({'id': id, 'username': username}, onConflict: 'id')
+          .select()
+          .single(),
+    );
     return Profile.fromJson(data);
   }
 
@@ -111,6 +114,31 @@ class ProfileRepository {
         .eq('username', username)
         .maybeSingle();
     return existing == null;
+  }
+
+  Future<T> _withTransientRetry<T>(Future<T> Function() request) async {
+    Object? lastError;
+
+    for (var attempt = 0; attempt < 3; attempt++) {
+      try {
+        return await request();
+      } catch (error) {
+        lastError = error;
+        if (!_isTransientNetworkError(error) || attempt == 2) rethrow;
+        await Future<void>.delayed(Duration(milliseconds: 350 * (attempt + 1)));
+      }
+    }
+
+    Error.throwWithStackTrace(lastError!, StackTrace.current);
+  }
+
+  bool _isTransientNetworkError(Object error) {
+    final message = error.toString().toLowerCase();
+    return message.contains('clientexception') ||
+        message.contains('ssl') ||
+        message.contains('socketexception') ||
+        message.contains('connection') ||
+        message.contains('failed host lookup');
   }
 }
 
