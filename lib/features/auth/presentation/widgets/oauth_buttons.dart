@@ -4,8 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/theme/app_spacing.dart';
 
-/// Google / Apple sign-in row. Wire these up after enabling the providers in
-/// Supabase Auth and configuring deep-link redirects.
 class OAuthButtons extends StatelessWidget {
   const OAuthButtons({super.key, required this.onProvider});
 
@@ -37,14 +35,8 @@ class OAuthButtons extends StatelessWidget {
                 onTap: () => onProvider(OAuthProvider.google),
               ),
             ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: _OAuthTile(
-                label: 'Apple',
-                icon: Icons.apple_rounded,
-                onTap: () => onProvider(OAuthProvider.apple),
-              ),
-            ),
+            // Apple OAuth requires an Apple Developer account and Apple provider
+            // credentials in Supabase, so it is hidden until those are available.
           ],
         ),
       ],

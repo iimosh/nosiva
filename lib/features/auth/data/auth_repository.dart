@@ -8,6 +8,8 @@ class AuthRepository {
   AuthRepository(this._client);
   final SupabaseClient _client;
 
+  static const oauthRedirectTo = 'com.example.nosiva://login-callback/';
+
   User? get currentUser => _client.auth.currentUser;
   Session? get currentSession => _client.auth.currentSession;
 
@@ -25,13 +27,10 @@ class AuthRepository {
     return _client.auth.signInWithPassword(email: email, password: password);
   }
 
-  /// Google / Apple OAuth. Requires the providers to be enabled in Supabase
-  /// and the platform redirect URLs configured.
   Future<bool> signInWithOAuth(OAuthProvider provider) {
     return _client.auth.signInWithOAuth(
       provider,
-      // Configure a platform redirect URL when enabling OAuth in production.
-      redirectTo: null,
+      redirectTo: oauthRedirectTo,
     );
   }
 

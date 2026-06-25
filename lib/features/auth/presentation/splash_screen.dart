@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/state_views.dart';
+import '../../profile/presentation/current_profile_provider.dart';
 
 /// Splash with the Nosiva wordmark. Shown while the session +
 /// profile resolve; the router redirects away once state settles.
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(currentProfileProvider);
+
+    if (profileAsync.hasError) {
+      return Scaffold(
+        body: ErrorStateView(
+          message: '${profileAsync.error}',
+          onRetry: () =>
+              ref.read(currentProfileProvider.notifier).refreshProfile(),
+        ),
+      );
+    }
+
     return Scaffold(
       body: DecoratedBox(
         decoration: const BoxDecoration(gradient: AppColors.splashGradient),
