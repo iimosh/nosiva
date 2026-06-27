@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
@@ -16,34 +18,6 @@ final buyerOrdersProvider =
     FutureProvider<List<Order>>((ref) => ref.watch(ordersRepositoryProvider).fetchAsBuyer());
 final sellerOrdersProvider =
     FutureProvider<List<Order>>((ref) => ref.watch(ordersRepositoryProvider).fetchAsSeller());
-
-class OrdersScreen extends ConsumerWidget {
-  const OrdersScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(context.l10n.orders),
-          bottom: TabBar(
-            labelColor: AppColors.hotPink,
-            indicatorColor: AppColors.hotPink,
-            tabs: [Tab(text: context.l10n.buying), Tab(text: context.l10n.selling)],
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            OrderListView(provider: buyerOrdersProvider),
-            OrderListView(provider: sellerOrdersProvider),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 
 class OrderListView extends ConsumerWidget {
   const OrderListView({super.key, required this.provider});
@@ -81,6 +55,7 @@ class OrderListView extends ConsumerWidget {
             final theme = Theme.of(context);
             return Card(
               child: ListTile(
+                onTap: () => context.push(AppRoutes.orderDetailPath(o.id)),
                 leading: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: SizedBox(

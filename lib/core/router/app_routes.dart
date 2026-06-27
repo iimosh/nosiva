@@ -19,7 +19,7 @@ abstract final class AppRoutes {
   static const favorites = '/favorites';
   static const chat = '/chat'; // /chat/:conversationId
   static const cart = '/cart';
-  static const orders = '/orders';
+  static const orderDetail = '/order'; // /order/:id
   static const notifications = '/notifications';
   static const editProfile = '/edit-profile';
   static const admin = '/admin';
@@ -28,6 +28,7 @@ abstract final class AppRoutes {
 
   static String listingDetailPath(String id) => '$listingDetail/$id';
   static String editListingPath(String id) => '$editListing/$id';
+  static String orderDetailPath(String id) => '$orderDetail/$id';
   static String chatPath(String id) => '$chat/$id';
   static String userPath(String id) => '$user/$id';
   static String followListPath(String id, {int tab = 0}) =>
