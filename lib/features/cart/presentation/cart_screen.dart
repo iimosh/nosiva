@@ -12,7 +12,12 @@ import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
 import '../../../core/widgets/state_views.dart';
+import '../../activity/presentation/activity_screen.dart';
+import '../../listings/data/listings_repository.dart';
+import '../../listings/presentation/controllers/feed_controller.dart';
+import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../orders/data/orders_repository.dart';
+import '../../orders/presentation/orders_screen.dart';
 import 'cart_controller.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
@@ -42,6 +47,22 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
     setState(() => _placing = true);
     try {
+      final sold = await ref
+          .read(listingsRepositoryProvider)
+          .soldListingIds(items.map((e) => e.id).toList());
+      if (sold.isNotEmpty) {
+        final cart = ref.read(cartControllerProvider.notifier);
+        for (final id in sold) {
+          cart.remove(id);
+        }
+        ref.invalidate(feedControllerProvider);
+        if (mounted) {
+          context.showError(context.l10n.soldItemsRemoved);
+          setState(() => _placing = false);
+        }
+        return;
+      }
+
       // ============================================================
       // 💳 STRIPE INTEGRATION POINT (stubbed for the MVP)
       // ------------------------------------------------------------
@@ -63,9 +84,16 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         );
       }
       ref.read(cartControllerProvider.notifier).clear();
+      ref.invalidate(feedControllerProvider);
+      ref.invalidate(buyerOrdersProvider);
+      for (final item in items) {
+        ref.invalidate(listingDetailProvider(item.id));
+        ref.invalidate(sellerListingsProvider(item.sellerId));
+      }
       if (mounted) {
         context.showSuccess(context.l10n.orderPlaced);
-        context.go(AppRoutes.orders);
+        ref.read(activityTabRequestProvider.notifier).state = 1;
+        context.go(AppRoutes.activity);
       }
     } catch (e) {
       if (mounted) context.showError(context.l10n.checkoutFailed('$e'));

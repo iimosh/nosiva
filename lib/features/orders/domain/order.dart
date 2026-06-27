@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../listings/domain/listing.dart';
 import '../../listings/domain/listing_enums.dart';
+import '../../profile/domain/profile.dart';
 
 part 'order.freezed.dart';
 part 'order.g.dart';
@@ -21,9 +22,13 @@ class Order with _$Order {
     @JsonKey(name: 'created_at') DateTime? createdAt,
     // Joined
     Listing? listing,
+    Profile? buyer,
+    Profile? seller,
   }) = _Order;
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 
   OrderStatus get statusEnum => OrderStatus.fromValue(status);
+
+  Profile? counterparty(String userId) => userId == sellerId ? buyer : seller;
 }

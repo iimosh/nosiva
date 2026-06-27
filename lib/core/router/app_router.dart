@@ -18,7 +18,7 @@ import '../../features/activity/presentation/activity_screen.dart';
 import '../../features/messaging/presentation/chat_screen.dart';
 import '../../features/messaging/presentation/inbox_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
-import '../../features/orders/presentation/orders_screen.dart';
+import '../../features/orders/presentation/order_detail_screen.dart';
 import '../../features/profile/presentation/current_profile_provider.dart';
 import '../../features/profile/presentation/edit_profile_screen.dart';
 import '../../features/profile/presentation/follow_list_screen.dart';
@@ -152,9 +152,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const CartScreen(),
       ),
       GoRoute(
-        path: AppRoutes.orders,
+        path: '${AppRoutes.orderDetail}/:id',
         parentNavigatorKey: _rootKey,
-        builder: (_, __) => const OrdersScreen(),
+        builder: (_, state) =>
+            OrderDetailScreen(orderId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.notifications,

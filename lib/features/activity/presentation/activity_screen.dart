@@ -7,42 +7,78 @@ import '../../notifications/data/notifications_repository.dart';
 import '../../notifications/presentation/notifications_screen.dart';
 import '../../orders/presentation/orders_screen.dart';
 
-/// The "Activity" tab: alerts + your orders (buying & selling).
-/// Replaces the old Search tab — search now lives on Home.
-class ActivityScreen extends ConsumerWidget {
+final activityTabRequestProvider = StateProvider<int?>((ref) => null);
+
+class ActivityScreen extends ConsumerStatefulWidget {
   const ActivityScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(context.l10n.activity),
-          actions: [
-            TextButton(
-              onPressed: () =>
-                  ref.read(notificationsRepositoryProvider).markAllRead(),
-              child: Text(context.l10n.markAllRead),
-            ),
-          ],
-          bottom: TabBar(
-            labelColor: AppColors.hotPink,
-            indicatorColor: AppColors.hotPink,
-            tabs: [
-              Tab(text: context.l10n.alerts),
-              Tab(text: context.l10n.buying),
-              Tab(text: context.l10n.selling),
-            ],
+  ConsumerState<ActivityScreen> createState() => _ActivityScreenState();
+}
+
+class _ActivityScreenState extends ConsumerState<ActivityScreen>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tab;
+
+  @override
+  void initState() {
+    super.initState();
+    final requested = ref.read(activityTabRequestProvider);
+    _tab = TabController(length: 3, vsync: this, initialIndex: requested ?? 0);
+    if (requested != null) _consume();
+  }
+
+  void _consume() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(activityTabRequestProvider.notifier).state = null;
+    });
+  }
+
+  @override
+  void dispose() {
+    _tab.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen<int?>(activityTabRequestProvider, (_, next) {
+      if (next == null) return;
+      if (next >= 0 && next < _tab.length && _tab.index != next) {
+        _tab.animateTo(next);
+      }
+      _consume();
+    });
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(context.l10n.activity),
+        actions: [
+          IconButton(
+            onPressed: () =>
+                ref.read(notificationsRepositoryProvider).markAllRead(),
+            tooltip: context.l10n.markAllRead,
+            icon: const Icon(Icons.remove_red_eye_outlined),
           ),
-        ),
-        body: TabBarView(
-          children: [
-            const NotificationsListView(),
-            OrderListView(provider: buyerOrdersProvider),
-            OrderListView(provider: sellerOrdersProvider),
+        ],
+        bottom: TabBar(
+          controller: _tab,
+          labelColor: AppColors.hotPink,
+          indicatorColor: AppColors.hotPink,
+          tabs: [
+            Tab(text: context.l10n.alerts),
+            Tab(text: context.l10n.buying),
+            Tab(text: context.l10n.selling),
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: _tab,
+        children: [
+          const NotificationsListView(),
+          OrderListView(provider: buyerOrdersProvider),
+          OrderListView(provider: sellerOrdersProvider),
+        ],
       ),
     );
   }

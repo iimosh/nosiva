@@ -9,7 +9,9 @@ class OrdersRepository {
   final SupabaseClient _client;
   static const _table = 'orders';
   static const _select =
-      '*, listing:listings(*, images:listing_images(*))';
+      '*, listing:listings(*, images:listing_images(*)), '
+      'buyer:profiles!orders_buyer_id_fkey(*), '
+      'seller:profiles!orders_seller_id_fkey(*)';
 
   /// Creates an order. Payment is stubbed — see Stripe integration point in
   /// the checkout flow. This simply records a pending order row.
@@ -53,6 +55,11 @@ class OrdersRepository {
         .eq('seller_id', uid)
         .order('created_at', ascending: false);
     return data.map<Order>((e) => Order.fromJson(e)).toList();
+  }
+
+  Future<Order> fetchById(String id) async {
+    final data = await _client.from(_table).select(_select).eq('id', id).single();
+    return Order.fromJson(data);
   }
 
   Future<void> updateStatus(String orderId, String status) async {
