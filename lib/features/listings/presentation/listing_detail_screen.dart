@@ -713,37 +713,59 @@ class _ActionBar extends ConsumerWidget {
                       label: context.l10n.editListing,
                       icon: Icons.edit_outlined,
                       variant: NosivaButtonVariant.secondary,
-                      onPressed: () =>
-                          context.push(AppRoutes.editListingPath(listing.id)),
+                      onPressed: () async {
+                        await context.push(
+                            AppRoutes.editListingPath(listing.id));
+                        ref.invalidate(listingDetailProvider(listing.id));
+                      },
                     ),
                   ),
                 ],
               )
-            : Row(
-                children: [
-                  IconButton.filledTonal(
-                    iconSize: 26,
-                    icon: const Icon(Icons.chat_bubble_outline_rounded),
-                    onPressed: () => _message(context, ref),
+            : listing.isSold
+                ? Row(
+                    children: [
+                      IconButton.filledTonal(
+                        iconSize: 26,
+                        icon: const Icon(Icons.chat_bubble_outline_rounded),
+                        onPressed: () => _message(context, ref),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: NosivaButton(
+                          label: context.l10n.sold,
+                          icon: Icons.sell_outlined,
+                          variant: NosivaButtonVariant.secondary,
+                          onPressed: null,
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    children: [
+                      IconButton.filledTonal(
+                        iconSize: 26,
+                        icon: const Icon(Icons.chat_bubble_outline_rounded),
+                        onPressed: () => _message(context, ref),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: NosivaButton(
+                          label: context.l10n.makeOffer,
+                          variant: NosivaButtonVariant.secondary,
+                          onPressed: () => _makeOffer(context, ref),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: NosivaButton(
+                          label: context.l10n.buyNow,
+                          variant: NosivaButtonVariant.gradient,
+                          onPressed: () => _buyNow(context, ref),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Expanded(
-                    child: NosivaButton(
-                      label: context.l10n.makeOffer,
-                      variant: NosivaButtonVariant.secondary,
-                      onPressed: () => _makeOffer(context, ref),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Expanded(
-                    child: NosivaButton(
-                      label: context.l10n.buyNow,
-                      variant: NosivaButtonVariant.gradient,
-                      onPressed: () => _buyNow(context, ref),
-                    ),
-                  ),
-                ],
-              ),
       ),
     );
   }
@@ -762,6 +784,10 @@ class _ActionBar extends ConsumerWidget {
   }
 
   void _buyNow(BuildContext context, WidgetRef ref) {
+    if (listing.isSold) {
+      context.showError(context.l10n.itemNoLongerAvailable);
+      return;
+    }
     ref.read(cartControllerProvider.notifier).add(listing);
     context.showSuccess(context.l10n.addedToCart);
     context.push(AppRoutes.cart);

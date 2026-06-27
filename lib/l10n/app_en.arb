@@ -145,6 +145,22 @@
       "error": {}
     }
   },
+  "editPhoto": "Edit photo",
+  "crop": "Crop",
+  "rotateLeft": "Rotate left",
+  "rotateRight": "Rotate right",
+  "done": "Done",
+  "moveLeft": "Move left",
+  "moveRight": "Move right",
+  "viewPhoto": "View photo",
+  "removePhoto": "Remove",
+  "keepOnePhoto": "Listings need at least one photo",
+  "photoEditFailed": "Couldn’t edit photo — {error}",
+  "@photoEditFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
   "listedSuccess": "Listing published successfully.",
   "listFailed": "Couldn’t list — {error}",
   "@listFailed": {
@@ -164,8 +180,9 @@
     }
   },
   "active": "Active",
-  "reserved": "Reserved",
   "sold": "Sold",
+  "itemNoLongerAvailable": "This item is no longer available",
+  "soldItemsRemoved": "Some items were just sold and removed from your bag",
   "hidden": "Hidden",
   "vibe": "Style",
   "seller": "Seller",
@@ -234,6 +251,7 @@
   "noMessages": "No messages yet",
   "noMessagesMessage": "When you message a seller (or get a buyer), it shows up here.",
   "nosivaUser": "Nosiva user",
+  "messageUser": "Message",
   "userNotFound": "User not found",
   "noListingsYet": "No listings yet",
   "sayHi": "Send message",
@@ -315,6 +333,17 @@
   "orderStatusShipped": "Shipped",
   "orderStatusDelivered": "Delivered",
   "orderStatusCancelled": "Cancelled",
+  "orderDetails": "Order details",
+  "buyer": "Buyer",
+  "orderedLabel": "Ordered",
+  "acceptOrder": "Accept order",
+  "declineOrder": "Decline",
+  "markShipped": "Mark as shipped",
+  "markDelivered": "Mark as delivered",
+  "cancelOrder": "Cancel order",
+  "confirmReceived": "Confirm received",
+  "orderUpdated": "Order updated",
+  "cancelOrderConfirm": "Cancel this order? This can't be undone.",
   "adminListings": "Listings",
   "adminReports": "Reports",
   "adminUsers": "Users",

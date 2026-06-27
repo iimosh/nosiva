@@ -49,6 +49,12 @@ class ListingCard extends ConsumerWidget {
                 children: [
                   _Image(url: listing.coverImageUrl),
                   const _ImageShade(),
+                  if (listing.isSold)
+                    Positioned.fill(
+                      child: ColoredBox(
+                        color: theme.colorScheme.surface.withValues(alpha: 0.55),
+                      ),
+                    ),
                   if (listing.statusEnum != ListingStatus.active)
                     Positioned(
                       left: AppSpacing.xs,

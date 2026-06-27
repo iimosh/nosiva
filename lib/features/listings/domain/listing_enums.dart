@@ -36,7 +36,6 @@ enum ItemCondition {
 
 enum ListingStatus {
   active('active'),
-  reserved('reserved'),
   sold('sold'),
   hidden('hidden');
 

@@ -878,6 +878,72 @@ abstract class AppLocalizations {
   /// **'Couldn’t add photo — {error}'**
   String photoAddFailed(Object error);
 
+  /// No description provided for @editPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit photo'**
+  String get editPhoto;
+
+  /// No description provided for @crop.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop'**
+  String get crop;
+
+  /// No description provided for @rotateLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate left'**
+  String get rotateLeft;
+
+  /// No description provided for @rotateRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate right'**
+  String get rotateRight;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// No description provided for @moveLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Move left'**
+  String get moveLeft;
+
+  /// No description provided for @moveRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Move right'**
+  String get moveRight;
+
+  /// No description provided for @viewPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'View photo'**
+  String get viewPhoto;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removePhoto;
+
+  /// No description provided for @keepOnePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings need at least one photo'**
+  String get keepOnePhoto;
+
+  /// No description provided for @photoEditFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t edit photo — {error}'**
+  String photoEditFailed(Object error);
+
   /// No description provided for @listedSuccess.
   ///
   /// In en, this message translates to:
@@ -932,17 +998,23 @@ abstract class AppLocalizations {
   /// **'Active'**
   String get active;
 
-  /// No description provided for @reserved.
-  ///
-  /// In en, this message translates to:
-  /// **'Reserved'**
-  String get reserved;
-
   /// No description provided for @sold.
   ///
   /// In en, this message translates to:
   /// **'Sold'**
   String get sold;
+
+  /// No description provided for @itemNoLongerAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This item is no longer available'**
+  String get itemNoLongerAvailable;
+
+  /// No description provided for @soldItemsRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Some items were just sold and removed from your bag'**
+  String get soldItemsRemoved;
 
   /// No description provided for @hidden.
   ///
@@ -1231,6 +1303,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nosiva user'**
   String get nosivaUser;
+
+  /// No description provided for @messageUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get messageUser;
 
   /// No description provided for @userNotFound.
   ///
@@ -1525,6 +1603,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancelled'**
   String get orderStatusCancelled;
+
+  /// No description provided for @orderDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Order details'**
+  String get orderDetails;
+
+  /// No description provided for @buyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer'**
+  String get buyer;
+
+  /// No description provided for @orderedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ordered'**
+  String get orderedLabel;
+
+  /// No description provided for @acceptOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept order'**
+  String get acceptOrder;
+
+  /// No description provided for @declineOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get declineOrder;
+
+  /// No description provided for @markShipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as shipped'**
+  String get markShipped;
+
+  /// No description provided for @markDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as delivered'**
+  String get markDelivered;
+
+  /// No description provided for @cancelOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel order'**
+  String get cancelOrder;
+
+  /// No description provided for @confirmReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm received'**
+  String get confirmReceived;
+
+  /// No description provided for @orderUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Order updated'**
+  String get orderUpdated;
+
+  /// No description provided for @cancelOrderConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this order? This can\'t be undone.'**
+  String get cancelOrderConfirm;
 
   /// No description provided for @adminListings.
   ///

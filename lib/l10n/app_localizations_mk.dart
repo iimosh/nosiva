@@ -414,6 +414,41 @@ class AppLocalizationsMk extends AppLocalizations {
   }
 
   @override
+  String get editPhoto => 'Уреди фотографија';
+
+  @override
+  String get crop => 'Исечи';
+
+  @override
+  String get rotateLeft => 'Ротирај лево';
+
+  @override
+  String get rotateRight => 'Ротирај десно';
+
+  @override
+  String get done => 'Готово';
+
+  @override
+  String get moveLeft => 'Помести лево';
+
+  @override
+  String get moveRight => 'Помести десно';
+
+  @override
+  String get viewPhoto => 'Прегледај фотографија';
+
+  @override
+  String get removePhoto => 'Отстрани';
+
+  @override
+  String get keepOnePhoto => 'Огласот мора да има барем една фотографија';
+
+  @override
+  String photoEditFailed(Object error) {
+    return 'Не можевме да ја уредиме фотографијата — $error';
+  }
+
+  @override
   String get listedSuccess => 'Огласот е успешно објавен.';
 
   @override
@@ -446,10 +481,14 @@ class AppLocalizationsMk extends AppLocalizations {
   String get active => 'Активен';
 
   @override
-  String get reserved => 'Резервиран';
+  String get sold => 'Продаден';
 
   @override
-  String get sold => 'Продаден';
+  String get itemNoLongerAvailable => 'Овој артикл повеќе не е достапен';
+
+  @override
+  String get soldItemsRemoved =>
+      'Некои артикли штотуку се продадени и се отстранети од кошничката';
 
   @override
   String get hidden => 'Скриен';
@@ -608,6 +647,9 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get nosivaUser => 'Nosiva корисник';
+
+  @override
+  String get messageUser => 'Порака';
 
   @override
   String get userNotFound => 'Корисникот не е пронајден';
@@ -772,6 +814,40 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get orderStatusCancelled => 'Откажано';
+
+  @override
+  String get orderDetails => 'Детали за нарачка';
+
+  @override
+  String get buyer => 'Купувач';
+
+  @override
+  String get orderedLabel => 'Нарачано';
+
+  @override
+  String get acceptOrder => 'Прифати нарачка';
+
+  @override
+  String get declineOrder => 'Одбиј';
+
+  @override
+  String get markShipped => 'Означи како испратено';
+
+  @override
+  String get markDelivered => 'Означи како доставено';
+
+  @override
+  String get cancelOrder => 'Откажи нарачка';
+
+  @override
+  String get confirmReceived => 'Потврди прием';
+
+  @override
+  String get orderUpdated => 'Нарачката е ажурирана';
+
+  @override
+  String get cancelOrderConfirm =>
+      'Да се откаже нарачката? Ова не може да се врати.';
 
   @override
   String get adminListings => 'Огласи';

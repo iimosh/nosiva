@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,12 +5,15 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/location/location_service.dart';
 import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/media/image_editing.dart';
+import '../../../core/media/photo_editor_screen.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/snackbars.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/widgets/fullscreen_image.dart';
 import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
@@ -21,8 +22,6 @@ import '../data/listings_repository.dart';
 import '../domain/listing_enums.dart';
 import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
-
-typedef PickedImage = ({Uint8List bytes, String ext});
 
 class CreateListingScreen extends ConsumerStatefulWidget {
   const CreateListingScreen({super.key});
@@ -88,6 +87,78 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
     final dot = path.lastIndexOf('.');
     final ext = dot == -1 ? 'jpg' : path.substring(dot + 1).toLowerCase();
     return ext == 'jpeg' ? 'jpg' : ext;
+  }
+
+  void _photoOptions(int i) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.visibility_outlined),
+              title: Text(context.l10n.viewPhoto),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                FullscreenImage.show(context, MemoryImage(_images[i].bytes));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.tune_rounded),
+              title: Text(context.l10n.editPhoto),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _editAt(i);
+              },
+            ),
+            if (i > 0)
+              ListTile(
+                leading: const Icon(Icons.arrow_back_rounded),
+                title: Text(context.l10n.moveLeft),
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  _move(i, i - 1);
+                },
+              ),
+            if (i < _images.length - 1)
+              ListTile(
+                leading: const Icon(Icons.arrow_forward_rounded),
+                title: Text(context.l10n.moveRight),
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  _move(i, i + 1);
+                },
+              ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: AppColors.error),
+              title: Text(context.l10n.removePhoto),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                setState(() => _images.removeAt(i));
+                _syncDirty();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _editAt(int i) async {
+    final edited = await PhotoEditorScreen.open(context, _images[i]);
+    if (edited != null && mounted) {
+      setState(() => _images[i] = edited);
+      _syncDirty();
+    }
+  }
+
+  void _move(int from, int to) {
+    setState(() {
+      final img = _images.removeAt(from);
+      _images.insert(to, img);
+    });
+    _syncDirty();
   }
 
   void _showPickerSheet() {
@@ -232,6 +303,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                 _PhotoStrip(
                   images: _images,
                   onAdd: _showPickerSheet,
+                  onTapImage: _photoOptions,
                   onRemove: (i) {
                     setState(() => _images.removeAt(i));
                     _syncDirty();
@@ -430,11 +502,13 @@ class _PhotoStrip extends StatelessWidget {
   const _PhotoStrip({
     required this.images,
     required this.onAdd,
+    required this.onTapImage,
     required this.onRemove,
   });
 
   final List<PickedImage> images;
   final VoidCallback onAdd;
+  final ValueChanged<int> onTapImage;
   final ValueChanged<int> onRemove;
 
   @override
@@ -450,10 +524,13 @@ class _PhotoStrip extends StatelessWidget {
               padding: const EdgeInsets.only(left: AppSpacing.xs),
               child: Stack(
                 children: [
-                  ClipRRect(
-                    borderRadius: AppRadii.field,
-                    child: Image.memory(images[i].bytes,
-                        height: 100, width: 100, fit: BoxFit.cover),
+                  GestureDetector(
+                    onTap: () => onTapImage(i),
+                    child: ClipRRect(
+                      borderRadius: AppRadii.field,
+                      child: Image.memory(images[i].bytes,
+                          height: 100, width: 100, fit: BoxFit.cover),
+                    ),
                   ),
                   Positioned(
                     top: 2,

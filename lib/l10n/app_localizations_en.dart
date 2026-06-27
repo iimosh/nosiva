@@ -413,6 +413,41 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get editPhoto => 'Edit photo';
+
+  @override
+  String get crop => 'Crop';
+
+  @override
+  String get rotateLeft => 'Rotate left';
+
+  @override
+  String get rotateRight => 'Rotate right';
+
+  @override
+  String get done => 'Done';
+
+  @override
+  String get moveLeft => 'Move left';
+
+  @override
+  String get moveRight => 'Move right';
+
+  @override
+  String get viewPhoto => 'View photo';
+
+  @override
+  String get removePhoto => 'Remove';
+
+  @override
+  String get keepOnePhoto => 'Listings need at least one photo';
+
+  @override
+  String photoEditFailed(Object error) {
+    return 'Couldn’t edit photo — $error';
+  }
+
+  @override
   String get listedSuccess => 'Listing published successfully.';
 
   @override
@@ -444,10 +479,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get active => 'Active';
 
   @override
-  String get reserved => 'Reserved';
+  String get sold => 'Sold';
 
   @override
-  String get sold => 'Sold';
+  String get itemNoLongerAvailable => 'This item is no longer available';
+
+  @override
+  String get soldItemsRemoved =>
+      'Some items were just sold and removed from your bag';
 
   @override
   String get hidden => 'Hidden';
@@ -605,6 +644,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nosivaUser => 'Nosiva user';
+
+  @override
+  String get messageUser => 'Message';
 
   @override
   String get userNotFound => 'User not found';
@@ -765,6 +807,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orderStatusCancelled => 'Cancelled';
+
+  @override
+  String get orderDetails => 'Order details';
+
+  @override
+  String get buyer => 'Buyer';
+
+  @override
+  String get orderedLabel => 'Ordered';
+
+  @override
+  String get acceptOrder => 'Accept order';
+
+  @override
+  String get declineOrder => 'Decline';
+
+  @override
+  String get markShipped => 'Mark as shipped';
+
+  @override
+  String get markDelivered => 'Mark as delivered';
+
+  @override
+  String get cancelOrder => 'Cancel order';
+
+  @override
+  String get confirmReceived => 'Confirm received';
+
+  @override
+  String get orderUpdated => 'Order updated';
+
+  @override
+  String get cancelOrderConfirm => 'Cancel this order? This can\'t be undone.';
 
   @override
   String get adminListings => 'Listings';
