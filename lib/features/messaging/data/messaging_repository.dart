@@ -43,6 +43,30 @@ class MessagingRepository {
     return Conversation.fromJson(created);
   }
 
+  Future<Conversation> getOrCreateDirectConversation(String otherUserId) async {
+    final uid = _client.auth.currentUser!.id;
+    final rows = await _client
+        .from(_conversations)
+        .select()
+        .isFilter('listing_id', null)
+        .or('and(buyer_id.eq.$uid,seller_id.eq.$otherUserId),'
+            'and(buyer_id.eq.$otherUserId,seller_id.eq.$uid)')
+        .limit(1);
+    if (rows.isNotEmpty) return Conversation.fromJson(rows.first);
+
+    final created = await _client
+        .from(_conversations)
+        .insert({'buyer_id': uid, 'seller_id': otherUserId})
+        .select()
+        .single();
+    return Conversation.fromJson(created);
+  }
+
+  Future<void> markConversationRead(String conversationId) async {
+    await _client
+        .rpc('mark_conversation_read', params: {'conv': conversationId});
+  }
+
   Future<Conversation> fetchConversation(String id) async {
     final data = await _client
         .from(_conversations)
@@ -64,7 +88,6 @@ class MessagingRepository {
     return data.map<Conversation>((e) => Conversation.fromJson(e)).toList();
   }
 
-  /// Realtime stream of messages in a conversation, ordered oldest-to-newest.
   Stream<List<Message>> messageStream(String conversationId) {
     return _client
         .from(_messages)
@@ -86,10 +109,6 @@ class MessagingRepository {
       'body': body,
       'image_url': imageUrl,
     });
-    await _client.from(_conversations).update({
-      'last_message': imageUrl != null ? 'Photo' : body,
-      'last_message_at': DateTime.now().toIso8601String(),
-    }).eq('id', conversationId);
   }
 
   Future<String> uploadChatImage({

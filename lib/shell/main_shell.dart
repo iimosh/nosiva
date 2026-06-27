@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../core/l10n/l10n_extensions.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
+import '../features/messaging/presentation/inbox_screen.dart';
+import '../features/profile/presentation/current_profile_provider.dart';
 
 final sellResetSignalProvider = StateProvider<int>((ref) => 0);
 
@@ -42,12 +44,17 @@ class MainShell extends ConsumerWidget {
       ref.read(sellFormDirtyProvider.notifier).state = false;
     }
     if (index == 2) ref.read(sellResetSignalProvider.notifier).state++;
+ if (index == 3) ref.invalidate(conversationsProvider);
+  if (index == 4) ref.read(currentProfileProvider.notifier).reload();
     shell.goBranch(index, initialLocation: index == shell.currentIndex);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    ref.watch(inboxRealtimeProvider); // keep the live inbox subscription open
+    ref.watch(profileRealtimeProvider); // live follower/following counts
+    final unread = ref.watch(unreadCountProvider);
     return Scaffold(
       body: shell,
       bottomNavigationBar: Container(
@@ -78,6 +85,7 @@ class MainShell extends ConsumerWidget {
                   icon: Icons.chat_bubble_rounded,
                   label: context.l10n.inbox,
                   selected: shell.currentIndex == 3,
+                  badgeCount: unread,
                   onTap: () => _go(context, ref, 3),
                 ),
                 _NavItem(
@@ -101,12 +109,14 @@ class _NavItem extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
+    this.badgeCount = 0,
   });
 
   final IconData icon;
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final int badgeCount;
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +130,12 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: color, size: 26),
+            Badge(
+              isLabelVisible: badgeCount > 0,
+              backgroundColor: AppColors.hotPink,
+              label: Text(badgeCount > 99 ? '99+' : '$badgeCount'),
+              child: Icon(icon, color: color, size: 26),
+            ),
             const SizedBox(height: 2),
             Text(label, style: theme.textTheme.labelMedium?.copyWith(color: color)),
           ],
