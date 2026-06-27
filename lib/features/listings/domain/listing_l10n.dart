@@ -35,7 +35,6 @@ extension ListingStatusL10n on ListingStatus {
   String localizedLabel(AppLocalizations l10n) {
     return switch (this) {
       ListingStatus.active => l10n.active,
-      ListingStatus.reserved => l10n.reserved,
       ListingStatus.sold => l10n.sold,
       ListingStatus.hidden => l10n.hidden,
     };
