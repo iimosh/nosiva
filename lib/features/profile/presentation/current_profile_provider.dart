@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/supabase/supabase_providers.dart';
 import '../data/profile_repository.dart';
@@ -29,6 +30,13 @@ class CurrentProfile extends AsyncNotifier<Profile?> {
     });
   }
 
+  Future<void> reload() async {
+    final user = ref.read(currentAuthUserProvider);
+    if (user == null) return;
+    final profile = await ref.read(profileRepositoryProvider).fetchById(user.id);
+    if (profile != null) state = AsyncValue.data(profile);
+  }
+
   void set(Profile profile) => state = AsyncValue.data(profile);
 
   static String _slug(String input) =>
@@ -41,4 +49,25 @@ final currentProfileProvider =
 
 final isAdminProvider = Provider<bool>((ref) {
   return ref.watch(currentProfileProvider).valueOrNull?.isAdmin ?? false;
+});
+
+final profileRealtimeProvider = Provider<void>((ref) {
+  final client = ref.watch(supabaseClientProvider);
+  final uid = ref.watch(currentAuthUserProvider)?.id;
+  if (uid == null) return;
+  final channel = client
+      .channel('profile:$uid')
+      .onPostgresChanges(
+        event: PostgresChangeEvent.update,
+        schema: 'public',
+        table: 'profiles',
+        filter: PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: 'id',
+          value: uid,
+        ),
+        callback: (_) => ref.read(currentProfileProvider.notifier).reload(),
+      )
+      .subscribe();
+  ref.onDispose(() => client.removeChannel(channel));
 });

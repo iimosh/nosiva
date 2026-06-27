@@ -15,6 +15,7 @@ import '../../../core/supabase/supabase_providers.dart';
 import '../data/messaging_repository.dart';
 import '../domain/conversation.dart';
 import '../domain/message.dart';
+import 'inbox_screen.dart';
 
 final conversationProvider =
     FutureProvider.family<Conversation, String>((ref, id) {
@@ -43,6 +44,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _picker = ImagePicker();
   int _lastMessageCount = 0;
   bool _sendingImage = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _markRead());
+  }
+
+  Future<void> _markRead() async {
+    try {
+      await ref
+          .read(messagingRepositoryProvider)
+          .markConversationRead(widget.conversationId);
+      ref.invalidate(conversationsProvider);
+    } catch (_) {
+      // Best effort; the badge will reconcile on the next inbox refresh.
+    }
+  }
 
   @override
   void dispose() {
@@ -160,6 +178,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final uid = ref.watch(currentAuthUserProvider)?.id;
     final stream = ref.watch(messagesStreamProvider(widget.conversationId));
     final pending = ref.watch(_pendingProvider(widget.conversationId));
+
+    ref.listen(messagesStreamProvider(widget.conversationId), (_, next) {
+      if (next.hasValue) _markRead();
+    });
 
     return Scaffold(
       appBar: AppBar(

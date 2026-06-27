@@ -5,14 +5,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
+import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../listings/domain/listing_l10n.dart';
 import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../listings/presentation/widgets/listing_card.dart';
+import '../../messaging/data/messaging_repository.dart';
 import '../data/profile_repository.dart';
 import '../domain/profile.dart';
 import 'widgets/follow_button.dart';
@@ -30,11 +33,33 @@ class UserProfileScreen extends ConsumerWidget {
   const UserProfileScreen({super.key, required this.userId});
   final String userId;
 
+  Future<void> _startChat(BuildContext context, WidgetRef ref) async {
+    try {
+      final convo = await ref
+          .read(messagingRepositoryProvider)
+          .getOrCreateDirectConversation(userId);
+      if (context.mounted) context.push(AppRoutes.chatPath(convo.id));
+    } catch (e) {
+      if (context.mounted) context.showError(context.l10n.startChatFailed('$e'));
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(userProfileProvider(userId));
+    final myId = ref.watch(currentAuthUserProvider)?.id;
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.profile)),
+      appBar: AppBar(
+        title: Text(context.l10n.profile),
+        actions: [
+          if (myId != null && myId != userId)
+            IconButton(
+              tooltip: context.l10n.messageUser,
+              icon: const Icon(Icons.chat_bubble_outline_rounded),
+              onPressed: () => _startChat(context, ref),
+            ),
+        ],
+      ),
       body: profileAsync.when(
         loading: () => const Center(
             child: CircularProgressIndicator(color: AppColors.hotPink)),
