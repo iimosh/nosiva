@@ -54,6 +54,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryAgain => 'Try again';
 
   @override
+  String get undo => 'Undo';
+
+  @override
   String get oopsGlitched => 'Something went wrong';
 
   @override
@@ -181,7 +184,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stylesYouLove => 'Preferred styles';
 
   @override
-  String get startSlaying => 'Continue';
+  String get continueButton => 'Continue';
 
   @override
   String couldNotSave(Object error) {
@@ -563,6 +566,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offerSent => 'Offer sent.';
 
   @override
+  String get newOffer => 'New offer';
+
+  @override
+  String get offerPending => 'Offer pending';
+
+  @override
+  String get offerAccepted => 'Offer accepted';
+
+  @override
+  String get offerDeclined => 'Offer declined';
+
+  @override
+  String offeredPrice(Object price) {
+    return 'Offered $price';
+  }
+
+  @override
+  String originalPrice(Object price) {
+    return 'Listed $price';
+  }
+
+  @override
+  String offeredTime(Object time) {
+    return 'Offered $time';
+  }
+
+  @override
+  String get acceptOffer => 'Accept offer';
+
+  @override
+  String get declineOffer => 'Decline';
+
+  @override
   String get cart => 'Cart';
 
   @override
@@ -620,20 +656,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your purchases and sales will show up here.';
 
   @override
+  String get buyingEmptyMessage => 'Your purchases will appear here.';
+
+  @override
+  String get sellingEmptyMessage =>
+      'Orders for your listed items will appear here.';
+
+  @override
   String get item => 'Item';
 
   @override
-  String get notifications => 'Notifications';
-
-  @override
   String get markAllRead => 'Mark all read';
-
-  @override
-  String get allCaughtUp => 'All caught up!';
-
-  @override
-  String get notificationsEmptyMessage =>
-      'New messages, offers and sales will pop up here.';
 
   @override
   String get noMessages => 'No messages yet';
@@ -797,7 +830,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderStatusPending => 'Pending';
 
   @override
-  String get orderStatusPaid => 'Paid';
+  String get orderStatusPaid => 'Accepted';
 
   @override
   String get orderStatusShipped => 'Shipped';
@@ -816,6 +849,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orderedLabel => 'Ordered';
+
+  @override
+  String get actionNeeded => 'Action needed';
+
+  @override
+  String get newActivity => 'New';
+
+  @override
+  String get updatedActivity => 'Updated';
+
+  @override
+  String get archive => 'Archive';
+
+  @override
+  String get archived => 'Archived';
+
+  @override
+  String get showArchived => 'Show archived';
+
+  @override
+  String get hideArchived => 'Hide archived';
+
+  @override
+  String get restore => 'Restore';
+
+  @override
+  String get restored => 'Restored';
+
+  @override
+  String get noArchivedOrders => 'No archived orders';
+
+  @override
+  String orderedTime(Object time) {
+    return 'Ordered $time';
+  }
+
+  @override
+  String updatedTime(Object time) {
+    return 'Updated $time';
+  }
 
   @override
   String get acceptOrder => 'Accept order';

@@ -14,10 +14,11 @@ import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../listings/domain/listing_enums.dart';
 import '../../listings/domain/listing_l10n.dart';
+import '../../listings/presentation/controllers/feed_controller.dart';
+import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../messaging/data/messaging_repository.dart';
 import '../data/orders_repository.dart';
 import '../domain/order.dart';
-import 'orders_screen.dart';
 
 final orderProvider = FutureProvider.family<Order, String>(
     (ref, id) => ref.watch(ordersRepositoryProvider).fetchById(id));
@@ -37,13 +38,35 @@ Color statusColor(OrderStatus s) => switch (s) {
       OrderStatus.cancelled => AppColors.error,
     };
 
-class OrderDetailScreen extends ConsumerWidget {
+class OrderDetailScreen extends ConsumerStatefulWidget {
   const OrderDetailScreen({super.key, required this.orderId});
   final String orderId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(orderProvider(orderId));
+  ConsumerState<OrderDetailScreen> createState() => _OrderDetailScreenState();
+}
+
+class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
+  String? _markedReadOrderId;
+
+  void _markRead(String orderId) {
+    if (_markedReadOrderId == orderId) return;
+    _markedReadOrderId = orderId;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      try {
+        await ref.read(ordersRepositoryProvider).markRead(orderId);
+        ref.invalidate(buyerOrdersProvider);
+        ref.invalidate(sellerOrdersProvider);
+      } catch (_) {
+        // Reading state is helpful, but it should not block the order screen.
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final async = ref.watch(orderProvider(widget.orderId));
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.orderDetails)),
       body: async.when(
@@ -51,9 +74,12 @@ class OrderDetailScreen extends ConsumerWidget {
             child: CircularProgressIndicator(color: AppColors.hotPink)),
         error: (e, _) => ErrorStateView(
           message: '$e',
-          onRetry: () => ref.invalidate(orderProvider(orderId)),
+          onRetry: () => ref.invalidate(orderProvider(widget.orderId)),
         ),
-        data: (order) => _Body(order: order),
+        data: (order) {
+          _markRead(order.id);
+          return _Body(order: order);
+        },
       ),
     );
   }
@@ -96,6 +122,9 @@ class _Body extends ConsumerWidget {
       ref.invalidate(orderProvider(order.id));
       ref.invalidate(buyerOrdersProvider);
       ref.invalidate(sellerOrdersProvider);
+      ref.invalidate(feedControllerProvider);
+      ref.invalidate(listingDetailProvider(order.listingId));
+      ref.invalidate(sellerListingsProvider(order.sellerId));
       if (context.mounted) context.showSuccess(context.l10n.orderUpdated);
     } catch (e) {
       if (context.mounted) context.showError(context.l10n.actionFailed('$e'));

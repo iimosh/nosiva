@@ -15,6 +15,7 @@
   "delete": "Избриши",
   "saveChanges": "Зачувај промени",
   "tryAgain": "Обиди се повторно",
+  "undo": "Врати",
   "oopsGlitched": "Настана грешка",
   "discardListingTitle": "Да се отфрли огласот?",
   "discardListingBody": "Имаш незачувани податоци за огласот. Сакаш да ги отфрлиш?",
@@ -55,7 +56,7 @@
   "favoriteCategories": "Омилени категории",
   "yourSizes": "Твои големини",
   "stylesYouLove": "Омилени стилови",
-  "startSlaying": "Продолжи",
+  "continueButton": "Продолжи",
   "couldNotSave": "Не можевме да зачуваме — {error}",
   "toggleTheme": "Промени тема",
   "nothingHereYet": "Сè уште нема ништо",
@@ -176,6 +177,30 @@
   "yourOffer": "Твоја понуда",
   "sendOffer": "Испрати понуда",
   "offerSent": "Понудата е испратена.",
+  "newOffer": "Нова понуда",
+  "offerPending": "Понудата чека",
+  "offerAccepted": "Понудата е прифатена",
+  "offerDeclined": "Понудата е одбиена",
+  "offeredPrice": "Понудено {price}",
+  "@offeredPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "originalPrice": "Објавено {price}",
+  "@originalPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "offeredTime": "Понудено {time}",
+  "@offeredTime": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "acceptOffer": "Прифати понуда",
+  "declineOffer": "Одбиј",
   "cart": "Кошничка",
   "bagEmpty": "Кошничката е празна",
   "bagEmptyMessage": "Додај артикл за да продолжиш со наплата.",
@@ -193,11 +218,10 @@
   "selling": "Продавам",
   "noOrders": "Сè уште нема нарачки",
   "ordersEmptyMessage": "Твоите купувања и продажби ќе се прикажат тука.",
+  "buyingEmptyMessage": "Твоите купувања ќе се прикажат тука.",
+  "sellingEmptyMessage": "Нарачките за твоите огласи ќе се прикажат тука.",
   "item": "Артикл",
-  "notifications": "Известувања",
   "markAllRead": "Означи ги сите како прочитани",
-  "allCaughtUp": "Сè е прегледано!",
-  "notificationsEmptyMessage": "Нови пораки, понуди и продажби ќе се прикажат тука.",
   "noMessages": "Сè уште нема пораки",
   "noMessagesMessage": "Кога ќе пишеш на продавач или купувач, ќе се прикаже тука.",
   "nosivaUser": "Nosiva корисник",
@@ -247,13 +271,35 @@
   "adminDashboard": "Админ панел",
   "adminDashboardSubtitle": "Модерирај огласи, статистики и корисници",
   "orderStatusPending": "Во тек",
-  "orderStatusPaid": "Платено",
+  "orderStatusPaid": "Прифатено",
   "orderStatusShipped": "Испратено",
   "orderStatusDelivered": "Доставено",
   "orderStatusCancelled": "Откажано",
   "orderDetails": "Детали за нарачка",
   "buyer": "Купувач",
   "orderedLabel": "Нарачано",
+  "actionNeeded": "Потребна акција",
+  "newActivity": "Ново",
+  "updatedActivity": "Ажурирано",
+  "archive": "Архивирај",
+  "archived": "Архивирано",
+  "showArchived": "Прикажи архивирани",
+  "hideArchived": "Скриј архивирани",
+  "restore": "Врати",
+  "restored": "Вратено",
+  "noArchivedOrders": "Нема архивирани нарачки",
+  "orderedTime": "Нарачано {time}",
+  "@orderedTime": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "updatedTime": "Ажурирано {time}",
+  "@updatedTime": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "acceptOrder": "Прифати нарачка",
   "declineOrder": "Одбиј",
   "markShipped": "Означи како испратено",
