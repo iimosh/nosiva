@@ -806,6 +806,8 @@ class _ActionBar extends ConsumerWidget {
             sellerId: listing.sellerId,
             amount: amount,
           );
+      ref.invalidate(buyerOffersProvider);
+      ref.invalidate(sellerOffersProvider);
       if (context.mounted) {
         context.showSuccess(context.l10n.offerSent);
       }

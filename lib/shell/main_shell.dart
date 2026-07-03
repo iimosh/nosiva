@@ -6,6 +6,8 @@ import '../core/l10n/l10n_extensions.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
 import '../features/messaging/presentation/inbox_screen.dart';
+import '../features/offers/data/offers_repository.dart';
+import '../features/orders/data/orders_repository.dart';
 import '../features/profile/presentation/current_profile_provider.dart';
 
 final sellResetSignalProvider = StateProvider<int>((ref) => 0);
@@ -44,8 +46,8 @@ class MainShell extends ConsumerWidget {
       ref.read(sellFormDirtyProvider.notifier).state = false;
     }
     if (index == 2) ref.read(sellResetSignalProvider.notifier).state++;
- if (index == 3) ref.invalidate(conversationsProvider);
-  if (index == 4) ref.read(currentProfileProvider.notifier).reload();
+    if (index == 3) ref.invalidate(conversationsProvider);
+    if (index == 4) ref.read(currentProfileProvider.notifier).reload();
     shell.goBranch(index, initialLocation: index == shell.currentIndex);
   }
 
@@ -54,7 +56,10 @@ class MainShell extends ConsumerWidget {
     final theme = Theme.of(context);
     ref.watch(inboxRealtimeProvider); // keep the live inbox subscription open
     ref.watch(profileRealtimeProvider); // live follower/following counts
-    final unread = ref.watch(unreadCountProvider);
+    final unreadMessages = ref.watch(unreadCountProvider);
+    final unreadOrders = ref.watch(unreadOrderActivityCountProvider);
+    final unreadOffers = ref.watch(unreadOfferActivityCountProvider);
+    final unreadActivity = unreadOrders + unreadOffers;
     return Scaffold(
       body: shell,
       bottomNavigationBar: Container(
@@ -75,9 +80,10 @@ class MainShell extends ConsumerWidget {
                   onTap: () => _go(context, ref, 0),
                 ),
                 _NavItem(
-                  icon: Icons.notifications_rounded,
+                  icon: Icons.receipt_long_rounded,
                   label: context.l10n.activity,
                   selected: shell.currentIndex == 1,
+                  badgeCount: unreadActivity,
                   onTap: () => _go(context, ref, 1),
                 ),
                 _SellButton(onTap: () => _go(context, ref, 2)),
@@ -85,7 +91,7 @@ class MainShell extends ConsumerWidget {
                   icon: Icons.chat_bubble_rounded,
                   label: context.l10n.inbox,
                   selected: shell.currentIndex == 3,
-                  badgeCount: unread,
+                  badgeCount: unreadMessages,
                   onTap: () => _go(context, ref, 3),
                 ),
                 _NavItem(

@@ -17,7 +17,6 @@ import '../../listings/data/listings_repository.dart';
 import '../../listings/presentation/controllers/feed_controller.dart';
 import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../orders/data/orders_repository.dart';
-import '../../orders/presentation/orders_screen.dart';
 import 'cart_controller.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
@@ -92,7 +91,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       }
       if (mounted) {
         context.showSuccess(context.l10n.orderPlaced);
-        ref.read(activityTabRequestProvider.notifier).state = 1;
+        ref.read(activityTabRequestProvider.notifier).state = 0;
         context.go(AppRoutes.activity);
       }
     } catch (e) {

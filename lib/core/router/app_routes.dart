@@ -20,7 +20,6 @@ abstract final class AppRoutes {
   static const chat = '/chat'; // /chat/:conversationId
   static const cart = '/cart';
   static const orderDetail = '/order'; // /order/:id
-  static const notifications = '/notifications';
   static const editProfile = '/edit-profile';
   static const admin = '/admin';
   static const user = '/user'; // /user/:id (public profile)

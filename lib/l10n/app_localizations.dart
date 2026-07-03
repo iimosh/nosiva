@@ -188,6 +188,12 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get tryAgain;
 
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
   /// No description provided for @oopsGlitched.
   ///
   /// In en, this message translates to:
@@ -428,11 +434,11 @@ abstract class AppLocalizations {
   /// **'Preferred styles'**
   String get stylesYouLove;
 
-  /// No description provided for @startSlaying.
+  /// No description provided for @continueButton.
   ///
   /// In en, this message translates to:
   /// **'Continue'**
-  String get startSlaying;
+  String get continueButton;
 
   /// No description provided for @couldNotSave.
   ///
@@ -1154,6 +1160,60 @@ abstract class AppLocalizations {
   /// **'Offer sent.'**
   String get offerSent;
 
+  /// No description provided for @newOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'New offer'**
+  String get newOffer;
+
+  /// No description provided for @offerPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer pending'**
+  String get offerPending;
+
+  /// No description provided for @offerAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer accepted'**
+  String get offerAccepted;
+
+  /// No description provided for @offerDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer declined'**
+  String get offerDeclined;
+
+  /// No description provided for @offeredPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered {price}'**
+  String offeredPrice(Object price);
+
+  /// No description provided for @originalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Listed {price}'**
+  String originalPrice(Object price);
+
+  /// No description provided for @offeredTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered {time}'**
+  String offeredTime(Object time);
+
+  /// No description provided for @acceptOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept offer'**
+  String get acceptOffer;
+
+  /// No description provided for @declineOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get declineOffer;
+
   /// No description provided for @cart.
   ///
   /// In en, this message translates to:
@@ -1256,35 +1316,29 @@ abstract class AppLocalizations {
   /// **'Your purchases and sales will show up here.'**
   String get ordersEmptyMessage;
 
+  /// No description provided for @buyingEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your purchases will appear here.'**
+  String get buyingEmptyMessage;
+
+  /// No description provided for @sellingEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders for your listed items will appear here.'**
+  String get sellingEmptyMessage;
+
   /// No description provided for @item.
   ///
   /// In en, this message translates to:
   /// **'Item'**
   String get item;
 
-  /// No description provided for @notifications.
-  ///
-  /// In en, this message translates to:
-  /// **'Notifications'**
-  String get notifications;
-
   /// No description provided for @markAllRead.
   ///
   /// In en, this message translates to:
   /// **'Mark all read'**
   String get markAllRead;
-
-  /// No description provided for @allCaughtUp.
-  ///
-  /// In en, this message translates to:
-  /// **'All caught up!'**
-  String get allCaughtUp;
-
-  /// No description provided for @notificationsEmptyMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'New messages, offers and sales will pop up here.'**
-  String get notificationsEmptyMessage;
 
   /// No description provided for @noMessages.
   ///
@@ -1583,7 +1637,7 @@ abstract class AppLocalizations {
   /// No description provided for @orderStatusPaid.
   ///
   /// In en, this message translates to:
-  /// **'Paid'**
+  /// **'Accepted'**
   String get orderStatusPaid;
 
   /// No description provided for @orderStatusShipped.
@@ -1621,6 +1675,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ordered'**
   String get orderedLabel;
+
+  /// No description provided for @actionNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Action needed'**
+  String get actionNeeded;
+
+  /// No description provided for @newActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newActivity;
+
+  /// No description provided for @updatedActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get updatedActivity;
+
+  /// No description provided for @archive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get archive;
+
+  /// No description provided for @archived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get archived;
+
+  /// No description provided for @showArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Show archived'**
+  String get showArchived;
+
+  /// No description provided for @hideArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide archived'**
+  String get hideArchived;
+
+  /// No description provided for @restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get restore;
+
+  /// No description provided for @restored.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored'**
+  String get restored;
+
+  /// No description provided for @noArchivedOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived orders'**
+  String get noArchivedOrders;
+
+  /// No description provided for @orderedTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Ordered {time}'**
+  String orderedTime(Object time);
+
+  /// No description provided for @updatedTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {time}'**
+  String updatedTime(Object time);
 
   /// No description provided for @acceptOrder.
   ///

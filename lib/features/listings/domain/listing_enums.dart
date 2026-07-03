@@ -75,21 +75,6 @@ enum OrderStatus {
       values.firstWhere((e) => e.value == v, orElse: () => pending);
 }
 
-enum NotificationType {
-  message('message'),
-  offer('offer'),
-  sale('sale'),
-  follow('follow'),
-  review('review'),
-  system('system');
-
-  const NotificationType(this.value);
-  final String value;
-
-  static NotificationType fromValue(String v) =>
-      values.firstWhere((e) => e.value == v, orElse: () => system);
-}
-
 /// Curated style tags shown in onboarding, listing creation, and filters.
 const kStyleTags = <String>[
   'Y2K',

@@ -15,6 +15,7 @@
   "delete": "Delete",
   "saveChanges": "Save changes",
   "tryAgain": "Try again",
+  "undo": "Undo",
   "oopsGlitched": "Something went wrong",
   "discardListingTitle": "Discard listing?",
   "discardListingBody": "You have unsaved listing details. Do you want to discard them?",
@@ -60,7 +61,7 @@
   "favoriteCategories": "Favorite categories",
   "yourSizes": "Your sizes",
   "stylesYouLove": "Preferred styles",
-  "startSlaying": "Continue",
+  "continueButton": "Continue",
   "couldNotSave": "Couldn’t save — {error}",
   "@couldNotSave": {
     "placeholders": {
@@ -216,6 +217,30 @@
   "yourOffer": "Your offer",
   "sendOffer": "Send offer",
   "offerSent": "Offer sent.",
+  "newOffer": "New offer",
+  "offerPending": "Offer pending",
+  "offerAccepted": "Offer accepted",
+  "offerDeclined": "Offer declined",
+  "offeredPrice": "Offered {price}",
+  "@offeredPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "originalPrice": "Listed {price}",
+  "@originalPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "offeredTime": "Offered {time}",
+  "@offeredTime": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "acceptOffer": "Accept offer",
+  "declineOffer": "Decline",
   "cart": "Cart",
   "bagEmpty": "Your bag is empty",
   "bagEmptyMessage": "Add an item to continue checkout.",
@@ -243,11 +268,10 @@
   "selling": "Selling",
   "noOrders": "No orders yet",
   "ordersEmptyMessage": "Your purchases and sales will show up here.",
+  "buyingEmptyMessage": "Your purchases will appear here.",
+  "sellingEmptyMessage": "Orders for your listed items will appear here.",
   "item": "Item",
-  "notifications": "Notifications",
   "markAllRead": "Mark all read",
-  "allCaughtUp": "All caught up!",
-  "notificationsEmptyMessage": "New messages, offers and sales will pop up here.",
   "noMessages": "No messages yet",
   "noMessagesMessage": "When you message a seller (or get a buyer), it shows up here.",
   "nosivaUser": "Nosiva user",
@@ -329,13 +353,35 @@
   "adminDashboard": "Admin dashboard",
   "adminDashboardSubtitle": "Moderate listings, view stats & users",
   "orderStatusPending": "Pending",
-  "orderStatusPaid": "Paid",
+  "orderStatusPaid": "Accepted",
   "orderStatusShipped": "Shipped",
   "orderStatusDelivered": "Delivered",
   "orderStatusCancelled": "Cancelled",
   "orderDetails": "Order details",
   "buyer": "Buyer",
   "orderedLabel": "Ordered",
+  "actionNeeded": "Action needed",
+  "newActivity": "New",
+  "updatedActivity": "Updated",
+  "archive": "Archive",
+  "archived": "Archived",
+  "showArchived": "Show archived",
+  "hideArchived": "Hide archived",
+  "restore": "Restore",
+  "restored": "Restored",
+  "noArchivedOrders": "No archived orders",
+  "orderedTime": "Ordered {time}",
+  "@orderedTime": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "updatedTime": "Updated {time}",
+  "@updatedTime": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "acceptOrder": "Accept order",
   "declineOrder": "Decline",
   "markShipped": "Mark as shipped",

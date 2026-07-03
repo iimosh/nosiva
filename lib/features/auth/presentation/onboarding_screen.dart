@@ -140,7 +140,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
               NosivaButton(
-                label: context.l10n.startSlaying,
+                label: context.l10n.continueButton,
                 loading: _saving,
                 variant: NosivaButtonVariant.gradient,
                 onPressed: _finish,

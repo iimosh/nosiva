@@ -54,6 +54,9 @@ class AppLocalizationsMk extends AppLocalizations {
   String get tryAgain => 'Обиди се повторно';
 
   @override
+  String get undo => 'Врати';
+
+  @override
   String get oopsGlitched => 'Настана грешка';
 
   @override
@@ -182,7 +185,7 @@ class AppLocalizationsMk extends AppLocalizations {
   String get stylesYouLove => 'Омилени стилови';
 
   @override
-  String get startSlaying => 'Продолжи';
+  String get continueButton => 'Продолжи';
 
   @override
   String couldNotSave(Object error) {
@@ -566,6 +569,39 @@ class AppLocalizationsMk extends AppLocalizations {
   String get offerSent => 'Понудата е испратена.';
 
   @override
+  String get newOffer => 'Нова понуда';
+
+  @override
+  String get offerPending => 'Понудата чека';
+
+  @override
+  String get offerAccepted => 'Понудата е прифатена';
+
+  @override
+  String get offerDeclined => 'Понудата е одбиена';
+
+  @override
+  String offeredPrice(Object price) {
+    return 'Понудено $price';
+  }
+
+  @override
+  String originalPrice(Object price) {
+    return 'Објавено $price';
+  }
+
+  @override
+  String offeredTime(Object time) {
+    return 'Понудено $time';
+  }
+
+  @override
+  String get acceptOffer => 'Прифати понуда';
+
+  @override
+  String get declineOffer => 'Одбиј';
+
+  @override
   String get cart => 'Кошничка';
 
   @override
@@ -623,20 +659,17 @@ class AppLocalizationsMk extends AppLocalizations {
       'Твоите купувања и продажби ќе се прикажат тука.';
 
   @override
+  String get buyingEmptyMessage => 'Твоите купувања ќе се прикажат тука.';
+
+  @override
+  String get sellingEmptyMessage =>
+      'Нарачките за твоите огласи ќе се прикажат тука.';
+
+  @override
   String get item => 'Артикл';
 
   @override
-  String get notifications => 'Известувања';
-
-  @override
   String get markAllRead => 'Означи ги сите како прочитани';
-
-  @override
-  String get allCaughtUp => 'Сè е прегледано!';
-
-  @override
-  String get notificationsEmptyMessage =>
-      'Нови пораки, понуди и продажби ќе се прикажат тука.';
 
   @override
   String get noMessages => 'Сè уште нема пораки';
@@ -804,7 +837,7 @@ class AppLocalizationsMk extends AppLocalizations {
   String get orderStatusPending => 'Во тек';
 
   @override
-  String get orderStatusPaid => 'Платено';
+  String get orderStatusPaid => 'Прифатено';
 
   @override
   String get orderStatusShipped => 'Испратено';
@@ -823,6 +856,46 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get orderedLabel => 'Нарачано';
+
+  @override
+  String get actionNeeded => 'Потребна акција';
+
+  @override
+  String get newActivity => 'Ново';
+
+  @override
+  String get updatedActivity => 'Ажурирано';
+
+  @override
+  String get archive => 'Архивирај';
+
+  @override
+  String get archived => 'Архивирано';
+
+  @override
+  String get showArchived => 'Прикажи архивирани';
+
+  @override
+  String get hideArchived => 'Скриј архивирани';
+
+  @override
+  String get restore => 'Врати';
+
+  @override
+  String get restored => 'Вратено';
+
+  @override
+  String get noArchivedOrders => 'Нема архивирани нарачки';
+
+  @override
+  String orderedTime(Object time) {
+    return 'Нарачано $time';
+  }
+
+  @override
+  String updatedTime(Object time) {
+    return 'Ажурирано $time';
+  }
 
   @override
   String get acceptOrder => 'Прифати нарачка';
