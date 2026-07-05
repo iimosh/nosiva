@@ -14,6 +14,7 @@ import '../../listings/domain/listing_enums.dart';
 import '../../listings/domain/listing_l10n.dart';
 import '../data/profile_repository.dart';
 import '../domain/profile.dart';
+import 'avatar_actions.dart';
 import 'current_profile_provider.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -126,7 +127,22 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _AvatarPreview(profile: profile),
+                    Center(
+                      child: Column(
+                        children: [
+                          EditableAvatar(profile: profile, radius: 52),
+                          TextButton(
+                            onPressed: () => showAvatarOptions(
+                              context,
+                              ref,
+                              userId: profile.id,
+                              hasPhoto: profile.avatarUrl != null,
+                            ),
+                            child: Text(context.l10n.changePhoto),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: AppSpacing.lg),
                     _SectionTitle(context.l10n.basicInfo),
                     NosivaTextField(
@@ -199,43 +215,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           );
         },
       ),
-    );
-  }
-}
-
-class _AvatarPreview extends StatelessWidget {
-  const _AvatarPreview({required this.profile});
-
-  final Profile profile;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 38,
-          backgroundColor: AppColors.blush,
-          backgroundImage:
-              profile.avatarUrl == null ? null : NetworkImage(profile.avatarUrl!),
-          child: profile.avatarUrl == null
-              ? const Icon(Icons.person_outline_rounded,
-                  color: AppColors.hotPink, size: 32)
-              : null,
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(profile.nameOrHandle, style: theme.textTheme.titleLarge),
-              const SizedBox(height: 2),
-              Text(context.l10n.profilePhotoInfo,
-                  style: theme.textTheme.bodySmall),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

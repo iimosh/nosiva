@@ -1586,6 +1586,24 @@ abstract class AppLocalizations {
   /// **'Could not update profile - {error}'**
   String profileUpdateFailed(Object error);
 
+  /// No description provided for @changePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get changePhoto;
+
+  /// No description provided for @photoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo updated'**
+  String get photoUpdated;
+
+  /// No description provided for @photoUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update photo - {error}'**
+  String photoUpdateFailed(Object error);
+
   /// No description provided for @myCloset.
   ///
   /// In en, this message translates to:

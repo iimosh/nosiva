@@ -10,6 +10,7 @@ import '../../../core/widgets/nosiva_text_field.dart';
 import '../../listings/domain/listing_enums.dart';
 import '../../listings/domain/listing_l10n.dart';
 import '../../profile/data/profile_repository.dart';
+import '../../profile/presentation/avatar_actions.dart';
 import '../../profile/presentation/current_profile_provider.dart';
 
 /// First-run setup: pick favorite categories, sizes & styles. These seed the
@@ -65,6 +66,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final profile = ref.watch(currentProfileProvider).valueOrNull;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -79,6 +81,25 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Text(context.l10n.onboardingSubtitle,
                   style: theme.textTheme.bodyLarge
                       ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+              if (profile != null) ...[
+                const SizedBox(height: AppSpacing.lg),
+                Center(
+                  child: Column(
+                    children: [
+                      EditableAvatar(profile: profile, radius: 44),
+                      TextButton(
+                        onPressed: () => showAvatarOptions(
+                          context,
+                          ref,
+                          userId: profile.id,
+                          hasPhoto: profile.avatarUrl != null,
+                        ),
+                        child: Text(context.l10n.changePhoto),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: AppSpacing.xl),
               NosivaTextField(
                 label: context.l10n.displayNameOptional,

@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../core/supabase/supabase_providers.dart';
 import '../domain/profile.dart';
@@ -9,6 +12,7 @@ class ProfileRepository {
   final SupabaseClient _client;
 
   static const _table = 'profiles';
+  static const _avatarsBucket = 'avatars';
 
   Future<Profile?> fetchById(String id) async {
     final data = await _withTransientRetry(
@@ -101,6 +105,37 @@ class ProfileRepository {
           'vibe_tags': vibeTags,
           'onboarded': true,
         })
+        .eq('id', id)
+        .select()
+        .single();
+    return Profile.fromJson(data);
+  }
+  Future<String> uploadAvatar({
+    required String userId,
+    required Uint8List bytes,
+    required String ext,
+  }) async {
+    final normalizedExt = ext == 'jpeg' ? 'jpg' : ext;
+    final path = '$userId/${const Uuid().v4()}.$normalizedExt';
+    await _client.storage.from(_avatarsBucket).uploadBinary(
+          path,
+          bytes,
+          fileOptions: FileOptions(
+            contentType:
+                'image/${normalizedExt == 'jpg' ? 'jpeg' : normalizedExt}',
+            upsert: true,
+          ),
+        );
+    return _client.storage.from(_avatarsBucket).getPublicUrl(path);
+  }
+
+  Future<Profile> updateAvatar({
+    required String id,
+    required String? avatarUrl,
+  }) async {
+    final data = await _client
+        .from(_table)
+        .update({'avatar_url': avatarUrl})
         .eq('id', id)
         .select()
         .single();

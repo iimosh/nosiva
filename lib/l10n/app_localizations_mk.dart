@@ -811,6 +811,17 @@ class AppLocalizationsMk extends AppLocalizations {
   }
 
   @override
+  String get changePhoto => 'Промени фотографија';
+
+  @override
+  String get photoUpdated => 'Профилната фотографија е ажурирана';
+
+  @override
+  String photoUpdateFailed(Object error) {
+    return 'Не можевме да ја ажурираме фотографијата - $error';
+  }
+
+  @override
   String get myCloset => 'Мој плакар';
 
   @override

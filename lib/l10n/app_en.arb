@@ -345,6 +345,14 @@
       "error": {}
     }
   },
+  "changePhoto": "Change photo",
+  "photoUpdated": "Profile photo updated",
+  "photoUpdateFailed": "Could not update photo - {error}",
+  "@photoUpdateFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
   "myCloset": "My closet",
   "closetEmpty": "Your closet is empty",
   "closetEmptyMessage": "List your first piece and start earning.",

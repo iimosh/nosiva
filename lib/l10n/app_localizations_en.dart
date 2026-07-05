@@ -806,6 +806,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get changePhoto => 'Change photo';
+
+  @override
+  String get photoUpdated => 'Profile photo updated';
+
+  @override
+  String photoUpdateFailed(Object error) {
+    return 'Could not update photo - $error';
+  }
+
+  @override
   String get myCloset => 'My closet';
 
   @override
