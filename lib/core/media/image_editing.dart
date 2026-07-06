@@ -66,3 +66,38 @@ Future<PickedImage?> cropImage(
   if (cropped == null) return null;
   return (bytes: await cropped.readAsBytes(), ext: pickedImageExt(cropped.path));
 }
+
+Future<PickedImage?> cropAvatar(
+  BuildContext context,
+  Uint8List bytes,
+  String ext,
+) async {
+  final title = context.l10n.crop;
+  final tmp = File(
+    '${Directory.systemTemp.path}/nosiva_avatar_'
+    '${DateTime.now().microsecondsSinceEpoch}.$ext',
+  );
+  await tmp.writeAsBytes(bytes);
+  final cropped = await ImageCropper().cropImage(
+    sourcePath: tmp.path,
+    aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+    uiSettings: [
+      AndroidUiSettings(
+        toolbarTitle: title,
+        toolbarColor: AppColors.hotPink,
+        toolbarWidgetColor: Colors.white,
+        activeControlsWidgetColor: AppColors.hotPink,
+        lockAspectRatio: true,
+        hideBottomControls: true,
+        cropStyle: CropStyle.circle,
+      ),
+      IOSUiSettings(
+        title: title,
+        aspectRatioLockEnabled: true,
+        cropStyle: CropStyle.circle,
+      ),
+    ],
+  );
+  if (cropped == null) return null;
+  return (bytes: await cropped.readAsBytes(), ext: pickedImageExt(cropped.path));
+}

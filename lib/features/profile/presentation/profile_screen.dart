@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +16,7 @@ import '../../listings/domain/listing.dart';
 import '../../listings/domain/listing_l10n.dart';
 import '../../listings/presentation/widgets/listing_card.dart';
 import '../domain/profile.dart';
+import 'avatar_actions.dart';
 import 'current_profile_provider.dart';
 
 final myListingsProvider = FutureProvider<List<Listing>>((ref) {
@@ -114,20 +114,7 @@ class _ProfileBody extends ConsumerWidget {
       children: [
         Row(
           children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundColor: AppColors.blush,
-              backgroundImage: profile.avatarUrl != null
-                  ? CachedNetworkImageProvider(profile.avatarUrl!)
-                  : null,
-              child: profile.avatarUrl == null
-                  ? const Icon(
-                      Icons.person_outline_rounded,
-                      color: AppColors.hotPink,
-                      size: 32,
-                    )
-                  : null,
-            ),
+            EditableAvatar(profile: profile, radius: 40),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
