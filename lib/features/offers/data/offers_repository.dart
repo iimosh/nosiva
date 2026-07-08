@@ -123,7 +123,9 @@ class OffersRepository {
           'seller_archived_at': null,
         })
         .eq('id', offerId)
-        .eq('seller_id', uid);
+        .eq('seller_id', uid)
+        .select('id')
+        .single();
   }
 
   Future<void> markRead(String offerId) async {

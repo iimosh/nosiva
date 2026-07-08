@@ -103,7 +103,12 @@ class OrdersRepository {
   }
 
   Future<void> updateStatus(String orderId, String status) async {
-    await _client.from(_table).update({'status': status}).eq('id', orderId);
+    await _client
+        .from(_table)
+        .update({'status': status})
+        .eq('id', orderId)
+        .select('id')
+        .single();
   }
 
   Future<void> markRead(String orderId) async {
