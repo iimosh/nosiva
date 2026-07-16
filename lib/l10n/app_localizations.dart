@@ -1364,6 +1364,36 @@ abstract class AppLocalizations {
   /// **'Message'**
   String get messageUser;
 
+  /// No description provided for @searchConversationsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search messages or people...'**
+  String get searchConversationsHint;
+
+  /// No description provided for @findSomeoneToMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Find someone to message'**
+  String get findSomeoneToMessage;
+
+  /// No description provided for @deleteConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete conversation?'**
+  String get deleteConversation;
+
+  /// No description provided for @deleteConversationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You won\'t see this chat anymore. It\'ll come back if they message you again.'**
+  String get deleteConversationMessage;
+
+  /// No description provided for @conversationDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation deleted'**
+  String get conversationDeleted;
+
   /// No description provided for @userNotFound.
   ///
   /// In en, this message translates to:

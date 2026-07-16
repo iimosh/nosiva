@@ -8,6 +8,7 @@ class NosivaTextField extends StatelessWidget {
     this.label,
     this.hint,
     this.controller,
+    this.focusNode,
     this.validator,
     this.keyboardType,
     this.obscureText = false,
@@ -24,6 +25,7 @@ class NosivaTextField extends StatelessWidget {
   final String? label;
   final String? hint;
   final TextEditingController? controller;
+  final FocusNode? focusNode;
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
   final bool obscureText;
@@ -48,6 +50,7 @@ class NosivaTextField extends StatelessWidget {
         ],
         TextFormField(
           controller: controller,
+          focusNode: focusNode,
           validator: validator,
           keyboardType: keyboardType,
           obscureText: obscureText,
