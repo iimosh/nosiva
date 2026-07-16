@@ -682,6 +682,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageUser => 'Message';
 
   @override
+  String get searchConversationsHint => 'Search messages or people...';
+
+  @override
+  String get findSomeoneToMessage => 'Find someone to message';
+
+  @override
+  String get deleteConversation => 'Delete conversation?';
+
+  @override
+  String get deleteConversationMessage =>
+      'You won\'t see this chat anymore. It\'ll come back if they message you again.';
+
+  @override
+  String get conversationDeleted => 'Conversation deleted';
+
+  @override
   String get userNotFound => 'User not found';
 
   @override

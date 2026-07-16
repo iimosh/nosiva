@@ -685,6 +685,22 @@ class AppLocalizationsMk extends AppLocalizations {
   String get messageUser => 'Порака';
 
   @override
+  String get searchConversationsHint => 'Пребарај пораки или луѓе...';
+
+  @override
+  String get findSomeoneToMessage => 'Пронајди некого за порака';
+
+  @override
+  String get deleteConversation => 'Избриши разговор?';
+
+  @override
+  String get deleteConversationMessage =>
+      'Нема повеќе да го гледаш овој разговор. Ќе се врати ако тие повторно ти напишат.';
+
+  @override
+  String get conversationDeleted => 'Разговорот е избришан';
+
+  @override
   String get userNotFound => 'Корисникот не е пронајден';
 
   @override

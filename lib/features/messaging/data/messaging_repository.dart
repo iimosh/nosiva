@@ -16,6 +16,11 @@ class MessagingRepository {
   static const _messages = 'messages';
   static const _chatImagesBucket = 'chat-images';
 
+  static const _conversationSelect =
+      '*, buyer:profiles!conversations_buyer_id_fkey(*), '
+      'seller:profiles!conversations_seller_id_fkey(*), '
+      'listing:listings(id, title, listing_images(id, listing_id, image_url, position))';
+
   /// Finds an existing buyer-seller conversation for a listing, or creates one.
   Future<Conversation> getOrCreateConversation({
     required String listingId,
@@ -67,11 +72,16 @@ class MessagingRepository {
         .rpc('mark_conversation_read', params: {'conv': conversationId});
   }
 
+  /// Hides a conversation from the caller's inbox. It reappears automatically
+  /// if the other participant sends a new message.
+  Future<void> hideConversation(String conversationId) async {
+    await _client.rpc('hide_conversation', params: {'conv': conversationId});
+  }
+
   Future<Conversation> fetchConversation(String id) async {
     final data = await _client
         .from(_conversations)
-        .select('*, buyer:profiles!conversations_buyer_id_fkey(*), '
-            'seller:profiles!conversations_seller_id_fkey(*)')
+        .select(_conversationSelect)
         .eq('id', id)
         .single();
     return Conversation.fromJson(data);
@@ -81,9 +91,9 @@ class MessagingRepository {
     final uid = _client.auth.currentUser!.id;
     final data = await _client
         .from(_conversations)
-        .select('*, buyer:profiles!conversations_buyer_id_fkey(*), '
-            'seller:profiles!conversations_seller_id_fkey(*)')
-        .or('buyer_id.eq.$uid,seller_id.eq.$uid')
+        .select(_conversationSelect)
+        .or('and(buyer_id.eq.$uid,deleted_by_buyer.eq.false),'
+            'and(seller_id.eq.$uid,deleted_by_seller.eq.false)')
         .order('last_message_at', ascending: false);
     return data.map<Conversation>((e) => Conversation.fromJson(e)).toList();
   }
