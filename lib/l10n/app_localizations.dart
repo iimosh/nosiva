@@ -884,6 +884,12 @@ abstract class AppLocalizations {
   /// **'Couldn’t add photo — {error}'**
   String photoAddFailed(Object error);
 
+  /// No description provided for @maxPhotosReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You can add up to {max} photos'**
+  String maxPhotosReached(Object max);
+
   /// No description provided for @editPhoto.
   ///
   /// In en, this message translates to:

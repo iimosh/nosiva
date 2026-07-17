@@ -417,6 +417,11 @@ class AppLocalizationsMk extends AppLocalizations {
   }
 
   @override
+  String maxPhotosReached(Object max) {
+    return 'Можеш да додадеш најмногу $max фотографии';
+  }
+
+  @override
   String get editPhoto => 'Уреди фотографија';
 
   @override

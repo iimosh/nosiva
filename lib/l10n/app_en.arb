@@ -146,6 +146,12 @@
       "error": {}
     }
   },
+  "maxPhotosReached": "You can add up to {max} photos",
+  "@maxPhotosReached": {
+    "placeholders": {
+      "max": {}
+    }
+  },
   "editPhoto": "Edit photo",
   "crop": "Crop",
   "rotateLeft": "Rotate left",

@@ -93,3 +93,11 @@ const kStyleTags = <String>[
 
 /// Common clothing sizes used in onboarding & filters.
 const kSizes = <String>['XS', 'S', 'M', 'L', 'XL', 'XXL', '6', '8', '10', '12'];
+
+/// Max photos per listing (create & edit) — keeps uploads and gallery
+/// scrolling reasonable and discourages accidental bulk-attach.
+const kMaxListingPhotos = 10;
+
+/// Downscale target for picked listing photos. Keeps uploads/storage
+/// reasonable without a visible quality loss on a phone screen.
+const kListingPhotoMaxDimension = 1600.0;
