@@ -62,14 +62,31 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
   }
 
   Future<void> _pick(ImageSource source) async {
+    if (_images.length >= kMaxListingPhotos) {
+      context.showError(context.l10n.maxPhotosReached('$kMaxListingPhotos'));
+      return;
+    }
     try {
       if (source == ImageSource.gallery) {
-        final files = await _picker.pickMultiImage(imageQuality: 80);
-        for (final f in files) {
+        final remaining = kMaxListingPhotos - _images.length;
+        final files = await _picker.pickMultiImage(
+          imageQuality: 80,
+          maxWidth: kListingPhotoMaxDimension,
+          maxHeight: kListingPhotoMaxDimension,
+        );
+        for (final f in files.take(remaining)) {
           _images.add((bytes: await f.readAsBytes(), ext: _ext(f.path)));
         }
+        if (mounted && files.length > remaining) {
+          context.showError(context.l10n.maxPhotosReached('$kMaxListingPhotos'));
+        }
       } else {
-        final f = await _picker.pickImage(source: source, imageQuality: 80);
+        final f = await _picker.pickImage(
+          source: source,
+          imageQuality: 80,
+          maxWidth: kListingPhotoMaxDimension,
+          maxHeight: kListingPhotoMaxDimension,
+        );
         if (f != null) {
           _images.add((bytes: await f.readAsBytes(), ext: _ext(f.path)));
         }
@@ -518,7 +535,7 @@ class _PhotoStrip extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          _AddTile(onTap: onAdd),
+          if (images.length < kMaxListingPhotos) _AddTile(onTap: onAdd),
           for (var i = 0; i < images.length; i++)
             Padding(
               padding: const EdgeInsets.only(left: AppSpacing.xs),

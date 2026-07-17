@@ -118,15 +118,32 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
   }
 
   Future<void> _pick(ImageSource source) async {
+    if (_photoCount >= kMaxListingPhotos) {
+      context.showError(context.l10n.maxPhotosReached('$kMaxListingPhotos'));
+      return;
+    }
     try {
       if (source == ImageSource.gallery) {
-        final files = await _picker.pickMultiImage(imageQuality: 80);
-        for (final f in files) {
+        final remaining = kMaxListingPhotos - _photoCount;
+        final files = await _picker.pickMultiImage(
+          imageQuality: 80,
+          maxWidth: kListingPhotoMaxDimension,
+          maxHeight: kListingPhotoMaxDimension,
+        );
+        for (final f in files.take(remaining)) {
           _photos.add(_NewPhoto(
               (bytes: await f.readAsBytes(), ext: pickedImageExt(f.path))));
         }
+        if (mounted && files.length > remaining) {
+          context.showError(context.l10n.maxPhotosReached('$kMaxListingPhotos'));
+        }
       } else {
-        final f = await _picker.pickImage(source: source, imageQuality: 80);
+        final f = await _picker.pickImage(
+          source: source,
+          imageQuality: 80,
+          maxWidth: kListingPhotoMaxDimension,
+          maxHeight: kListingPhotoMaxDimension,
+        );
         if (f != null) {
           _photos.add(_NewPhoto(
               (bytes: await f.readAsBytes(), ext: pickedImageExt(f.path))));
@@ -547,7 +564,7 @@ class _EditPhotoStrip extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          _AddTile(onTap: onAdd),
+          if (photos.length < kMaxListingPhotos) _AddTile(onTap: onAdd),
           for (var i = 0; i < photos.length; i++)
             Padding(
               padding: const EdgeInsets.only(left: AppSpacing.xs),

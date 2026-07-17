@@ -416,6 +416,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String maxPhotosReached(Object max) {
+    return 'You can add up to $max photos';
+  }
+
+  @override
   String get editPhoto => 'Edit photo';
 
   @override

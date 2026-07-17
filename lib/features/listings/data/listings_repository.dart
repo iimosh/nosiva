@@ -188,6 +188,12 @@ class ListingsRepository {
   Future<void> setStatus(String id, ListingStatus status) =>
       updateListing(id, {'status': status.value});
 
+  /// Server-side view counter (excludes the seller viewing their own
+  /// listing). Direct client writes to view_count are blocked by RLS/trigger.
+  Future<void> incrementView(String listingId) async {
+    await _client.rpc('increment_listing_view', params: {'listing': listingId});
+  }
+
 Future<Set<String>> soldListingIds(List<String> ids) async {
     if (ids.isEmpty) return {};
     final data = await _client
