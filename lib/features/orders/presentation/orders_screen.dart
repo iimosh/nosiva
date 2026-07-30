@@ -218,8 +218,29 @@ class _OrderActivityCard extends ConsumerWidget {
   Future<void> _setStatus(
     BuildContext context,
     WidgetRef ref,
-    OrderStatus next,
-  ) async {
+    OrderStatus next, {
+    bool confirm = false,
+  }) async {
+    if (confirm) {
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(context.l10n.cancelOrder),
+          content: Text(context.l10n.cancelOrderConfirm),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(context.l10n.keepEditing)),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(context.l10n.cancelOrder,
+                  style: const TextStyle(color: AppColors.error)),
+            ),
+          ],
+        ),
+      );
+      if (ok != true) return;
+    }
     try {
       await ref.read(ordersRepositoryProvider).updateStatus(order.id, next.value);
       ref.invalidate(buyerOrdersProvider);
@@ -806,12 +827,14 @@ class _SellerActions extends StatelessWidget {
   const _SellerActions({required this.order, required this.onStatus});
 
   final Order order;
-  final Future<void> Function(BuildContext, WidgetRef, OrderStatus) onStatus;
+  final Future<void> Function(BuildContext, WidgetRef, OrderStatus, {bool confirm})
+      onStatus;
 
   @override
   Widget build(BuildContext context) {
     final status = order.statusEnum;
-    final actions = <({String label, OrderStatus next, bool secondary})>[];
+    final actions =
+        <({String label, OrderStatus next, bool secondary, bool confirm})>[];
 
     switch (status) {
       case OrderStatus.pending:
@@ -819,23 +842,27 @@ class _SellerActions extends StatelessWidget {
           label: context.l10n.acceptOrder,
           next: OrderStatus.paid,
           secondary: false,
+          confirm: false,
         ));
         actions.add((
           label: context.l10n.declineOrder,
           next: OrderStatus.cancelled,
           secondary: true,
+          confirm: true,
         ));
       case OrderStatus.paid:
         actions.add((
           label: context.l10n.markShipped,
           next: OrderStatus.shipped,
           secondary: false,
+          confirm: false,
         ));
       case OrderStatus.shipped:
         actions.add((
           label: context.l10n.markDelivered,
           next: OrderStatus.delivered,
           secondary: false,
+          confirm: false,
         ));
       case OrderStatus.delivered:
       case OrderStatus.cancelled:
@@ -856,7 +883,8 @@ class _SellerActions extends StatelessWidget {
                   variant: actions[i].secondary
                       ? NosivaButtonVariant.secondary
                       : NosivaButtonVariant.gradient,
-                  onPressed: () => onStatus(context, ref, actions[i].next),
+                  onPressed: () => onStatus(context, ref, actions[i].next,
+                      confirm: actions[i].confirm),
                 ),
               ),
               if (i < actions.length - 1)

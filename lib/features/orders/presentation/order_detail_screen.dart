@@ -20,7 +20,10 @@ import '../../messaging/data/messaging_repository.dart';
 import '../data/orders_repository.dart';
 import '../domain/order.dart';
 
-final orderProvider = FutureProvider.family<Order, String>(
+// autoDispose: same reasoning as listingDetailProvider — without it, an
+// order viewed earlier in the session stays cached, so re-opening it later
+// (e.g. from the activity list after its status changed) can show stale data.
+final orderProvider = FutureProvider.autoDispose.family<Order, String>(
     (ref, id) => ref.watch(ordersRepositoryProvider).fetchById(id));
 
 const _statusFlow = [

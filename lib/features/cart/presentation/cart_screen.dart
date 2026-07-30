@@ -74,6 +74,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       // For now we skip straight to creating "pending" orders.
       // ============================================================
       final repo = ref.read(ordersRepositoryProvider);
+      final cart = ref.read(cartControllerProvider.notifier);
+      // Each item is removed from the cart as soon as its own order is
+      // placed, not after the whole batch finishes — so if a later item
+      // fails (e.g. someone else bought it first), earlier successful
+      // orders aren't left silently sitting in the cart to be re-ordered
+      // (and rejected as duplicates) on retry.
       for (final item in items) {
         await repo.createOrder(
           listingId: item.id,
@@ -81,14 +87,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           total: item.price,
           shippingAddress: _address.text.trim(),
         );
-      }
-      ref.read(cartControllerProvider.notifier).clear();
-      ref.invalidate(feedControllerProvider);
-      ref.invalidate(buyerOrdersProvider);
-      for (final item in items) {
+        cart.remove(item.id);
         ref.invalidate(listingDetailProvider(item.id));
         ref.invalidate(sellerListingsProvider(item.sellerId));
       }
+      ref.invalidate(feedControllerProvider);
+      ref.invalidate(buyerOrdersProvider);
       if (mounted) {
         context.showSuccess(context.l10n.orderPlaced);
         ref.read(activityTabRequestProvider.notifier).state = 0;
