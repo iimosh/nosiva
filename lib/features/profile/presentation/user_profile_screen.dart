@@ -20,7 +20,12 @@ import '../data/profile_repository.dart';
 import '../domain/profile.dart';
 import 'widgets/follow_button.dart';
 
-final userProfileProvider = FutureProvider.family<Profile?, String>((ref, id) {
+// autoDispose: same reasoning as listingDetailProvider/orderProvider —
+// without it, a profile viewed earlier in the session stays cached, so its
+// rating (or follower count, bio, etc.) can look stale after it changes
+// elsewhere — e.g. right after leaving a review for that person.
+final userProfileProvider =
+    FutureProvider.autoDispose.family<Profile?, String>((ref, id) {
   return ref.watch(profileRepositoryProvider).fetchById(id);
 });
 
@@ -151,6 +156,7 @@ class _Body extends ConsumerWidget {
             _Stat(
               label: context.l10n.rating,
               value: profile.ratingAvg.toStringAsFixed(1),
+              onTap: () => context.push(AppRoutes.reviewsPath(profile.id)),
             ),
           ],
         ),

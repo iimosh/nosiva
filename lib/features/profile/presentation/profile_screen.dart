@@ -175,6 +175,7 @@ class _ProfileBody extends ConsumerWidget {
             _Stat(
               label: context.l10n.rating,
               value: profile.ratingAvg.toStringAsFixed(1),
+              onTap: () => context.push(AppRoutes.reviewsPath(profile.id)),
             ),
           ],
         ),

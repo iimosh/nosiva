@@ -338,6 +338,38 @@
   "following": "Following",
   "forYou": "For You",
   "rating": "Rating",
+  "reviews": "Reviews",
+  "ratingCount": "{count} ratings",
+  "@ratingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rateUser": "Rate {name}",
+  "@rateUser": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "leaveReview": "Rate your experience",
+  "editReview": "Edit your review",
+  "yourRating": "Your rating",
+  "reviewCommentHint": "Share how it went (optional)",
+  "submitReview": "Submit review",
+  "updateReview": "Update review",
+  "reviewSubmitted": "Review submitted",
+  "reviewUpdated": "Review updated",
+  "reviewFailed": "Couldn’t submit review — {error}",
+  "@reviewFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "noReviewsYet": "No reviews yet",
+  "noReviewsYetMessage": "Reviews from buyers and sellers will show up here.",
+  "pickRating": "Select a star rating",
   "listings": "Listings",
   "editProfile": "Edit profile",
   "editProfileTodo": "Profile editing is not available yet.",

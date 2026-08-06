@@ -1544,6 +1544,96 @@ abstract class AppLocalizations {
   /// **'Rating'**
   String get rating;
 
+  /// No description provided for @reviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviews;
+
+  /// No description provided for @ratingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ratings'**
+  String ratingCount(int count);
+
+  /// No description provided for @rateUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate {name}'**
+  String rateUser(Object name);
+
+  /// No description provided for @leaveReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate your experience'**
+  String get leaveReview;
+
+  /// No description provided for @editReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit your review'**
+  String get editReview;
+
+  /// No description provided for @yourRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating'**
+  String get yourRating;
+
+  /// No description provided for @reviewCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share how it went (optional)'**
+  String get reviewCommentHint;
+
+  /// No description provided for @submitReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit review'**
+  String get submitReview;
+
+  /// No description provided for @updateReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Update review'**
+  String get updateReview;
+
+  /// No description provided for @reviewSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Review submitted'**
+  String get reviewSubmitted;
+
+  /// No description provided for @reviewUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Review updated'**
+  String get reviewUpdated;
+
+  /// No description provided for @reviewFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t submit review — {error}'**
+  String reviewFailed(Object error);
+
+  /// No description provided for @noReviewsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get noReviewsYet;
+
+  /// No description provided for @noReviewsYetMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews from buyers and sellers will show up here.'**
+  String get noReviewsYetMessage;
+
+  /// No description provided for @pickRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a star rating'**
+  String get pickRating;
+
   /// No description provided for @listings.
   ///
   /// In en, this message translates to:

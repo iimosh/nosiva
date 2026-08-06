@@ -23,6 +23,7 @@ import '../../features/profile/presentation/edit_profile_screen.dart';
 import '../../features/profile/presentation/follow_list_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/user_profile_screen.dart';
+import '../../features/reviews/presentation/reviews_list_screen.dart';
 import '../../shell/main_shell.dart';
 import '../supabase/supabase_providers.dart';
 import 'app_routes.dart';
@@ -180,6 +181,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           initialTab:
               state.uri.queryParameters['tab'] == 'following' ? 1 : 0,
         ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.reviews}/:id',
+        parentNavigatorKey: _rootKey,
+        builder: (_, state) =>
+            ReviewsListScreen(userId: state.pathParameters['id']!),
       ),
     ],
   );
