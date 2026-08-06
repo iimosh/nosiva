@@ -11,12 +11,18 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/nosiva_button.dart';
+import '../../../core/widgets/nosiva_text_field.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../listings/domain/listing_enums.dart';
 import '../../listings/domain/listing_l10n.dart';
 import '../../listings/presentation/controllers/feed_controller.dart';
 import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../messaging/data/messaging_repository.dart';
+import '../../profile/domain/profile.dart';
+import '../../profile/presentation/user_profile_screen.dart' show userProfileProvider;
+import '../../reviews/data/reviews_repository.dart';
+import '../../reviews/domain/review.dart';
+import '../../reviews/presentation/widgets/star_rating.dart';
 import '../data/orders_repository.dart';
 import '../domain/order.dart';
 
@@ -251,6 +257,10 @@ class _Body extends ConsumerWidget {
           label: context.l10n.total,
           value: Formatters.price(order.total),
         ),
+        if (order.statusEnum == OrderStatus.delivered && other != null) ...[
+          const SizedBox(height: AppSpacing.md),
+          _ReviewSection(order: order, other: other),
+        ],
         const SizedBox(height: AppSpacing.lg),
         ..._actions(context, ref, isSeller),
       ],
@@ -447,6 +457,177 @@ class _Card extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.md),
           child: child,
         ),
+      ),
+    );
+  }
+}
+
+class _ReviewSection extends ConsumerWidget {
+  const _ReviewSection({required this.order, required this.other});
+
+  final Order order;
+  final Profile other;
+
+  Future<void> _openSheet(BuildContext context, WidgetRef ref, Review? existing) async {
+    final result = await showModalBottomSheet<({int rating, String? comment})>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => _ReviewSheet(other: other, existing: existing),
+    );
+    if (result == null) return;
+
+    try {
+      await ref.read(reviewsRepositoryProvider).upsertReview(
+            orderId: order.id,
+            revieweeId: other.id,
+            rating: result.rating,
+            comment: result.comment,
+          );
+      ref.invalidate(myReviewForOrderProvider(order.id));
+      ref.invalidate(userReviewsProvider(other.id));
+      ref.invalidate(userProfileProvider(other.id));
+      if (context.mounted) {
+        context.showSuccess(
+          existing == null ? context.l10n.reviewSubmitted : context.l10n.reviewUpdated,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) context.showError(context.l10n.reviewFailed('$e'));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final reviewAsync = ref.watch(myReviewForOrderProvider(order.id));
+
+    return reviewAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (review) {
+        if (review == null) {
+          return _Card(
+            onTap: () => _openSheet(context, ref, null),
+            child: Row(
+              children: [
+                const Icon(Icons.star_outline_rounded, color: AppColors.hotPink),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(context.l10n.leaveReview,
+                      style: theme.textTheme.titleMedium),
+                ),
+                const Icon(Icons.chevron_right_rounded),
+              ],
+            ),
+          );
+        }
+        return _Card(
+          onTap: () => _openSheet(context, ref, review),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    StarRating(rating: review.rating, size: 18),
+                    if (review.comment?.isNotEmpty == true) ...[
+                      const SizedBox(height: 4),
+                      Text(review.comment!, style: theme.textTheme.bodyMedium),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Text(context.l10n.editReview,
+                  style: theme.textTheme.labelLarge
+                      ?.copyWith(color: AppColors.hotPink)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ReviewSheet extends StatefulWidget {
+  const _ReviewSheet({required this.other, required this.existing});
+
+  final Profile other;
+  final Review? existing;
+
+  @override
+  State<_ReviewSheet> createState() => _ReviewSheetState();
+}
+
+class _ReviewSheetState extends State<_ReviewSheet> {
+  final _comment = TextEditingController();
+  int _rating = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _rating = widget.existing?.rating ?? 0;
+    _comment.text = widget.existing?.comment ?? '';
+  }
+
+  @override
+  void dispose() {
+    _comment.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (_rating == 0) {
+      context.showError(context.l10n.pickRating);
+      return;
+    }
+    Navigator.of(context).pop((
+      rating: _rating,
+      comment: _comment.text.trim().isEmpty ? null : _comment.text.trim(),
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: EdgeInsets.only(
+        left: AppSpacing.lg,
+        right: AppSpacing.lg,
+        top: AppSpacing.lg,
+        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(context.l10n.rateUser(widget.other.nameOrHandle),
+              style: theme.textTheme.headlineSmall),
+          const SizedBox(height: AppSpacing.md),
+          Text(context.l10n.yourRating, style: theme.textTheme.titleMedium),
+          const SizedBox(height: AppSpacing.xs),
+          StarRating(
+            rating: _rating,
+            size: 32,
+            onChanged: (v) => setState(() => _rating = v),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          NosivaTextField(
+            hint: context.l10n.reviewCommentHint,
+            controller: _comment,
+            maxLines: 3,
+            maxLength: 500,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          NosivaButton(
+            label: widget.existing == null
+                ? context.l10n.submitReview
+                : context.l10n.updateReview,
+            variant: NosivaButtonVariant.gradient,
+            onPressed: _submit,
+          ),
+        ],
       ),
     );
   }

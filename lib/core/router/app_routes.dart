@@ -24,6 +24,7 @@ abstract final class AppRoutes {
   static const admin = '/admin';
   static const user = '/user'; // /user/:id (public profile)
   static const followList = '/follows'; // /follows/:id?tab=followers|following
+  static const reviews = '/reviews'; // /reviews/:id (reviews received by user)
 
   static String listingDetailPath(String id) => '$listingDetail/$id';
   static String editListingPath(String id) => '$editListing/$id';
@@ -32,4 +33,5 @@ abstract final class AppRoutes {
   static String userPath(String id) => '$user/$id';
   static String followListPath(String id, {int tab = 0}) =>
       '$followList/$id?tab=${tab == 1 ? 'following' : 'followers'}';
+  static String reviewsPath(String id) => '$reviews/$id';
 }

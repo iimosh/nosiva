@@ -786,6 +786,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rating => 'Rating';
 
   @override
+  String get reviews => 'Reviews';
+
+  @override
+  String ratingCount(int count) {
+    return '$count ratings';
+  }
+
+  @override
+  String rateUser(Object name) {
+    return 'Rate $name';
+  }
+
+  @override
+  String get leaveReview => 'Rate your experience';
+
+  @override
+  String get editReview => 'Edit your review';
+
+  @override
+  String get yourRating => 'Your rating';
+
+  @override
+  String get reviewCommentHint => 'Share how it went (optional)';
+
+  @override
+  String get submitReview => 'Submit review';
+
+  @override
+  String get updateReview => 'Update review';
+
+  @override
+  String get reviewSubmitted => 'Review submitted';
+
+  @override
+  String get reviewUpdated => 'Review updated';
+
+  @override
+  String reviewFailed(Object error) {
+    return 'Couldn’t submit review — $error';
+  }
+
+  @override
+  String get noReviewsYet => 'No reviews yet';
+
+  @override
+  String get noReviewsYetMessage =>
+      'Reviews from buyers and sellers will show up here.';
+
+  @override
+  String get pickRating => 'Select a star rating';
+
+  @override
   String get listings => 'Listings';
 
   @override

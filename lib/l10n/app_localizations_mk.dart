@@ -789,6 +789,58 @@ class AppLocalizationsMk extends AppLocalizations {
   String get rating => 'Оцена';
 
   @override
+  String get reviews => 'Рецензии';
+
+  @override
+  String ratingCount(int count) {
+    return '$count оценки';
+  }
+
+  @override
+  String rateUser(Object name) {
+    return 'Оцени го $name';
+  }
+
+  @override
+  String get leaveReview => 'Оцени го искуството';
+
+  @override
+  String get editReview => 'Уреди ја рецензијата';
+
+  @override
+  String get yourRating => 'Твојата оцена';
+
+  @override
+  String get reviewCommentHint => 'Сподели како помина (по избор)';
+
+  @override
+  String get submitReview => 'Испрати рецензија';
+
+  @override
+  String get updateReview => 'Ажурирај рецензија';
+
+  @override
+  String get reviewSubmitted => 'Рецензијата е испратена';
+
+  @override
+  String get reviewUpdated => 'Рецензијата е ажурирана';
+
+  @override
+  String reviewFailed(Object error) {
+    return 'Не можевме да ја испратиме рецензијата — $error';
+  }
+
+  @override
+  String get noReviewsYet => 'Сè уште нема рецензии';
+
+  @override
+  String get noReviewsYetMessage =>
+      'Рецензиите од купувачи и продавачи ќе се прикажат тука.';
+
+  @override
+  String get pickRating => 'Избери оцена со ѕвездички';
+
+  @override
   String get listings => 'Огласи';
 
   @override
