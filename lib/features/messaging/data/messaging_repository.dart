@@ -48,7 +48,15 @@ class MessagingRepository {
     return Conversation.fromJson(created);
   }
 
+  static final _uuidPattern = RegExp(
+      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+
   Future<Conversation> getOrCreateDirectConversation(String otherUserId) async {
+    // otherUserId is interpolated into a PostgREST filter string below and can
+    // originate from a route parameter, so only a real UUID may pass.
+    if (!_uuidPattern.hasMatch(otherUserId)) {
+      throw ArgumentError.value(otherUserId, 'otherUserId', 'Not a valid user id');
+    }
     final uid = _client.auth.currentUser!.id;
     final rows = await _client
         .from(_conversations)

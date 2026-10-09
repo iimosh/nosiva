@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/supabase/supabase_providers.dart';
 import '../data/follow_repository.dart';
 import 'current_profile_provider.dart';
 import 'user_profile_screen.dart';
@@ -7,6 +8,9 @@ import 'user_profile_screen.dart';
 class FollowController extends AsyncNotifier<Set<String>> {
   @override
   Future<Set<String>> build() {
+    // Re-fetches on every sign-in/sign-out so switching accounts on the same
+    // device shows the new user's own follows, not the previous user's.
+    ref.watch(currentAuthUserProvider);
     return ref.watch(followRepositoryProvider).fetchFollowingIds();
   }
 

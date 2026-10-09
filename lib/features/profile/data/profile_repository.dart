@@ -7,6 +7,9 @@ import 'package:uuid/uuid.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../domain/profile.dart';
 
+/// Thrown by sign-up when the chosen username is already claimed.
+class UsernameTakenException implements Exception {}
+
 class ProfileRepository {
   ProfileRepository(this._client);
   final SupabaseClient _client;
@@ -25,8 +28,24 @@ class ProfileRepository {
     await _client.from(_table).update({'role': role}).eq('id', userId);
   }
 
+  /// Whether [username] is already claimed. Called before creating the auth
+  /// account during sign-up so a taken username fails fast instead of
+  /// leaving a login with no profile behind it.
+  Future<bool> isUsernameTaken(String username) async {
+    final data = await _client
+        .from(_table)
+        .select('id')
+        .eq('username', username)
+        .maybeSingle();
+    return data != null;
+  }
+
   Future<List<Profile>> search(String query, {int limit = 20}) async {
-    final q = query.trim();
+    // The query is interpolated into a PostgREST filter string below, so
+    // strip the characters that carry filter syntax (commas, parentheses,
+    // wildcards, quotes). Otherwise a crafted search could append its own
+    // conditions to the filter.
+    final q = query.replaceAll(RegExp(r'[,()%*\\"]'), '').trim();
     if (q.isEmpty) return [];
     final data = await _client
         .from(_table)

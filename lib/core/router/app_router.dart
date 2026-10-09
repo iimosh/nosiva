@@ -2,7 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/onboarding_screen.dart';
+import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/sign_in_screen.dart';
 import '../../features/auth/presentation/sign_up_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
@@ -42,9 +44,23 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: AppRoutes.splash,
     refreshListenable: refresh,
     redirect: (context, state) {
-      final user = ref.read(currentAuthUserProvider);
       final loc = state.matchedLocation;
-      const authRoutes = {AppRoutes.welcome, AppRoutes.signIn, AppRoutes.signUp};
+
+      // A recovery-email link signs the user in, but they must set a new
+      // password before doing anything else — check this first so it
+      // overrides every other redirect rule below, including "already
+      // signed in -> go home".
+      if (ref.read(passwordRecoveryProvider)) {
+        return loc == AppRoutes.resetPassword ? null : AppRoutes.resetPassword;
+      }
+
+      final user = ref.read(currentAuthUserProvider);
+      const authRoutes = {
+        AppRoutes.welcome,
+        AppRoutes.signIn,
+        AppRoutes.signUp,
+        AppRoutes.forgotPassword,
+      };
       final isAuthRoute = authRoutes.contains(loc);
       final isSplash = loc == AppRoutes.splash;
 
@@ -62,7 +78,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             return loc == AppRoutes.onboarding ? null : AppRoutes.onboarding;
           }
           if (loc == AppRoutes.admin && !p.isAdmin) return AppRoutes.home;
-          if (isAuthRoute || isSplash || loc == AppRoutes.onboarding) {
+          if (isAuthRoute ||
+              isSplash ||
+              loc == AppRoutes.onboarding ||
+              loc == AppRoutes.resetPassword) {
             return AppRoutes.home;
           }
           return null;
@@ -74,6 +93,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: AppRoutes.welcome, builder: (_, __) => const WelcomeScreen()),
       GoRoute(path: AppRoutes.signIn, builder: (_, __) => const SignInScreen()),
       GoRoute(path: AppRoutes.signUp, builder: (_, __) => const SignUpScreen()),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (_, __) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        builder: (_, __) => const ResetPasswordScreen(),
+      ),
       GoRoute(
         path: AppRoutes.onboarding,
         builder: (_, __) => const OnboardingScreen(),

@@ -9,6 +9,7 @@ import '../../../core/utils/snackbars.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
+import '../../profile/data/profile_repository.dart';
 import 'auth_controller.dart';
 import 'widgets/oauth_buttons.dart';
 
@@ -36,17 +37,25 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    final ok = await ref.read(authControllerProvider.notifier).signUp(
+    final result = await ref.read(authControllerProvider.notifier).signUp(
           email: _email.text,
           password: _password.text,
           username: _username.text,
         );
     if (!mounted) return;
-    if (ok) {
-      context.showSuccess(context.l10n.accountCreated);
-    } else {
-      final err = ref.read(authControllerProvider).error;
-      context.showError(context.l10n.signUpFailed(err ?? context.l10n.tryAgain));
+    switch (result) {
+      case SignUpResult.signedIn:
+        context.showSuccess(context.l10n.accountCreated);
+      case SignUpResult.confirmEmail:
+        context.showSuccess(context.l10n.confirmEmailSent);
+        context.pushReplacement(AppRoutes.signIn);
+      case SignUpResult.failed:
+        final err = ref.read(authControllerProvider).error;
+        if (err is UsernameTakenException) {
+          context.showError(context.l10n.usernameTaken);
+        } else {
+          context.showError(context.l10n.signUpFailed(err ?? context.l10n.tryAgain));
+        }
     }
   }
 
@@ -77,7 +86,16 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   hint: context.l10n.usernameHint,
                   controller: _username,
                   prefixIcon: Icons.tag_rounded,
-                  validator: (v) => Validators.minLength(v, 3, field: 'Username'),
+                  maxLength: 30,
+                  validator: (v) {
+                    final username = v?.trim() ?? '';
+                    if (username.isEmpty) return context.l10n.usernameRequired;
+                    if (username.length < 3) return context.l10n.usernameTooShort;
+                    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(username)) {
+                      return context.l10n.usernameInvalid;
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: AppSpacing.md),
                 NosivaTextField(

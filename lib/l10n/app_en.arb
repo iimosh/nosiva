@@ -33,6 +33,31 @@
   "password": "Password",
   "passwordDotsHint": "••••••••",
   "passwordSignupHint": "at least 8 characters",
+  "forgotPasswordLink": "Forgot password?",
+  "resetPasswordTitle": "Reset your password",
+  "resetPasswordSubtitle": "Enter your email and we’ll send you a link to reset it.",
+  "sendResetLink": "Send reset link",
+  "resetLinkSent": "Check your email for a reset link",
+  "resetLinkFailed": "Couldn’t send reset link — {error}",
+  "@resetLinkFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "setNewPasswordTitle": "Set a new password",
+  "setNewPasswordSubtitle": "Choose a new password for your account.",
+  "newPassword": "New password",
+  "confirmNewPassword": "Confirm new password",
+  "passwordsDontMatch": "Passwords don’t match",
+  "passwordUpdated": "Password updated",
+  "passwordUpdateFailed": "Couldn’t update password — {error}",
+  "@passwordUpdateFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "updatePasswordCta": "Update password",
+  "backToSignIn": "Back to sign in",
   "username": "Username",
   "usernameHint": "username",
   "signIn": "Sign in",
@@ -381,6 +406,74 @@
   "usernameTooShort": "Username must be at least 3 characters",
   "usernameInvalid": "Use only letters, numbers, and underscores",
   "usernameTaken": "That username is already taken",
+  "confirmEmailSent": "Check your email to confirm your account, then sign in.",
+  "emailNotConfirmed": "Please confirm your email first. Check your inbox for the link.",
+  "reportUser": "Report user",
+  "reportListing": "Report listing",
+  "blockUser": "Block user",
+  "unblockUser": "Unblock user",
+  "blockUserTitle": "Block {name}?",
+  "@blockUserTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "blockUserMessage": "They won’t be able to message you or make offers or orders, and you won’t see their listings or chats. You can unblock them anytime.",
+  "userBlocked": "User blocked",
+  "userUnblocked": "User unblocked",
+  "blockFailed": "Couldn’t update block — {error}",
+  "@blockFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "youBlockedThisUser": "You blocked this person.",
+  "cannotMessage": "You can’t message this person.",
+  "reportTitle": "Report",
+  "reportWhy": "What’s the problem?",
+  "reasonSpam": "Spam",
+  "reasonScam": "Scam or fraud",
+  "reasonInappropriate": "Inappropriate content",
+  "reasonHarassment": "Harassment",
+  "reasonCounterfeit": "Counterfeit item",
+  "reasonOther": "Something else",
+  "reportDetailsHint": "Add details (optional)",
+  "sendReportCta": "Send report",
+  "reportSent": "Thanks, we’ll review this",
+  "reportAlready": "You’ve already reported this",
+  "reportFailed": "Couldn’t send report — {error}",
+  "@reportFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "reportsEmptyTitle": "No open reports",
+  "reportsEmptyBody": "New reports from users will show up here.",
+  "reportActionResolve": "Resolve",
+  "reportActionDismiss": "Dismiss",
+  "reportActionView": "View",
+  "reportedBy": "Reported by {name}",
+  "@reportedBy": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "reportTypeUser": "User",
+  "reportTypeListing": "Listing",
+  "reportClosed": "Report closed",
+  "deleteAccount": "Delete account",
+  "deleteAccountTitle": "Delete your account?",
+  "deleteAccountBody": "This permanently deletes your profile, listings, messages, reviews and order history. This can’t be undone.",
+  "deleteAccountTypeToConfirm": "Type DELETE to confirm",
+  "deleteAccountConfirm": "Delete forever",
+  "deleteAccountOpenOrders": "Finish or cancel your open orders before deleting your account.",
+  "deleteAccountFailed": "Couldn’t delete account — {error}",
+  "@deleteAccountFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "accountDeleted": "Your account was deleted",
   "profileUpdated": "Profile updated",
   "profileUpdateFailed": "Could not update profile - {error}",
   "@profileUpdateFailed": {

@@ -149,6 +149,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       label: context.l10n.displayNameOptional,
                       hint: context.l10n.displayNameHint,
                       controller: _displayName,
+                      maxLength: 60,
                       validator: (value) {
                         final text = value?.trim() ?? '';
                         if (text.isEmpty) return null;
@@ -164,6 +165,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       label: context.l10n.username,
                       hint: context.l10n.usernameHint,
                       controller: _username,
+                      maxLength: 30,
                       prefixIcon: Icons.alternate_email_rounded,
                       validator: _validateUsername,
                     ),
@@ -181,6 +183,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       label: context.l10n.locationOptional,
                       hint: context.l10n.cityCountry,
                       controller: _location,
+                      maxLength: 120,
                       prefixIcon: Icons.place_outlined,
                     ),
                     const SizedBox(height: AppSpacing.md),

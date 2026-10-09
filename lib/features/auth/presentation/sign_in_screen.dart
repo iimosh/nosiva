@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
@@ -41,7 +42,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     if (ok) {
       context.showSuccess(context.l10n.welcomeBackSuccess);
     } else {
-      context.showError(context.l10n.signInFailed);
+      final err = ref.read(authControllerProvider).error;
+      final notConfirmed = err is AuthException &&
+          (err.code == 'email_not_confirmed' ||
+              err.message.toLowerCase().contains('not confirmed'));
+      context.showError(notConfirmed
+          ? context.l10n.emailNotConfirmed
+          : context.l10n.signInFailed);
     }
   }
 
@@ -90,7 +97,15 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.xs),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => context.push(AppRoutes.forgotPassword),
+                    child: Text(context.l10n.forgotPasswordLink),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
                 NosivaButton(
                   label: context.l10n.signIn,
                   loading: loading,

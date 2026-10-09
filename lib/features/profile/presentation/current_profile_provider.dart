@@ -15,9 +15,22 @@ class CurrentProfile extends AsyncNotifier<Profile?> {
     final existing = await repo.fetchById(user.id);
     if (existing != null) return existing;
 
+    // Email sign-ups carry their chosen username in the user metadata
+    // (they had no session to create the profile with at sign-up time).
+    final chosen = user.userMetadata?['username'];
+    if (chosen is String && RegExp(r'^[A-Za-z0-9_]{3,30}$').hasMatch(chosen)) {
+      try {
+        return await repo.createInitial(id: user.id, username: chosen);
+      } catch (_) {
+        // Taken in the meantime — fall through to a generated username.
+      }
+    }
+
     final emailLocal = user.email?.split('@').first ?? 'user';
+    final slug = _slug(emailLocal);
+    // Capped so the result stays within the 30-char username limit.
     final username =
-        '${_slug(emailLocal)}${user.id.substring(0, 4)}';
+        '${slug.length > 20 ? slug.substring(0, 20) : slug}${user.id.substring(0, 4)}';
     return repo.createInitial(id: user.id, username: username);
   }
 

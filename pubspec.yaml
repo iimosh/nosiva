@@ -23,6 +23,12 @@ dependencies:
   # --- Backend (Supabase: Auth, Postgres, Storage, Realtime) ---
   supabase_flutter: ^2.8.0
 
+  # --- Security ---
+  # Backs Supabase's session storage with Android Keystore / iOS Keychain
+  # instead of plain SharedPreferences, so the auth session (including the
+  # long-lived refresh token) isn't stored in a plain, unencrypted file.
+  flutter_secure_storage: ^9.2.4
+
   # --- Models / serialization ---
   freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0
