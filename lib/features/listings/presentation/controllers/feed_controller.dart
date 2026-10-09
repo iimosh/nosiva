@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../profile/presentation/follow_controller.dart';
+import '../../../safety/data/safety_repository.dart';
 import '../../data/listings_repository.dart';
 import '../../domain/listing.dart';
 import '../../domain/listing_filter.dart';
@@ -23,7 +24,13 @@ class FeedController extends AsyncNotifier<List<Listing>> {
     _page = 0;
     _hasMore = true;
     final repo = ref.watch(listingsRepositoryProvider);
-    final first = await repo.fetchFeed(filter: filter, page: 0);
+    // Waiting for the block list means blocked sellers never flash into the
+    // feed first; the feed reloads automatically when someone is (un)blocked.
+    final blocked = await ref
+        .watch(blockedIdsProvider.future)
+        .catchError((_) => <String>{});
+    final first =
+        await repo.fetchFeed(filter: filter, page: 0, excludeSellerIds: blocked);
     _hasMore = first.length == ListingsRepository.pageSize;
     return first;
   }
@@ -34,7 +41,9 @@ class FeedController extends AsyncNotifier<List<Listing>> {
     final filter = ref.read(feedFilterProvider);
     final repo = ref.read(listingsRepositoryProvider);
     try {
-      final next = await repo.fetchFeed(filter: filter, page: _page + 1);
+      final blocked = ref.read(blockedIdsProvider).valueOrNull ?? const <String>{};
+      final next = await repo.fetchFeed(
+          filter: filter, page: _page + 1, excludeSellerIds: blocked);
       _page += 1;
       _hasMore = next.length == ListingsRepository.pageSize;
       final current = state.valueOrNull ?? const [];
@@ -54,7 +63,9 @@ final feedControllerProvider =
     AsyncNotifierProvider<FeedController, List<Listing>>(FeedController.new);
 
 final followingFeedProvider = FutureProvider<List<Listing>>((ref) {
-  final ids = ref.watch(followControllerProvider).valueOrNull ?? const <String>{};
+  final blocked = ref.watch(blockedIdsProvider).valueOrNull ?? const <String>{};
+  final ids = (ref.watch(followControllerProvider).valueOrNull ?? const <String>{})
+      .difference(blocked);
   if (ids.isEmpty) return Future.value(const <Listing>[]);
   return ref.watch(listingsRepositoryProvider).fetchBySellers(ids.toList());
 });

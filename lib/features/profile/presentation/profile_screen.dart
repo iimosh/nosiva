@@ -11,6 +11,7 @@ import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../auth/presentation/auth_controller.dart';
+import '../../auth/presentation/delete_account_dialog.dart';
 import '../../listings/data/listings_repository.dart';
 import '../../listings/domain/listing.dart';
 import '../../listings/domain/listing_l10n.dart';
@@ -231,6 +232,19 @@ class _ProfileBody extends ConsumerWidget {
             );
           },
         ),
+        const SizedBox(height: AppSpacing.xl),
+        Center(
+          child: TextButton.icon(
+            icon: const Icon(Icons.delete_forever_outlined,
+                color: AppColors.error),
+            label: Text(
+              context.l10n.deleteAccount,
+              style: const TextStyle(color: AppColors.error),
+            ),
+            onPressed: () => showDeleteAccountDialog(context),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
       ],
     );
   }

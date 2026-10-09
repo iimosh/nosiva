@@ -111,6 +111,56 @@ class AppLocalizationsMk extends AppLocalizations {
   String get passwordSignupHint => 'најмалку 8 карактери';
 
   @override
+  String get forgotPasswordLink => 'Ја заборави лозинката?';
+
+  @override
+  String get resetPasswordTitle => 'Ресетирај ја лозинката';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Внеси ја твојата е-пошта и ќе ти испратиме линк за ресетирање.';
+
+  @override
+  String get sendResetLink => 'Испрати линк за ресетирање';
+
+  @override
+  String get resetLinkSent => 'Провери ја е-поштата за линк за ресетирање';
+
+  @override
+  String resetLinkFailed(Object error) {
+    return 'Не можевме да го испратиме линкот — $error';
+  }
+
+  @override
+  String get setNewPasswordTitle => 'Постави нова лозинка';
+
+  @override
+  String get setNewPasswordSubtitle => 'Избери нова лозинка за твојата сметка.';
+
+  @override
+  String get newPassword => 'Нова лозинка';
+
+  @override
+  String get confirmNewPassword => 'Потврди ја новата лозинка';
+
+  @override
+  String get passwordsDontMatch => 'Лозинките не се совпаѓаат';
+
+  @override
+  String get passwordUpdated => 'Лозинката е ажурирана';
+
+  @override
+  String passwordUpdateFailed(Object error) {
+    return 'Не можевме да ја ажурираме лозинката — $error';
+  }
+
+  @override
+  String get updatePasswordCta => 'Ажурирај лозинка';
+
+  @override
+  String get backToSignIn => 'Назад кон најава';
+
+  @override
   String get username => 'Корисничко име';
 
   @override
@@ -874,6 +924,151 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get usernameTaken => 'Ова корисничко име веќе е зафатено';
+
+  @override
+  String get confirmEmailSent =>
+      'Провери ја е-поштата за да ја потврдиш сметката, па најави се.';
+
+  @override
+  String get emailNotConfirmed =>
+      'Прво потврди ја е-поштата. Провери го сандачето за линкот.';
+
+  @override
+  String get reportUser => 'Пријави корисник';
+
+  @override
+  String get reportListing => 'Пријави оглас';
+
+  @override
+  String get blockUser => 'Блокирај корисник';
+
+  @override
+  String get unblockUser => 'Одблокирај корисник';
+
+  @override
+  String blockUserTitle(Object name) {
+    return 'Да го блокираш $name?';
+  }
+
+  @override
+  String get blockUserMessage =>
+      'Нема да може да ти пишува, да праќа понуди или нарачки, а ти нема да ги гледаш неговите огласи и разговори. Можеш да го одблокираш во секое време.';
+
+  @override
+  String get userBlocked => 'Корисникот е блокиран';
+
+  @override
+  String get userUnblocked => 'Корисникот е одблокиран';
+
+  @override
+  String blockFailed(Object error) {
+    return 'Не можевме да го ажурираме блокирањето — $error';
+  }
+
+  @override
+  String get youBlockedThisUser => 'Го блокираше овој корисник.';
+
+  @override
+  String get cannotMessage => 'Не можеш да му пишуваш на овој корисник.';
+
+  @override
+  String get reportTitle => 'Пријави';
+
+  @override
+  String get reportWhy => 'Што е проблемот?';
+
+  @override
+  String get reasonSpam => 'Спам';
+
+  @override
+  String get reasonScam => 'Измама';
+
+  @override
+  String get reasonInappropriate => 'Несоодветна содржина';
+
+  @override
+  String get reasonHarassment => 'Вознемирување';
+
+  @override
+  String get reasonCounterfeit => 'Фалсификуван артикл';
+
+  @override
+  String get reasonOther => 'Нешто друго';
+
+  @override
+  String get reportDetailsHint => 'Додај детали (по избор)';
+
+  @override
+  String get sendReportCta => 'Испрати пријава';
+
+  @override
+  String get reportSent => 'Благодариме, ќе ја прегледаме';
+
+  @override
+  String get reportAlready => 'Веќе го пријави ова';
+
+  @override
+  String reportFailed(Object error) {
+    return 'Не можевме да ја испратиме пријавата — $error';
+  }
+
+  @override
+  String get reportsEmptyTitle => 'Нема отворени пријави';
+
+  @override
+  String get reportsEmptyBody =>
+      'Новите пријави од корисници ќе се прикажат тука.';
+
+  @override
+  String get reportActionResolve => 'Реши';
+
+  @override
+  String get reportActionDismiss => 'Отфрли';
+
+  @override
+  String get reportActionView => 'Погледни';
+
+  @override
+  String reportedBy(Object name) {
+    return 'Пријавено од $name';
+  }
+
+  @override
+  String get reportTypeUser => 'Корисник';
+
+  @override
+  String get reportTypeListing => 'Оглас';
+
+  @override
+  String get reportClosed => 'Пријавата е затворена';
+
+  @override
+  String get deleteAccount => 'Избриши сметка';
+
+  @override
+  String get deleteAccountTitle => 'Да ја избришеш сметката?';
+
+  @override
+  String get deleteAccountBody =>
+      'Ова трајно ги брише твојот профил, огласи, пораки, рецензии и историјата на нарачки. Не може да се врати.';
+
+  @override
+  String get deleteAccountTypeToConfirm => 'Напиши DELETE за потврда';
+
+  @override
+  String get deleteAccountConfirm => 'Избриши засекогаш';
+
+  @override
+  String get deleteAccountOpenOrders =>
+      'Заврши или откажи ги отворените нарачки пред да ја избришеш сметката.';
+
+  @override
+  String deleteAccountFailed(Object error) {
+    return 'Не можевме да ја избришеме сметката — $error';
+  }
+
+  @override
+  String get accountDeleted => 'Твојата сметка е избришана';
 
   @override
   String get profileUpdated => 'Профилот е ажуриран';

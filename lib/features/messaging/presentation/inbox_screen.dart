@@ -16,6 +16,7 @@ import '../../../core/widgets/state_views.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../profile/domain/profile.dart';
 import '../../profile/presentation/user_profile_screen.dart' show peopleSearchProvider;
+import '../../safety/data/safety_repository.dart';
 import '../data/messaging_repository.dart';
 import '../domain/conversation.dart';
 
@@ -43,8 +44,13 @@ final inboxRealtimeProvider = Provider<void>((ref) {
 final unreadCountProvider = Provider<int>((ref) {
   final uid = ref.watch(currentAuthUserProvider)?.id;
   if (uid == null) return 0;
+  final blocked = ref.watch(blockedIdsProvider).valueOrNull ?? const <String>{};
   final convos = ref.watch(conversationsProvider).valueOrNull ?? const [];
-  return convos.fold<int>(0, (sum, c) => sum + c.unreadFor(uid));
+  return convos.fold<int>(0, (sum, c) {
+    final other = c.otherParticipant(uid);
+    if (other != null && blocked.contains(other.id)) return sum;
+    return sum + c.unreadFor(uid);
+  });
 });
 
 class InboxScreen extends ConsumerStatefulWidget {
@@ -125,7 +131,13 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
                 message: '$e',
                 onRetry: () => ref.invalidate(conversationsProvider),
               ),
-              data: (list) {
+              data: (allConvos) {
+                final blocked =
+                    ref.watch(blockedIdsProvider).valueOrNull ?? const <String>{};
+                final list = allConvos.where((c) {
+                  final other = uid == null ? null : c.otherParticipant(uid);
+                  return other == null || !blocked.contains(other.id);
+                }).toList();
                 final lowerQuery = query.toLowerCase();
                 final filtered = lowerQuery.isEmpty
                     ? list

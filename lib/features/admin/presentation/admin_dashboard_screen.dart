@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/router/app_routes.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -14,6 +16,8 @@ import '../../listings/domain/listing_enums.dart';
 import '../../listings/domain/listing_l10n.dart';
 import '../../listings/presentation/controllers/feed_controller.dart';
 import '../../profile/domain/profile.dart';
+import '../../safety/data/safety_repository.dart';
+import '../../safety/domain/report.dart';
 import 'admin_controller.dart';
 
 class AdminDashboardScreen extends ConsumerWidget {
@@ -175,15 +179,136 @@ class _ListingsTab extends ConsumerWidget {
   }
 }
 
-class _ReportsTab extends StatelessWidget {
+class _ReportsTab extends ConsumerWidget {
   const _ReportsTab();
 
   @override
-  Widget build(BuildContext context) {
-    return EmptyStateView(
-      icon: Icons.flag_outlined,
-      title: context.l10n.reportsComingSoon,
-      message: context.l10n.reportsComingSoonBody,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final reports = ref.watch(adminReportsProvider);
+    return reports.when(
+      loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.hotPink)),
+      error: (e, _) => ErrorStateView(
+        message: '$e',
+        onRetry: () => ref.invalidate(adminReportsProvider),
+      ),
+      data: (items) {
+        if (items.isEmpty) {
+          return EmptyStateView(
+            icon: Icons.flag_outlined,
+            title: context.l10n.reportsEmptyTitle,
+            message: context.l10n.reportsEmptyBody,
+          );
+        }
+        return RefreshIndicator(
+          color: AppColors.hotPink,
+          onRefresh: () async => ref.invalidate(adminReportsProvider),
+          child: ListView.separated(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            itemCount: items.length,
+            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+            itemBuilder: (_, i) => _ReportTile(report: items[i]),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ReportTile extends ConsumerWidget {
+  const _ReportTile({required this.report});
+  final Report report;
+
+  String _reasonLabel(BuildContext context) {
+    final l10n = context.l10n;
+    return switch (report.reason) {
+      ReportReason.spam => l10n.reasonSpam,
+      ReportReason.scam => l10n.reasonScam,
+      ReportReason.inappropriate => l10n.reasonInappropriate,
+      ReportReason.harassment => l10n.reasonHarassment,
+      ReportReason.counterfeit => l10n.reasonCounterfeit,
+      ReportReason.other => l10n.reasonOther,
+    };
+  }
+
+  Future<void> _close(BuildContext context, WidgetRef ref, String status) async {
+    try {
+      await ref.read(safetyRepositoryProvider).setReportStatus(report.id, status);
+      ref.invalidate(adminReportsProvider);
+      if (context.mounted) context.showSuccess(context.l10n.reportClosed);
+    } catch (e) {
+      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: AppRadii.card,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                report.isListing
+                    ? Icons.inventory_2_outlined
+                    : Icons.person_outline_rounded,
+                size: 18,
+                color: AppColors.hotPink,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                report.isListing
+                    ? context.l10n.reportTypeListing
+                    : context.l10n.reportTypeUser,
+                style: theme.textTheme.labelLarge,
+              ),
+              const Spacer(),
+              if (report.createdAt != null)
+                Text(Formatters.timeAgo(report.createdAt!),
+                    style: theme.textTheme.bodySmall),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(_reasonLabel(context), style: theme.textTheme.titleMedium),
+          if (report.details?.isNotEmpty == true) ...[
+            const SizedBox(height: 2),
+            Text(report.details!, style: theme.textTheme.bodyMedium),
+          ],
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            context.l10n.reportedBy(
+                report.reporter?.nameOrHandle ?? context.l10n.nosivaUser),
+            style: theme.textTheme.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Wrap(
+            spacing: AppSpacing.xs,
+            children: [
+              OutlinedButton(
+                onPressed: () => context.push(report.isListing
+                    ? AppRoutes.listingDetailPath(report.targetId)
+                    : AppRoutes.userPath(report.targetId)),
+                child: Text(context.l10n.reportActionView),
+              ),
+              OutlinedButton(
+                onPressed: () => _close(context, ref, 'resolved'),
+                child: Text(context.l10n.reportActionResolve),
+              ),
+              TextButton(
+                onPressed: () => _close(context, ref, 'dismissed'),
+                child: Text(context.l10n.reportActionDismiss),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

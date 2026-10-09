@@ -16,6 +16,7 @@ import '../../listings/domain/listing_l10n.dart';
 import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../listings/presentation/widgets/listing_card.dart';
 import '../../messaging/data/messaging_repository.dart';
+import '../../safety/presentation/user_safety_menu.dart';
 import '../data/profile_repository.dart';
 import '../domain/profile.dart';
 import 'widgets/follow_button.dart';
@@ -57,12 +58,17 @@ class UserProfileScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.l10n.profile),
         actions: [
-          if (myId != null && myId != userId)
+          if (myId != null && myId != userId) ...[
             IconButton(
               tooltip: context.l10n.messageUser,
               icon: const Icon(Icons.chat_bubble_outline_rounded),
               onPressed: () => _startChat(context, ref),
             ),
+            UserSafetyMenu(
+              userId: userId,
+              name: profileAsync.valueOrNull?.nameOrHandle ?? '',
+            ),
+          ],
         ],
       ),
       body: profileAsync.when(

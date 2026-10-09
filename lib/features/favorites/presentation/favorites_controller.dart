@@ -1,11 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/supabase/supabase_providers.dart';
 import '../data/favorites_repository.dart';
 
 /// Holds the set of favorited listing ids and toggles them optimistically.
 class FavoritesController extends AsyncNotifier<Set<String>> {
   @override
   Future<Set<String>> build() {
+    // Re-fetches on every sign-in/sign-out so switching accounts on the same
+    // device shows the new user's own favorites, not the previous user's.
+    ref.watch(currentAuthUserProvider);
     return ref.watch(favoritesRepositoryProvider).fetchFavoriteIds();
   }
 

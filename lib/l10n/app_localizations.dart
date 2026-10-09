@@ -296,6 +296,96 @@ abstract class AppLocalizations {
   /// **'at least 8 characters'**
   String get passwordSignupHint;
 
+  /// No description provided for @forgotPasswordLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPasswordLink;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset your password'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we’ll send you a link to reset it.'**
+  String get resetPasswordSubtitle;
+
+  /// No description provided for @sendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get sendResetLink;
+
+  /// No description provided for @resetLinkSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email for a reset link'**
+  String get resetLinkSent;
+
+  /// No description provided for @resetLinkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t send reset link — {error}'**
+  String resetLinkFailed(Object error);
+
+  /// No description provided for @setNewPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a new password'**
+  String get setNewPasswordTitle;
+
+  /// No description provided for @setNewPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a new password for your account.'**
+  String get setNewPasswordSubtitle;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPassword;
+
+  /// No description provided for @confirmNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm new password'**
+  String get confirmNewPassword;
+
+  /// No description provided for @passwordsDontMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords don’t match'**
+  String get passwordsDontMatch;
+
+  /// No description provided for @passwordUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated'**
+  String get passwordUpdated;
+
+  /// No description provided for @passwordUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t update password — {error}'**
+  String passwordUpdateFailed(Object error);
+
+  /// No description provided for @updatePasswordCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Update password'**
+  String get updatePasswordCta;
+
+  /// No description provided for @backToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get backToSignIn;
+
   /// No description provided for @username.
   ///
   /// In en, this message translates to:
@@ -1699,6 +1789,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That username is already taken'**
   String get usernameTaken;
+
+  /// No description provided for @confirmEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email to confirm your account, then sign in.'**
+  String get confirmEmailSent;
+
+  /// No description provided for @emailNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your email first. Check your inbox for the link.'**
+  String get emailNotConfirmed;
+
+  /// No description provided for @reportUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Report user'**
+  String get reportUser;
+
+  /// No description provided for @reportListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Report listing'**
+  String get reportListing;
+
+  /// No description provided for @blockUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Block user'**
+  String get blockUser;
+
+  /// No description provided for @unblockUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock user'**
+  String get unblockUser;
+
+  /// No description provided for @blockUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {name}?'**
+  String blockUserTitle(Object name);
+
+  /// No description provided for @blockUserMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'They won’t be able to message you or make offers or orders, and you won’t see their listings or chats. You can unblock them anytime.'**
+  String get blockUserMessage;
+
+  /// No description provided for @userBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'User blocked'**
+  String get userBlocked;
+
+  /// No description provided for @userUnblocked.
+  ///
+  /// In en, this message translates to:
+  /// **'User unblocked'**
+  String get userUnblocked;
+
+  /// No description provided for @blockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t update block — {error}'**
+  String blockFailed(Object error);
+
+  /// No description provided for @youBlockedThisUser.
+  ///
+  /// In en, this message translates to:
+  /// **'You blocked this person.'**
+  String get youBlockedThisUser;
+
+  /// No description provided for @cannotMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You can’t message this person.'**
+  String get cannotMessage;
+
+  /// No description provided for @reportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get reportTitle;
+
+  /// No description provided for @reportWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'What’s the problem?'**
+  String get reportWhy;
+
+  /// No description provided for @reasonSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get reasonSpam;
+
+  /// No description provided for @reasonScam.
+  ///
+  /// In en, this message translates to:
+  /// **'Scam or fraud'**
+  String get reasonScam;
+
+  /// No description provided for @reasonInappropriate.
+  ///
+  /// In en, this message translates to:
+  /// **'Inappropriate content'**
+  String get reasonInappropriate;
+
+  /// No description provided for @reasonHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment'**
+  String get reasonHarassment;
+
+  /// No description provided for @reasonCounterfeit.
+  ///
+  /// In en, this message translates to:
+  /// **'Counterfeit item'**
+  String get reasonCounterfeit;
+
+  /// No description provided for @reasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get reasonOther;
+
+  /// No description provided for @reportDetailsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add details (optional)'**
+  String get reportDetailsHint;
+
+  /// No description provided for @sendReportCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Send report'**
+  String get sendReportCta;
+
+  /// No description provided for @reportSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks, we’ll review this'**
+  String get reportSent;
+
+  /// No description provided for @reportAlready.
+  ///
+  /// In en, this message translates to:
+  /// **'You’ve already reported this'**
+  String get reportAlready;
+
+  /// No description provided for @reportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t send report — {error}'**
+  String reportFailed(Object error);
+
+  /// No description provided for @reportsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No open reports'**
+  String get reportsEmptyTitle;
+
+  /// No description provided for @reportsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'New reports from users will show up here.'**
+  String get reportsEmptyBody;
+
+  /// No description provided for @reportActionResolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get reportActionResolve;
+
+  /// No description provided for @reportActionDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get reportActionDismiss;
+
+  /// No description provided for @reportActionView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get reportActionView;
+
+  /// No description provided for @reportedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported by {name}'**
+  String reportedBy(Object name);
+
+  /// No description provided for @reportTypeUser.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get reportTypeUser;
+
+  /// No description provided for @reportTypeListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing'**
+  String get reportTypeListing;
+
+  /// No description provided for @reportClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Report closed'**
+  String get reportClosed;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes your profile, listings, messages, reviews and order history. This can’t be undone.'**
+  String get deleteAccountBody;
+
+  /// No description provided for @deleteAccountTypeToConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Type DELETE to confirm'**
+  String get deleteAccountTypeToConfirm;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete forever'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountOpenOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish or cancel your open orders before deleting your account.'**
+  String get deleteAccountOpenOrders;
+
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t delete account — {error}'**
+  String deleteAccountFailed(Object error);
+
+  /// No description provided for @accountDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account was deleted'**
+  String get accountDeleted;
 
   /// No description provided for @profileUpdated.
   ///

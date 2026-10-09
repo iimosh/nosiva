@@ -23,6 +23,7 @@ class ListingsRepository {
   Future<List<Listing>> fetchFeed({
     ListingFilter filter = const ListingFilter(),
     int page = 0,
+    Set<String> excludeSellerIds = const {},
   }) async {
     final from = page * pageSize;
     final to = from + pageSize - 1;
@@ -31,6 +32,9 @@ class ListingsRepository {
 
     final uid = _client.auth.currentUser?.id;
     if (uid != null) query = query.neq('seller_id', uid);
+    if (excludeSellerIds.isNotEmpty) {
+      query = query.not('seller_id', 'in', '(${excludeSellerIds.join(',')})');
+    }
 
     if (filter.category != null) {
       query = query.eq('category', filter.category!.value);

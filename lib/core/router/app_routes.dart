@@ -4,6 +4,8 @@ abstract final class AppRoutes {
   static const welcome = '/welcome';
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
+  static const forgotPassword = '/forgot-password';
+  static const resetPassword = '/reset-password';
   static const onboarding = '/onboarding';
 
   // Bottom-nav shell branches

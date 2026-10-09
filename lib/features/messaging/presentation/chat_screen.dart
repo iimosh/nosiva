@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
@@ -12,6 +13,8 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../../core/supabase/supabase_providers.dart';
+import '../../safety/data/safety_repository.dart';
+import '../../safety/presentation/user_safety_menu.dart';
 import '../data/messaging_repository.dart';
 import '../domain/conversation.dart';
 import '../domain/message.dart';
@@ -98,7 +101,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       pendingNotifier.state = pendingNotifier.state
           .where((m) => m.id != optimistic.id)
           .toList();
-      if (mounted) context.showError(context.l10n.messageFailed('$e'));
+      if (mounted) {
+        // 42501 = row-level security rejection, which is what a block
+        // (in either direction) produces.
+        context.showError(e is PostgrestException && e.code == '42501'
+            ? context.l10n.cannotMessage
+            : context.l10n.messageFailed('$e'));
+      }
     }
   }
 
@@ -178,6 +187,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final uid = ref.watch(currentAuthUserProvider)?.id;
     final stream = ref.watch(messagesStreamProvider(widget.conversationId));
     final pending = ref.watch(_pendingProvider(widget.conversationId));
+    final convo =
+        ref.watch(conversationProvider(widget.conversationId)).valueOrNull;
+    final other = (convo == null || uid == null) ? null : convo.otherParticipant(uid);
+    final iBlockedThem = other != null &&
+        (ref.watch(blockedIdsProvider).valueOrNull?.contains(other.id) ?? false);
 
     ref.listen(messagesStreamProvider(widget.conversationId), (_, next) {
       if (next.hasValue) _markRead();
@@ -187,6 +201,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       appBar: AppBar(
         titleSpacing: 0,
         title: _ChatHeader(conversationId: widget.conversationId),
+        actions: [
+          if (other != null)
+            UserSafetyMenu(userId: other.id, name: other.nameOrHandle),
+        ],
       ),
       body: Column(
         children: [
@@ -229,12 +247,30 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               },
             ),
           ),
-          _Composer(
-            controller: _controller,
-            sendingImage: _sendingImage,
-            onPickImage: _showImagePicker,
-            onSend: _send,
-          ),
+          if (iBlockedThem)
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                child: Row(
+                  children: [
+                    Expanded(child: Text(context.l10n.youBlockedThisUser)),
+                    TextButton(
+                      onPressed: () => ref
+                          .read(blockedIdsProvider.notifier)
+                          .unblock(other.id),
+                      child: Text(context.l10n.unblockUser),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            _Composer(
+              controller: _controller,
+              sendingImage: _sendingImage,
+              onPickImage: _showImagePicker,
+              onSend: _send,
+            ),
         ],
       ),
     );
@@ -416,6 +452,8 @@ class _Composer extends StatelessWidget {
                 controller: controller,
                 minLines: 1,
                 maxLines: 4,
+                maxLength: 4000,
+                buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => onSend(),
                 decoration: InputDecoration(hintText: context.l10n.messageHint),

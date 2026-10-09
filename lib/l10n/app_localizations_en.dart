@@ -111,6 +111,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordSignupHint => 'at least 8 characters';
 
   @override
+  String get forgotPasswordLink => 'Forgot password?';
+
+  @override
+  String get resetPasswordTitle => 'Reset your password';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Enter your email and we’ll send you a link to reset it.';
+
+  @override
+  String get sendResetLink => 'Send reset link';
+
+  @override
+  String get resetLinkSent => 'Check your email for a reset link';
+
+  @override
+  String resetLinkFailed(Object error) {
+    return 'Couldn’t send reset link — $error';
+  }
+
+  @override
+  String get setNewPasswordTitle => 'Set a new password';
+
+  @override
+  String get setNewPasswordSubtitle =>
+      'Choose a new password for your account.';
+
+  @override
+  String get newPassword => 'New password';
+
+  @override
+  String get confirmNewPassword => 'Confirm new password';
+
+  @override
+  String get passwordsDontMatch => 'Passwords don’t match';
+
+  @override
+  String get passwordUpdated => 'Password updated';
+
+  @override
+  String passwordUpdateFailed(Object error) {
+    return 'Couldn’t update password — $error';
+  }
+
+  @override
+  String get updatePasswordCta => 'Update password';
+
+  @override
+  String get backToSignIn => 'Back to sign in';
+
+  @override
   String get username => 'Username';
 
   @override
@@ -869,6 +920,150 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get usernameTaken => 'That username is already taken';
+
+  @override
+  String get confirmEmailSent =>
+      'Check your email to confirm your account, then sign in.';
+
+  @override
+  String get emailNotConfirmed =>
+      'Please confirm your email first. Check your inbox for the link.';
+
+  @override
+  String get reportUser => 'Report user';
+
+  @override
+  String get reportListing => 'Report listing';
+
+  @override
+  String get blockUser => 'Block user';
+
+  @override
+  String get unblockUser => 'Unblock user';
+
+  @override
+  String blockUserTitle(Object name) {
+    return 'Block $name?';
+  }
+
+  @override
+  String get blockUserMessage =>
+      'They won’t be able to message you or make offers or orders, and you won’t see their listings or chats. You can unblock them anytime.';
+
+  @override
+  String get userBlocked => 'User blocked';
+
+  @override
+  String get userUnblocked => 'User unblocked';
+
+  @override
+  String blockFailed(Object error) {
+    return 'Couldn’t update block — $error';
+  }
+
+  @override
+  String get youBlockedThisUser => 'You blocked this person.';
+
+  @override
+  String get cannotMessage => 'You can’t message this person.';
+
+  @override
+  String get reportTitle => 'Report';
+
+  @override
+  String get reportWhy => 'What’s the problem?';
+
+  @override
+  String get reasonSpam => 'Spam';
+
+  @override
+  String get reasonScam => 'Scam or fraud';
+
+  @override
+  String get reasonInappropriate => 'Inappropriate content';
+
+  @override
+  String get reasonHarassment => 'Harassment';
+
+  @override
+  String get reasonCounterfeit => 'Counterfeit item';
+
+  @override
+  String get reasonOther => 'Something else';
+
+  @override
+  String get reportDetailsHint => 'Add details (optional)';
+
+  @override
+  String get sendReportCta => 'Send report';
+
+  @override
+  String get reportSent => 'Thanks, we’ll review this';
+
+  @override
+  String get reportAlready => 'You’ve already reported this';
+
+  @override
+  String reportFailed(Object error) {
+    return 'Couldn’t send report — $error';
+  }
+
+  @override
+  String get reportsEmptyTitle => 'No open reports';
+
+  @override
+  String get reportsEmptyBody => 'New reports from users will show up here.';
+
+  @override
+  String get reportActionResolve => 'Resolve';
+
+  @override
+  String get reportActionDismiss => 'Dismiss';
+
+  @override
+  String get reportActionView => 'View';
+
+  @override
+  String reportedBy(Object name) {
+    return 'Reported by $name';
+  }
+
+  @override
+  String get reportTypeUser => 'User';
+
+  @override
+  String get reportTypeListing => 'Listing';
+
+  @override
+  String get reportClosed => 'Report closed';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete your account?';
+
+  @override
+  String get deleteAccountBody =>
+      'This permanently deletes your profile, listings, messages, reviews and order history. This can’t be undone.';
+
+  @override
+  String get deleteAccountTypeToConfirm => 'Type DELETE to confirm';
+
+  @override
+  String get deleteAccountConfirm => 'Delete forever';
+
+  @override
+  String get deleteAccountOpenOrders =>
+      'Finish or cancel your open orders before deleting your account.';
+
+  @override
+  String deleteAccountFailed(Object error) {
+    return 'Couldn’t delete account — $error';
+  }
+
+  @override
+  String get accountDeleted => 'Your account was deleted';
 
   @override
   String get profileUpdated => 'Profile updated';

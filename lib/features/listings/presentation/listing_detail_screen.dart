@@ -23,6 +23,7 @@ import '../../messaging/data/messaging_repository.dart';
 import '../../offers/data/offers_repository.dart';
 import '../../profile/presentation/current_profile_provider.dart';
 import '../../profile/presentation/widgets/follow_button.dart';
+import '../../safety/presentation/report_sheet.dart';
 import '../domain/listing.dart';
 import '../domain/listing_enums.dart';
 import '../domain/listing_l10n.dart';
@@ -283,6 +284,17 @@ class _GalleryState extends ConsumerState<_Gallery> {
                   onTap: () => context.showSnack(context.l10n.shareTodo),
                 ),
                 const SizedBox(width: AppSpacing.xs),
+                if (!isOwn) ...[
+                  _CircleIcon(
+                    icon: Icons.flag_outlined,
+                    onTap: () => showReportSheet(
+                      context,
+                      targetType: 'listing',
+                      targetId: listing.id,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                ],
                 if (isAdmin && !isOwn) ...[
                   _ModerationButton(listing: listing),
                   const SizedBox(width: AppSpacing.xs),
