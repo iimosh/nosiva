@@ -11,6 +11,10 @@ import '../data/follow_repository.dart';
 import '../domain/profile.dart';
 import 'user_profile_screen.dart';
 import 'widgets/follow_button.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/widgets/shimmer_box.dart';
+import '../../../core/widgets/pull_to_refresh.dart';
 
 final userFollowersProvider =
     FutureProvider.family<List<Profile>, String>((ref, userId) {
@@ -63,25 +67,31 @@ class FollowListScreen extends ConsumerWidget {
 
 class _PeopleList extends ConsumerWidget {
   const _PeopleList({required this.provider});
-  final ProviderListenable<AsyncValue<List<Profile>>> provider;
+  final FutureProvider<List<Profile>> provider;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final people = ref.watch(provider);
-    return people.when(
-      loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.hotPink)),
-      error: (e, _) => ErrorStateView(message: '$e'),
-      data: (list) {
-        if (list.isEmpty) {
-          return const EmptyStateView(emoji: '👤', title: 'Nobody here yet');
-        }
-        return ListView.separated(
-          itemCount: list.length,
-          separatorBuilder: (_, __) => const Divider(indent: 72, height: 1),
-          itemBuilder: (_, i) => _PersonRow(person: list[i]),
-        );
-      },
+    return PullToRefresh(
+      onRefresh: () => ref.refresh(provider.future),
+      child: people.when(
+        loading: () => const ListSkeleton(),
+        error: (e, _) => ErrorStateView(message: friendlyError(context.l10n, e)),
+        data: (list) {
+          if (list.isEmpty) {
+            return EmptyStateView(
+              icon: Icons.group_outlined,
+              title: context.l10n.nothingHereYet,
+            );
+          }
+          return ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: list.length,
+            separatorBuilder: (_, __) => const Divider(indent: 72, height: 1),
+            itemBuilder: (_, i) => _PersonRow(person: list[i]),
+          );
+        },
+      ),
     );
   }
 }
@@ -96,12 +106,13 @@ class _PersonRow extends StatelessWidget {
       onTap: () => context.push(AppRoutes.userPath(person.id)),
       leading: CircleAvatar(
         radius: 22,
-        backgroundColor: AppColors.blush,
+        backgroundColor: context.palette.placeholder,
         backgroundImage: person.avatarUrl != null
             ? CachedNetworkImageProvider(person.avatarUrl!)
             : null,
         child: person.avatarUrl == null
-            ? const Text('💁‍♀️', style: TextStyle(fontSize: 18))
+            ? const Icon(Icons.person_outline_rounded,
+                color: AppColors.hotPink, size: 22)
             : null,
       ),
       title: Text(person.nameOrHandle),

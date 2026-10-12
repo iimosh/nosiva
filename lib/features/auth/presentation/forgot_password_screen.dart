@@ -8,6 +8,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
 import '../data/auth_repository.dart' show authRepositoryProvider;
+import '../../../core/utils/friendly_error.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -39,7 +40,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         context.showSuccess(context.l10n.resetLinkSent);
       }
     } catch (e) {
-      if (mounted) context.showError(context.l10n.resetLinkFailed('$e'));
+      if (mounted) context.showError(context.l10n.resetLinkFailed(friendlyError(context.l10n, e)));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -53,6 +54,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       appBar: AppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Form(
             key: _formKey,
@@ -79,7 +81,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 NosivaButton(
                   label: context.l10n.sendResetLink,
                   loading: _submitting,
-                  variant: NosivaButtonVariant.gradient,
+                  variant: NosivaButtonVariant.primary,
                   onPressed: _sent ? null : _submit,
                 ),
                 const SizedBox(height: AppSpacing.lg),

@@ -2,11 +2,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../l10n/app_localizations.dart';
+
+enum LocationFailure { servicesOff, permissionDenied, permissionBlocked, cityNotFound }
+
+/// Why the city couldn't be found. Screens turn this into a translated
+/// message with [locationErrorMessage].
 class LocationException implements Exception {
-  LocationException(this.message);
-  final String message;
+  const LocationException(this.reason);
+  final LocationFailure reason;
   @override
-  String toString() => message;
+  String toString() => 'LocationException(${reason.name})';
 }
 
 class LocationService {
@@ -14,7 +20,7 @@ class LocationService {
 
   Future<String> currentCity() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
-      throw LocationException('Turn on location services to use this 📍');
+      throw const LocationException(LocationFailure.servicesOff);
     }
 
     var permission = await Geolocator.checkPermission();
@@ -22,11 +28,10 @@ class LocationService {
       permission = await Geolocator.requestPermission();
     }
     if (permission == LocationPermission.denied) {
-      throw LocationException('Location permission was denied.');
+      throw const LocationException(LocationFailure.permissionDenied);
     }
     if (permission == LocationPermission.deniedForever) {
-      throw LocationException(
-          'Location is blocked — enable it in Settings to use this.');
+      throw const LocationException(LocationFailure.permissionBlocked);
     }
 
     final position = await Geolocator.getCurrentPosition(
@@ -39,7 +44,7 @@ class LocationService {
     final placemarks =
         await placemarkFromCoordinates(position.latitude, position.longitude);
     if (placemarks.isEmpty) {
-      throw LocationException('Couldn’t figure out where you are.');
+      throw const LocationException(LocationFailure.cityNotFound);
     }
 
     final place = placemarks.first;
@@ -49,7 +54,7 @@ class LocationService {
       place.administrativeArea,
     ]);
     if (city.isEmpty) {
-      throw LocationException('Couldn’t figure out your city.');
+      throw const LocationException(LocationFailure.cityNotFound);
     }
     return city;
   }
@@ -60,6 +65,18 @@ class LocationService {
     }
     return '';
   }
+}
+
+/// A translated, user-friendly message for any error from [currentCity] —
+/// including timeouts and network errors, which never show their raw text.
+String locationErrorMessage(AppLocalizations l10n, Object error) {
+  if (error is! LocationException) return l10n.locationUnavailable;
+  return switch (error.reason) {
+    LocationFailure.servicesOff => l10n.locationServicesOff,
+    LocationFailure.permissionDenied => l10n.locationPermissionDenied,
+    LocationFailure.permissionBlocked => l10n.locationPermissionBlocked,
+    LocationFailure.cityNotFound => l10n.locationCityNotFound,
+  };
 }
 
 final locationServiceProvider =

@@ -15,9 +15,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get language => 'Language';
 
   @override
-  String get languageChanged => 'Language changed';
-
-  @override
   String get english => 'English';
 
   @override
@@ -87,6 +84,96 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alreadyHaveAccount => 'I already have an account';
+
+  @override
+  String get welcomeHeadlineTop => 'Give fashion';
+
+  @override
+  String get welcomeHeadlineAccent => 'a second life';
+
+  @override
+  String get getStarted => 'Get started';
+
+  @override
+  String get otherSize => 'Other';
+
+  @override
+  String get customSizeTitle => 'Your size';
+
+  @override
+  String get customSizeHint => 'e.g. 38, W30 L32, One size';
+
+  @override
+  String get customSizeInvalid =>
+      'Up to 20 letters or numbers (. / - ( ) allowed)';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get haveAccountQuestion => 'Already have an account?';
+
+  @override
+  String get guestPromptBody =>
+      'Create a free account in a minute to buy, sell and chat with other members.';
+
+  @override
+  String get guestBuyTitle => 'Sign in to buy this item';
+
+  @override
+  String get guestOfferTitle => 'Sign in to make an offer';
+
+  @override
+  String get guestMessageTitle => 'Sign in to send a message';
+
+  @override
+  String get guestFavoriteTitle => 'Sign in to save favorites';
+
+  @override
+  String get guestFollowTitle => 'Sign in to follow sellers';
+
+  @override
+  String get guestReportTitle => 'Sign in to report';
+
+  @override
+  String get guestCartTitle => 'Sign in to see your cart';
+
+  @override
+  String get guestActivityTitle => 'Your orders and offers';
+
+  @override
+  String get guestActivityBody =>
+      'Sign in to keep track of everything you buy and sell.';
+
+  @override
+  String get guestSellTitle => 'Start selling';
+
+  @override
+  String get guestSellBody =>
+      'Sign in to list your pieces and reach buyers near you.';
+
+  @override
+  String get guestInboxTitle => 'Your messages';
+
+  @override
+  String get guestInboxBody => 'Sign in to chat with buyers and sellers.';
+
+  @override
+  String get guestProfileTitle => 'Your profile';
+
+  @override
+  String get guestProfileBody =>
+      'Sign in to manage your profile, listings and favorites.';
+
+  @override
+  String get guestFollowingTitle => 'Follow sellers you love';
+
+  @override
+  String get guestFollowingBody =>
+      'Sign in to see new listings from people you follow.';
 
   @override
   String get welcomeBackTitle => 'Welcome back';
@@ -205,10 +292,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get onboardingTitle => 'Set your preferences';
+  String get onboardingTitle => 'Set up your profile';
 
   @override
-  String get onboardingSubtitle => 'We will use this to personalize your feed.';
+  String get onboardingSubtitle =>
+      'Add a photo, your name and city so buyers know who they\'re dealing with. Everything here is optional.';
 
   @override
   String get displayNameOptional => 'Display name (optional)';
@@ -226,24 +314,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cityCountry => 'City, Country';
 
   @override
-  String get favoriteCategories => 'Favorite categories';
-
-  @override
-  String get yourSizes => 'Your sizes';
-
-  @override
-  String get stylesYouLove => 'Preferred styles';
-
-  @override
   String get continueButton => 'Continue';
 
   @override
   String couldNotSave(Object error) {
     return 'Couldn’t save — $error';
   }
-
-  @override
-  String get toggleTheme => 'Toggle theme';
 
   @override
   String get nothingHereYet => 'Nothing here yet';
@@ -335,45 +411,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get size => 'Size';
 
   @override
-  String get style => 'Style';
-
-  @override
-  String get styleTagY2k => 'Y2K';
-
-  @override
-  String get styleTagCoquette => 'Coquette';
-
-  @override
-  String get styleTagStreetwear => 'Streetwear';
-
-  @override
-  String get styleTagVintage => 'Vintage';
-
-  @override
-  String get styleTagMinimalist => 'Minimalist';
-
-  @override
-  String get styleTagCottagecore => 'Cottagecore';
-
-  @override
-  String get styleTagGrunge => 'Grunge';
-
-  @override
-  String get styleTagPreppy => 'Preppy';
-
-  @override
-  String get styleTagBoho => 'Boho';
-
-  @override
-  String get styleTagAcademia => 'Academia';
-
-  @override
-  String get styleTagAthleisure => 'Athleisure';
-
-  @override
-  String get styleTagGorpcore => 'Gorpcore';
-
-  @override
   String get location => 'Location';
 
   @override
@@ -439,9 +476,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get colorHint => 'e.g. Pink';
-
-  @override
-  String get styleTags => 'Style tags';
 
   @override
   String get status => 'Status';
@@ -781,9 +815,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get imageSharingTodo => 'Image sharing is not available yet.';
-
-  @override
   String imageSendFailed(Object error) {
     return 'Could not send image - $error';
   }
@@ -807,9 +838,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String followersCount(int count) {
     return '$count followers';
   }
-
-  @override
-  String get shareTodo => 'Sharing is coming soon';
 
   @override
   String startChatFailed(Object error) {
@@ -895,16 +923,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editProfile => 'Edit profile';
 
   @override
-  String get editProfileTodo => 'Profile editing is not available yet.';
-
-  @override
   String get bio => 'Bio';
 
   @override
   String get bioHint => 'Short description about you';
-
-  @override
-  String get locationAndStyle => 'Location and style';
 
   @override
   String get profilePhotoInfo => 'Profile photo updates can be added later.';
@@ -1216,9 +1238,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'New listings will show up here as they are posted.';
 
   @override
-  String get reportsComingSoon => 'Reports coming soon';
-
-  @override
   String get reportsComingSoonBody =>
       'User reports of listings and sellers will land here for review.';
 
@@ -1305,4 +1324,125 @@ class AppLocalizationsEn extends AppLocalizations {
   String actionFailed(Object error) {
     return 'Action failed - $error';
   }
+
+  @override
+  String get locationServicesOff =>
+      'Turn on location on your phone to use this.';
+
+  @override
+  String get locationPermissionDenied => 'Location access was denied.';
+
+  @override
+  String get locationPermissionBlocked =>
+      'Location is blocked. Turn it on in Settings to use this.';
+
+  @override
+  String get locationCityNotFound =>
+      'We couldn\'t find your city. Please type it in.';
+
+  @override
+  String get locationUnavailable =>
+      'We couldn\'t get your location. Try again or type your city.';
+
+  @override
+  String get errorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get errorNoInternet =>
+      'No internet connection. Check your connection and try again.';
+
+  @override
+  String get errorNotAllowed => 'You don\'t have permission to do that.';
+
+  @override
+  String get errorAlreadyExists => 'That already exists.';
+
+  @override
+  String get errorNotFound => 'This is no longer available.';
+
+  @override
+  String get errorInvalidData =>
+      'Some details aren\'t valid. Please check them and try again.';
+
+  @override
+  String get errorTooManyAttempts =>
+      'Too many attempts. Please wait a moment and try again.';
+
+  @override
+  String get errorEmailInUse => 'An account with this email already exists.';
+
+  @override
+  String get errorWeakPassword => 'Please choose a stronger password.';
+
+  @override
+  String get errorInvalidEmail => 'Please enter a valid email address.';
+
+  @override
+  String get errorSessionExpired =>
+      'Your session has expired. Please sign in again.';
+
+  @override
+  String get errorFileTooLarge =>
+      'This photo is too large. Please choose a smaller one.';
+
+  @override
+  String get errorFileType =>
+      'This file type isn\'t supported. Please use a JPG, PNG or WebP photo.';
+
+  @override
+  String shareListingText(String title, String price) {
+    return 'Check out \"$title\" for $price on Nosiva, the second-hand fashion marketplace.';
+  }
+
+  @override
+  String get timeJustNow => 'just now';
+
+  @override
+  String timeMinutesAgo(int count) {
+    return '${count}m ago';
+  }
+
+  @override
+  String timeHoursAgo(int count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String timeDaysAgo(int count) {
+    return '${count}d ago';
+  }
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get themeAuto => 'Auto';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeAutoHint =>
+      'Auto follows your phone\'s light or dark setting.';
+
+  @override
+  String get sortBy => 'Sort by';
+
+  @override
+  String get sortNewest => 'Newest';
+
+  @override
+  String get sortPriceLow => 'Price: low to high';
+
+  @override
+  String get sortPriceHigh => 'Price: high to low';
+
+  @override
+  String get sortPopular => 'Most liked';
 }

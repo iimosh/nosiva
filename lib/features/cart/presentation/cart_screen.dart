@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/snackbars.dart';
@@ -18,6 +17,8 @@ import '../../listings/presentation/controllers/feed_controller.dart';
 import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../orders/data/orders_repository.dart';
 import 'cart_controller.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -99,7 +100,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         context.go(AppRoutes.activity);
       }
     } catch (e) {
-      if (mounted) context.showError(context.l10n.checkoutFailed('$e'));
+      if (mounted) context.showError(context.l10n.checkoutFailed(friendlyError(context.l10n, e)));
     } finally {
       if (mounted) setState(() => _placing = false);
     }
@@ -134,8 +135,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           child: item.coverImageUrl != null
                               ? CachedNetworkImage(
                                   imageUrl: item.coverImageUrl!,
-                                  fit: BoxFit.cover)
-                              : const ColoredBox(color: AppColors.blush),
+                                  fit: BoxFit.cover,
+                                  memCacheWidth: 300)
+                              : ColoredBox(color: context.palette.placeholder),
                         ),
                       ),
                       title: Text(item.title,
@@ -170,7 +172,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 NosivaButton(
                   label: context.l10n.checkout(Formatters.price(total)),
                   loading: _placing,
-                  variant: NosivaButtonVariant.gradient,
+                  variant: NosivaButtonVariant.primary,
                   onPressed: _checkout,
                 ),
                 const SizedBox(height: AppSpacing.xs),
@@ -206,7 +208,7 @@ class _SummaryRow extends StatelessWidget {
           Text(label, style: style),
           Text(value,
               style: style?.copyWith(
-                  color: emphasize ? AppColors.berry : null)),
+                  color: emphasize ? context.palette.emphasis : null)),
         ],
       ),
     );

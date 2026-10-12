@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_palette.dart';
 
 /// Swipeable photo carousel with page dots, used on the item detail screen.
 class PhotoCarousel extends StatefulWidget {
@@ -27,7 +28,7 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
     if (widget.imageUrls.isEmpty) {
       return Container(
         height: 380,
-        color: AppColors.blush,
+        color: context.palette.placeholder,
         alignment: Alignment.center,
         child: const Icon(Icons.checkroom_outlined,
             color: AppColors.hotPink, size: 56),
@@ -46,10 +47,10 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
               imageUrl: widget.imageUrls[i],
               fit: BoxFit.cover,
               width: double.infinity,
-              placeholder: (_, __) => const ColoredBox(color: AppColors.blush),
-              errorWidget: (_, __, ___) => const ColoredBox(
-                color: AppColors.blush,
-                child: Icon(Icons.broken_image_outlined),
+              placeholder: (_, __) => ColoredBox(color: context.palette.placeholder),
+              errorWidget: (_, __, ___) => ColoredBox(
+                color: context.palette.placeholder,
+                child: const Icon(Icons.broken_image_outlined),
               ),
             ),
           ),

@@ -9,6 +9,7 @@ import '../../../../core/widgets/nosiva_button.dart';
 import '../../../../core/widgets/nosiva_chip.dart';
 import '../../../../core/widgets/nosiva_text_field.dart';
 import '../../domain/listing_enums.dart';
+import 'size_picker.dart';
 import '../../domain/listing_filter.dart';
 import '../../domain/listing_l10n.dart';
 import '../controllers/feed_controller.dart';
@@ -50,7 +51,7 @@ class _FilterSheetState extends ConsumerState<FilterSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('$e')));
+            .showSnackBar(SnackBar(content: Text(locationErrorMessage(context.l10n, e))));
       }
     } finally {
       if (mounted) setState(() => _detectingLocation = false);
@@ -66,7 +67,6 @@ class _FilterSheetState extends ConsumerState<FilterSheet> {
       clearMinPrice: _min.text.isEmpty,
       clearMaxPrice: _max.text.isEmpty,
       clearLocation: location.isEmpty,
-      styleTags: _draft.styleTags,
     );
     Navigator.pop(context);
   }
@@ -78,11 +78,27 @@ class _FilterSheetState extends ConsumerState<FilterSheet> {
       expand: false,
       initialChildSize: 0.8,
       builder: (_, scroll) => ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         controller: scroll,
         padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
           Text(context.l10n.filters, style: theme.textTheme.headlineSmall),
           const SizedBox(height: AppSpacing.lg),
+          Text(context.l10n.sortBy, style: theme.textTheme.titleMedium),
+          const SizedBox(height: AppSpacing.xs),
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: [
+              for (final sort in ListingSort.values)
+                NosivaChip(
+                  label: sort.localizedLabel(context.l10n),
+                  selected: _draft.sort == sort,
+                  onTap: () => setState(() => _draft = _draft.copyWith(sort: sort)),
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
           Text(context.l10n.category, style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.xs),
           Wrap(
@@ -91,7 +107,7 @@ class _FilterSheetState extends ConsumerState<FilterSheet> {
             children: [
               for (final c in ListingCategory.values)
                 NosivaChip(
-                  label: c.localizedWithEmoji(context.l10n),
+                  label: c.localizedLabel(context.l10n),
                   selected: _draft.category == c,
                   onTap: () => setState(() => _draft = _draft.category == c
                       ? _draft.copyWith(clearCategory: true)
@@ -118,36 +134,12 @@ class _FilterSheetState extends ConsumerState<FilterSheet> {
           const SizedBox(height: AppSpacing.md),
           Text(context.l10n.size, style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.xs),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: [
-              for (final s in kSizes)
-                NosivaChip(
-                  label: s,
-                  selected: _draft.size == s,
-                  onTap: () => setState(() => _draft = _draft.copyWith(size: s)),
-                ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text(context.l10n.style, style: theme.textTheme.titleMedium),
-          const SizedBox(height: AppSpacing.xs),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: [
-              for (final tag in kStyleTags)
-                NosivaChip(
-                  label: localizedStyleTag(tag, context.l10n),
-                  selected: _draft.styleTags.contains(tag),
-                  onTap: () => setState(() {
-                    final next = [..._draft.styleTags];
-                    next.contains(tag) ? next.remove(tag) : next.add(tag);
-                    _draft = _draft.copyWith(styleTags: next);
-                  }),
-                ),
-            ],
+          // Buyers can search a typed size too, e.g. shoe size 38.
+          SizePicker(
+            value: _draft.size,
+            onChanged: (size) => setState(() => _draft = size == null
+                ? _draft.copyWith(clearSize: true)
+                : _draft.copyWith(size: size)),
           ),
           const SizedBox(height: AppSpacing.md),
           Text(context.l10n.location, style: theme.textTheme.titleMedium),
@@ -201,7 +193,7 @@ class _FilterSheetState extends ConsumerState<FilterSheet> {
           const SizedBox(height: AppSpacing.xl),
           NosivaButton(
             label: context.l10n.showResults,
-            variant: NosivaButtonVariant.gradient,
+            variant: NosivaButtonVariant.primary,
             onPressed: _apply,
           ),
         ],

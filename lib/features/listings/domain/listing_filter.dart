@@ -9,7 +9,6 @@ class ListingFilter {
     this.brand,
     this.condition,
     this.color,
-    this.styleTags = const [],
     this.minPrice,
     this.maxPrice,
     this.location,
@@ -22,7 +21,6 @@ class ListingFilter {
   final String? brand;
   final ItemCondition? condition;
   final String? color;
-  final List<String> styleTags;
   final double? minPrice;
   final double? maxPrice;
   final String? location;
@@ -35,7 +33,6 @@ class ListingFilter {
       brand == null &&
       condition == null &&
       color == null &&
-      styleTags.isEmpty &&
       minPrice == null &&
       maxPrice == null &&
       location == null;
@@ -45,10 +42,10 @@ class ListingFilter {
     ListingCategory? category,
     bool clearCategory = false,
     String? size,
+    bool clearSize = false,
     String? brand,
     ItemCondition? condition,
     String? color,
-    List<String>? styleTags,
     double? minPrice,
     double? maxPrice,
     String? location,
@@ -60,11 +57,10 @@ class ListingFilter {
     return ListingFilter(
       query: query ?? this.query,
       category: clearCategory ? null : (category ?? this.category),
-      size: size ?? this.size,
+      size: clearSize ? null : (size ?? this.size),
       brand: brand ?? this.brand,
       condition: condition ?? this.condition,
       color: color ?? this.color,
-      styleTags: styleTags ?? this.styleTags,
       minPrice: clearMinPrice ? null : (minPrice ?? this.minPrice),
       maxPrice: clearMaxPrice ? null : (maxPrice ?? this.maxPrice),
       location: clearLocation ? null : (location ?? this.location),
@@ -84,12 +80,11 @@ class ListingFilter {
       other.minPrice == minPrice &&
       other.maxPrice == maxPrice &&
       other.location == location &&
-      other.sort == sort &&
-      other.styleTags.join(',') == styleTags.join(',');
+      other.sort == sort;
 
   @override
-  int get hashCode => Object.hash(query, category, size, brand, condition, color,
-      minPrice, maxPrice, location, sort, styleTags.join(','));
+  int get hashCode => Object.hash(
+      query, category, size, brand, condition, color, minPrice, maxPrice, location, sort);
 }
 
 enum ListingSort {

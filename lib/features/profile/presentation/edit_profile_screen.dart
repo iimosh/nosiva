@@ -3,19 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/snackbars.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/nosiva_button.dart';
-import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
-import '../../listings/domain/listing_enums.dart';
-import '../../listings/domain/listing_l10n.dart';
 import '../data/profile_repository.dart';
 import '../domain/profile.dart';
 import 'avatar_actions.dart';
 import 'current_profile_provider.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/widgets/shimmer_box.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -30,7 +29,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _username = TextEditingController();
   final _bio = TextEditingController();
   final _location = TextEditingController();
-  final _styles = <String>{};
 
   Profile? _initial;
   bool _saving = false;
@@ -51,9 +49,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _username.text = profile.username;
     _bio.text = profile.bio ?? '';
     _location.text = profile.location ?? '';
-    _styles
-      ..clear()
-      ..addAll(profile.vibeTags);
   }
 
   String? _clean(String value) {
@@ -91,14 +86,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         displayName: _clean(_displayName.text),
         bio: _clean(_bio.text),
         location: _clean(_location.text),
-        vibeTags: _styles.toList(),
       );
       ref.read(currentProfileProvider.notifier).set(updated);
       if (!mounted) return;
       context.showSuccess(context.l10n.profileUpdated);
       context.pop();
     } catch (e) {
-      if (mounted) context.showError(context.l10n.profileUpdateFailed('$e'));
+      if (mounted) context.showError(context.l10n.profileUpdateFailed(friendlyError(context.l10n, e)));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -110,10 +104,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.editProfile)),
       body: profileAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.hotPink),
-        ),
-        error: (e, _) => Center(child: Text('$e')),
+        loading: () => const FormSkeleton(),
+        error: (e, _) => Center(child: Text(friendlyError(context.l10n, e))),
         data: (profile) {
           if (profile == null) {
             return Center(child: Text(context.l10n.noProfileFound));
@@ -121,6 +113,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           _seed(profile);
           return SafeArea(
             child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Form(
                 key: _formKey,
@@ -178,7 +171,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       maxLength: 240,
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    _SectionTitle(context.l10n.locationAndStyle),
+                    _SectionTitle(context.l10n.location),
                     NosivaTextField(
                       label: context.l10n.locationOptional,
                       hint: context.l10n.cityCountry,
@@ -186,29 +179,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       maxLength: 120,
                       prefixIcon: Icons.place_outlined,
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    _Label(context.l10n.stylesYouLove),
-                    Wrap(
-                      spacing: AppSpacing.xs,
-                      runSpacing: AppSpacing.xs,
-                      children: [
-                        for (final tag in kStyleTags)
-                          NosivaChip(
-                            label: localizedStyleTag(tag, context.l10n),
-                            selected: _styles.contains(tag),
-                            onTap: () => setState(() {
-                              _styles.contains(tag)
-                                  ? _styles.remove(tag)
-                                  : _styles.add(tag);
-                            }),
-                          ),
-                      ],
-                    ),
                     const SizedBox(height: AppSpacing.xl),
                     NosivaButton(
                       label: context.l10n.saveChanges,
                       loading: _saving,
-                      variant: NosivaButtonVariant.gradient,
+                      variant: NosivaButtonVariant.primary,
                       onPressed: _save,
                     ),
                   ],
@@ -235,21 +210,8 @@ class _SectionTitle extends StatelessWidget {
         style: Theme.of(context)
             .textTheme
             .titleLarge
-            ?.copyWith(color: AppColors.berry),
+            ?.copyWith(color: context.palette.emphasis),
       ),
-    );
-  }
-}
-
-class _Label extends StatelessWidget {
-  const _Label(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-      child: Text(text, style: Theme.of(context).textTheme.titleMedium),
     );
   }
 }

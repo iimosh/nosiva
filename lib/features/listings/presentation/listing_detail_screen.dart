@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,11 +13,11 @@ import '../../../core/utils/snackbars.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/heart_button.dart';
 import '../../../core/widgets/nosiva_button.dart';
-import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../admin/presentation/admin_controller.dart';
+import '../../auth/presentation/guest_prompt.dart';
 import '../../cart/presentation/cart_controller.dart';
 import '../../favorites/presentation/favorites_controller.dart';
 import '../../messaging/data/messaging_repository.dart';
@@ -29,6 +30,11 @@ import '../domain/listing_enums.dart';
 import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
 import 'controllers/listing_detail_provider.dart';
+import 'share_listing.dart';
+import '../../../core/widgets/pull_to_refresh.dart';
+import '../../../core/widgets/shimmer_box.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
 
 class ListingDetailScreen extends ConsumerWidget {
   const ListingDetailScreen({super.key, required this.listingId});
@@ -41,12 +47,21 @@ class ListingDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       body: listingAsync.when(
-        loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.hotPink)),
+        // Back button stays usable while the listing loads.
+        loading: () => Stack(
+          children: [
+            const ListingDetailSkeleton(),
+            Positioned(
+              top: MediaQuery.paddingOf(context).top + 4,
+              left: 4,
+              child: const _CircleBackButton(),
+            ),
+          ],
+        ),
         error: (e, _) => Scaffold(
           appBar: AppBar(),
           body: ErrorStateView(
-            message: '$e',
+            message: friendlyError(context.l10n, e),
             onRetry: () => ref.invalidate(listingDetailProvider(listingId)),
           ),
         ),
@@ -76,7 +91,17 @@ class _DetailBody extends ConsumerWidget {
       if (listing.brand != null) (label: context.l10n.brand, value: listing.brand!),
     ];
 
-    return ListView(
+    return PullToRefresh(
+      // The photo runs under the status bar; keep the spinner below it.
+      edgeOffset: MediaQuery.paddingOf(context).top,
+      onRefresh: () async {
+        ref.invalidate(sellerListingsProvider(listing.sellerId));
+        ref.invalidate(similarListingsProvider(listing.categoryEnum));
+        ref.invalidate(listingDetailProvider(listing.id));
+        await ref.read(listingDetailProvider(listing.id).future);
+      },
+      child: ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.zero,
       children: [
         _Gallery(listing: listing),
@@ -92,7 +117,7 @@ class _DetailBody extends ConsumerWidget {
                     child: Text(
                       Formatters.price(listing.price),
                       style: theme.textTheme.headlineMedium
-                          ?.copyWith(color: AppColors.berry, fontSize: 30),
+                          ?.copyWith(color: context.palette.emphasis, fontSize: 30),
                     ),
                   ),
                   _ConditionBadge(condition: listing.conditionEnum),
@@ -113,20 +138,6 @@ class _DetailBody extends ConsumerWidget {
               const SizedBox(height: AppSpacing.sm),
 
               _FactGrid(facts: facts),
-
-              if (listing.styleTags.isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.lg),
-                _SectionTitle(context.l10n.style),
-                const SizedBox(height: AppSpacing.xs),
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    for (final tag in listing.styleTags)
-                      NosivaChip(label: '#${localizedStyleTag(tag, context.l10n)}'),
-                  ],
-                ),
-              ],
 
               if (listing.description.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.lg),
@@ -160,6 +171,7 @@ class _DetailBody extends ConsumerWidget {
           ),
         ),
       ],
+      ),
     );
   }
 }
@@ -211,7 +223,7 @@ class _GalleryState extends ConsumerState<_Gallery> {
               onTap: _openFullscreen,
               child: urls.isEmpty
                   ? Container(
-                      color: AppColors.blush,
+                      color: context.palette.placeholder,
                       alignment: Alignment.center,
                       child: const Icon(Icons.checkroom_outlined,
                           color: AppColors.hotPink, size: 72),
@@ -224,10 +236,10 @@ class _GalleryState extends ConsumerState<_Gallery> {
                         imageUrl: urls[i],
                         fit: BoxFit.cover,
                         placeholder: (_, __) =>
-                            const ColoredBox(color: AppColors.blush),
-                        errorWidget: (_, __, ___) => const ColoredBox(
-                          color: AppColors.blush,
-                          child: Icon(Icons.broken_image_outlined),
+                            ColoredBox(color: context.palette.placeholder),
+                        errorWidget: (_, __, ___) => ColoredBox(
+                          color: context.palette.placeholder,
+                          child: const Icon(Icons.broken_image_outlined),
                         ),
                       ),
                     ),
@@ -279,19 +291,33 @@ class _GalleryState extends ConsumerState<_Gallery> {
               children: [
                 const _CircleBackButton(),
                 const Spacer(),
-                _CircleIcon(
-                  icon: Icons.ios_share_rounded,
-                  onTap: () => context.showSnack(context.l10n.shareTodo),
+                // Builder: the share sheet anchors to this button on iPad.
+                Builder(
+                  builder: (buttonContext) => _CircleIcon(
+                    icon: Icons.ios_share_rounded,
+                    onTap: () async {
+                      try {
+                        await shareListing(buttonContext, listing);
+                      } catch (e) {
+                        if (context.mounted) {
+                          context.showError(friendlyError(context.l10n, e));
+                        }
+                      }
+                    },
+                  ),
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 if (!isOwn) ...[
                   _CircleIcon(
                     icon: Icons.flag_outlined,
-                    onTap: () => showReportSheet(
-                      context,
-                      targetType: 'listing',
-                      targetId: listing.id,
-                    ),
+                    onTap: () {
+                      if (!ensureSignedIn(context, ref, GuestAction.report)) return;
+                      showReportSheet(
+                        context,
+                        targetType: 'listing',
+                        targetId: listing.id,
+                      );
+                    },
                   ),
                   const SizedBox(width: AppSpacing.xs),
                 ],
@@ -303,9 +329,10 @@ class _GalleryState extends ConsumerState<_Gallery> {
                   padding: const EdgeInsets.all(8),
                   child: HeartButton(
                     liked: liked,
-                    onTap: () => ref
-                        .read(favoritesControllerProvider.notifier)
-                        .toggle(listing.id),
+                    onTap: () {
+                      if (!ensureSignedIn(context, ref, GuestAction.favorite)) return;
+                      ref.read(favoritesControllerProvider.notifier).toggle(listing.id);
+                    },
                   ),
                 ),
               ],
@@ -392,7 +419,7 @@ class _MetaRow extends StatelessWidget {
       _meta(Icons.remove_red_eye_outlined, '${listing.viewCount}', style),
       _meta(Icons.favorite_border_rounded, '${listing.favoriteCount}', style),
       if (listing.createdAt != null)
-        _meta(Icons.schedule_rounded, Formatters.timeAgo(listing.createdAt!),
+        _meta(Icons.schedule_rounded, Formatters.timeAgo(listing.createdAt!, context.l10n),
             style),
       if (listing.location != null)
         _meta(Icons.place_outlined, listing.location!, style),
@@ -561,7 +588,7 @@ class _SellerCard extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 26,
-              backgroundColor: AppColors.blush,
+              backgroundColor: context.palette.placeholder,
               backgroundImage: seller.avatarUrl != null
                   ? CachedNetworkImageProvider(seller.avatarUrl!)
                   : null,
@@ -661,14 +688,17 @@ class _MiniListingCard extends StatelessWidget {
                 width: 140,
                 child: listing.coverImageUrl != null
                     ? CachedNetworkImage(
-                        imageUrl: listing.coverImageUrl!, fit: BoxFit.cover)
-                    : const ColoredBox(color: AppColors.blush),
+                        imageUrl: listing.coverImageUrl!,
+                        fit: BoxFit.cover,
+                        // Rail cards are 140 dp wide.
+                        memCacheWidth: 450)
+                    : ColoredBox(color: context.palette.placeholder),
               ),
             ),
             const SizedBox(height: 4),
             Text(Formatters.price(listing.price),
                 style: theme.textTheme.titleMedium
-                    ?.copyWith(color: AppColors.berry)),
+                    ?.copyWith(color: context.palette.emphasis)),
             Text(listing.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -688,9 +718,9 @@ class _CircleIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      backgroundColor: Colors.white.withValues(alpha: 0.9),
+      backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.92),
       child: IconButton(
-        icon: Icon(icon, color: AppColors.plum, size: 20),
+        icon: Icon(icon, color: Theme.of(context).colorScheme.onSurface, size: 20),
         onPressed: onTap,
       ),
     );
@@ -773,7 +803,7 @@ class _ActionBar extends ConsumerWidget {
                       Expanded(
                         child: NosivaButton(
                           label: context.l10n.buyNow,
-                          variant: NosivaButtonVariant.gradient,
+                          variant: NosivaButtonVariant.primary,
                           onPressed: () => _buyNow(context, ref),
                         ),
                       ),
@@ -784,6 +814,7 @@ class _ActionBar extends ConsumerWidget {
   }
 
   Future<void> _message(BuildContext context, WidgetRef ref) async {
+    if (!ensureSignedIn(context, ref, GuestAction.message)) return;
     try {
       final convo =
           await ref.read(messagingRepositoryProvider).getOrCreateConversation(
@@ -792,21 +823,24 @@ class _ActionBar extends ConsumerWidget {
               );
       if (context.mounted) context.push(AppRoutes.chatPath(convo.id));
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.startChatFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.startChatFailed(friendlyError(context.l10n, e)));
     }
   }
 
   void _buyNow(BuildContext context, WidgetRef ref) {
+    if (!ensureSignedIn(context, ref, GuestAction.buy)) return;
     if (listing.isSold) {
       context.showError(context.l10n.itemNoLongerAvailable);
       return;
     }
+    HapticFeedback.lightImpact();
     ref.read(cartControllerProvider.notifier).add(listing);
     context.showSuccess(context.l10n.addedToCart);
     context.push(AppRoutes.cart);
   }
 
   Future<void> _makeOffer(BuildContext context, WidgetRef ref) async {
+    if (!ensureSignedIn(context, ref, GuestAction.offer)) return;
     final amount = await showModalBottomSheet<num>(
       context: context,
       isScrollControlled: true,
@@ -821,11 +855,12 @@ class _ActionBar extends ConsumerWidget {
           );
       ref.invalidate(buyerOffersProvider);
       ref.invalidate(sellerOffersProvider);
+      HapticFeedback.mediumImpact();
       if (context.mounted) {
         context.showSuccess(context.l10n.offerSent);
       }
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.sendOfferFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.sendOfferFailed(friendlyError(context.l10n, e)));
     }
   }
 }
@@ -880,7 +915,7 @@ class _OfferSheetState extends State<_OfferSheet> {
             const SizedBox(height: AppSpacing.lg),
             NosivaButton(
               label: context.l10n.sendOffer,
-              variant: NosivaButtonVariant.gradient,
+              variant: NosivaButtonVariant.primary,
               onPressed: () {
                 if (!_formKey.currentState!.validate()) return;
                 Navigator.of(context).pop(double.parse(_controller.text.trim()));
@@ -914,7 +949,7 @@ class _ModerationButton extends ConsumerWidget {
         if (popAfter) context.pop();
       }
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.actionFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -924,10 +959,10 @@ class _ModerationButton extends ConsumerWidget {
     final isHidden = listing.statusEnum == ListingStatus.hidden;
 
     return CircleAvatar(
-      backgroundColor: Colors.white.withValues(alpha: 0.9),
+      backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.92),
       child: IconButton(
         tooltip: context.l10n.moderate,
-        icon: const Icon(Icons.shield_outlined, color: AppColors.plum),
+        icon: Icon(Icons.shield_outlined, color: Theme.of(context).colorScheme.onSurface),
         onPressed: () {
           showModalBottomSheet<void>(
             context: context,
@@ -989,9 +1024,9 @@ class _CircleBackButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: CircleAvatar(
-        backgroundColor: Colors.white.withValues(alpha: 0.9),
+        backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.92),
         child: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.plum),
+          icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
       ),

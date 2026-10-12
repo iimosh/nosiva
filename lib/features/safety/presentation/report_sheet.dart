@@ -9,6 +9,7 @@ import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
 import '../data/safety_repository.dart';
 import '../domain/report.dart';
+import '../../../core/utils/friendly_error.dart';
 
 /// Asks why a user or listing is being reported and submits the report.
 Future<void> showReportSheet(
@@ -76,7 +77,7 @@ class _ReportSheetState extends ConsumerState<_ReportSheet> {
       Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {
-        context.showError(context.l10n.reportFailed('$e'));
+        context.showError(context.l10n.reportFailed(friendlyError(context.l10n, e)));
         setState(() => _sending = false);
       }
     }
@@ -86,6 +87,7 @@ class _ReportSheetState extends ConsumerState<_ReportSheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: EdgeInsets.only(
         left: AppSpacing.lg,
         right: AppSpacing.lg,
@@ -123,7 +125,7 @@ class _ReportSheetState extends ConsumerState<_ReportSheet> {
           NosivaButton(
             label: context.l10n.sendReportCta,
             loading: _sending,
-            variant: NosivaButtonVariant.gradient,
+            variant: NosivaButtonVariant.primary,
             onPressed: _reason == null ? null : _submit,
           ),
         ],

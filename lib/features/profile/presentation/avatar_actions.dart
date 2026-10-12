@@ -10,6 +10,8 @@ import '../../../core/utils/snackbars.dart';
 import '../data/profile_repository.dart';
 import '../domain/profile.dart';
 import 'current_profile_provider.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
 
 final avatarControllerProvider =
     NotifierProvider<AvatarController, bool>(AvatarController.new);
@@ -56,7 +58,7 @@ class AvatarController extends Notifier<bool> {
       if (context.mounted) context.showSuccess(context.l10n.photoUpdated);
     } catch (e) {
       if (context.mounted) {
-        context.showError(context.l10n.photoUpdateFailed('$e'));
+        context.showError(context.l10n.photoUpdateFailed(friendlyError(context.l10n, e)));
       }
     } finally {
       state = false;
@@ -130,7 +132,7 @@ class EditableAvatar extends ConsumerWidget {
         children: [
           CircleAvatar(
             radius: radius,
-            backgroundColor: AppColors.blush,
+            backgroundColor: context.palette.placeholder,
             backgroundImage: url == null ? null : CachedNetworkImageProvider(url),
             child: url == null && !uploading
                 ? Icon(Icons.person_outline_rounded,

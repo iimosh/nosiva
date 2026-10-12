@@ -10,10 +10,12 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/utils/snackbars.dart';
 import '../../../../core/widgets/heart_button.dart';
+import '../../../auth/presentation/guest_prompt.dart';
 import '../../../favorites/presentation/favorites_controller.dart';
 import '../../domain/listing.dart';
 import '../../domain/listing_enums.dart';
 import '../../domain/listing_l10n.dart';
+import '../../../../core/theme/app_palette.dart';
 
 class ListingCard extends ConsumerWidget {
   const ListingCard({super.key, required this.listing});
@@ -30,20 +32,17 @@ class ListingCard extends ConsumerWidget {
       listing.size == null ? null : '${context.l10n.size} ${listing.size}',
     ].whereType<String>().where((value) => value.trim().isNotEmpty).join(' - ');
 
-    return Material(
-      color: theme.colorScheme.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadii.card,
-        side: BorderSide(color: theme.colorScheme.outline),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => context.push(AppRoutes.listingDetailPath(listing.id)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 7,
+    // Photo-first card: a large rounded image with the details underneath,
+    // no box around it.
+    return InkWell(
+      onTap: () => context.push(AppRoutes.listingDetailPath(listing.id)),
+      borderRadius: AppRadii.tile,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: AppRadii.tile,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -72,54 +71,43 @@ class ListingCard extends ConsumerWidget {
                 ],
               ),
             ),
-            Expanded(
-              flex: 4,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.sm,
-                  AppSpacing.xs,
-                  AppSpacing.sm,
-                  AppSpacing.sm,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(2, AppSpacing.xs, 2, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  Formatters.price(listing.price),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleLarge,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      Formatters.price(listing.price),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: AppColors.berry,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      listing.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      meta.isEmpty
-                          ? listing.categoryEnum.localizedLabel(context.l10n)
-                          : meta,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall,
-                    ),
-                    const Spacer(),
-                    _CardFooter(listing: listing),
-                  ],
+                const SizedBox(height: 1),
+                Text(
+                  listing.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
+                const SizedBox(height: 1),
+                Text(
+                  meta.isEmpty
+                      ? listing.categoryEnum.localizedLabel(context.l10n)
+                      : meta,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall,
+                ),
+                const SizedBox(height: 4),
+                _CardFooter(listing: listing),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -132,6 +120,7 @@ class ListingCard extends ConsumerWidget {
     WidgetRef ref,
     bool liked,
   ) async {
+    if (!ensureSignedIn(context, ref, GuestAction.favorite)) return;
     try {
       await ref.read(favoritesControllerProvider.notifier).toggle(listing.id);
       if (context.mounted && !liked) {
@@ -272,7 +261,7 @@ class _Image extends StatelessWidget {
   Widget build(BuildContext context) {
     if (url == null || url!.isEmpty) {
       return Container(
-        color: AppColors.blush,
+        color: context.palette.placeholder,
         alignment: Alignment.center,
         child: const Icon(
           Icons.checkroom_outlined,
@@ -281,18 +270,30 @@ class _Image extends StatelessWidget {
         ),
       );
     }
-    return CachedNetworkImage(
-      imageUrl: url!,
-      fit: BoxFit.cover,
-      placeholder: (_, __) => const ColoredBox(color: AppColors.blush),
-      errorWidget: (_, __, ___) => Container(
-        color: AppColors.blush,
-        alignment: Alignment.center,
-        child: const Icon(
-          Icons.broken_image_outlined,
-          color: AppColors.plumFaint,
-        ),
-      ),
+    // Decode the photo at the size the card actually shows it, not the
+    // uploaded 1600 px — far less memory and smoother scrolling. Sized by
+    // height: the photo area is taller than wide, so square and portrait
+    // photos still fill it without being stretched.
+    return LayoutBuilder(
+      builder: (context, box) {
+        final px = box.maxHeight.isFinite
+            ? (box.maxHeight * MediaQuery.devicePixelRatioOf(context)).round()
+            : null;
+        return CachedNetworkImage(
+          imageUrl: url!,
+          fit: BoxFit.cover,
+          memCacheHeight: px,
+          placeholder: (_, __) => ColoredBox(color: context.palette.placeholder),
+          errorWidget: (_, __, ___) => Container(
+            color: context.palette.placeholder,
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.broken_image_outlined,
+              color: context.palette.onPlaceholder,
+            ),
+          ),
+        );
+      },
     );
   }
 }

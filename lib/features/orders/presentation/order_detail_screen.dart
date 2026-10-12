@@ -25,6 +25,10 @@ import '../../reviews/domain/review.dart';
 import '../../reviews/presentation/widgets/star_rating.dart';
 import '../data/orders_repository.dart';
 import '../domain/order.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/widgets/shimmer_box.dart';
+import '../../../core/widgets/pull_to_refresh.dart';
 
 // autoDispose: same reasoning as listingDetailProvider — without it, an
 // order viewed earlier in the session stays cached, so re-opening it later
@@ -79,10 +83,9 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.orderDetails)),
       body: async.when(
-        loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.hotPink)),
+        loading: () => const DetailSkeleton(),
         error: (e, _) => ErrorStateView(
-          message: '$e',
+          message: friendlyError(context.l10n, e),
           onRetry: () => ref.invalidate(orderProvider(widget.orderId)),
         ),
         data: (order) {
@@ -136,7 +139,7 @@ class _Body extends ConsumerWidget {
       ref.invalidate(sellerListingsProvider(order.sellerId));
       if (context.mounted) context.showSuccess(context.l10n.orderUpdated);
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.actionFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -147,7 +150,7 @@ class _Body extends ConsumerWidget {
           .getOrCreateDirectConversation(userId);
       if (context.mounted) context.push(AppRoutes.chatPath(convo.id));
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.startChatFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.startChatFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -158,7 +161,10 @@ class _Body extends ConsumerWidget {
     final other = myId == null ? null : order.counterparty(myId);
     final listing = order.listing;
 
-    return ListView(
+    return PullToRefresh(
+      onRefresh: () => ref.refresh(orderProvider(order.id).future),
+      child: ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AppSpacing.lg),
       children: [
         _StatusCard(order: order),
@@ -175,8 +181,10 @@ class _Body extends ConsumerWidget {
                     height: 60,
                     child: listing.coverImageUrl != null
                         ? CachedNetworkImage(
-                            imageUrl: listing.coverImageUrl!, fit: BoxFit.cover)
-                        : const ColoredBox(color: AppColors.blush),
+                            imageUrl: listing.coverImageUrl!,
+                            fit: BoxFit.cover,
+                            memCacheWidth: 300)
+                        : ColoredBox(color: context.palette.placeholder),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
@@ -191,7 +199,7 @@ class _Body extends ConsumerWidget {
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
-                              ?.copyWith(color: AppColors.berry)),
+                              ?.copyWith(color: context.palette.emphasis)),
                     ],
                   ),
                 ),
@@ -206,7 +214,7 @@ class _Body extends ConsumerWidget {
               children: [
                 CircleAvatar(
                   radius: 22,
-                  backgroundColor: AppColors.blush,
+                  backgroundColor: context.palette.placeholder,
                   backgroundImage: other.avatarUrl != null
                       ? CachedNetworkImageProvider(other.avatarUrl!)
                       : null,
@@ -250,7 +258,7 @@ class _Body extends ConsumerWidget {
           _InfoRow(
             icon: Icons.event_outlined,
             label: context.l10n.orderedLabel,
-            value: Formatters.timeAgo(order.createdAt!),
+            value: Formatters.timeAgo(order.createdAt!, context.l10n),
           ),
         _InfoRow(
           icon: Icons.payments_outlined,
@@ -264,6 +272,7 @@ class _Body extends ConsumerWidget {
         const SizedBox(height: AppSpacing.lg),
         ..._actions(context, ref, isSeller),
       ],
+      ),
     );
   }
 
@@ -279,7 +288,7 @@ class _Body extends ConsumerWidget {
           label: label,
           variant: danger
               ? NosivaButtonVariant.secondary
-              : NosivaButtonVariant.gradient,
+              : NosivaButtonVariant.primary,
           onPressed: () => _setStatus(context, ref, next, confirm: confirm),
         ),
       ));
@@ -492,7 +501,7 @@ class _ReviewSection extends ConsumerWidget {
         );
       }
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.reviewFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.reviewFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -624,7 +633,7 @@ class _ReviewSheetState extends State<_ReviewSheet> {
             label: widget.existing == null
                 ? context.l10n.submitReview
                 : context.l10n.updateReview,
-            variant: NosivaButtonVariant.gradient,
+            variant: NosivaButtonVariant.primary,
             onPressed: _submit,
           ),
         ],

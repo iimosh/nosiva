@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
+import 'app_palette.dart';
 import 'app_spacing.dart';
 import 'app_typography.dart';
 
@@ -50,6 +51,7 @@ abstract final class AppTheme {
       scaffoldBackgroundColor: background,
       textTheme: textTheme,
       splashFactory: InkSparkle.splashFactory,
+      extensions: [isDark ? AppPalette.dark : AppPalette.light],
 
       appBarTheme: AppBarTheme(
         backgroundColor: background,
@@ -61,22 +63,23 @@ abstract final class AppTheme {
       ),
 
       elevatedButtonTheme: ElevatedButtonThemeData(
+        // Solid wine, no gradient: white text stays clearly readable.
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.hotPink,
+          backgroundColor: AppColors.berry,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: AppColors.hotPink.withValues(alpha: 0.4),
+          disabledBackgroundColor: AppColors.berry.withValues(alpha: 0.4),
           disabledForegroundColor: Colors.white70,
           elevation: 0,
-          minimumSize: const Size(64, 54),
+          minimumSize: const Size(64, 56),
           textStyle: textTheme.labelLarge,
           shape: const RoundedRectangleBorder(borderRadius: AppRadii.button),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.hotPink,
-          minimumSize: const Size(64, 54),
-          side: const BorderSide(color: AppColors.hotPink, width: 1.5),
+          foregroundColor: onSurface,
+          minimumSize: const Size(64, 56),
+          side: BorderSide(color: border, width: 1.5),
           textStyle: textTheme.labelLarge,
           shape: const RoundedRectangleBorder(borderRadius: AppRadii.button),
         ),
@@ -85,25 +88,38 @@ abstract final class AppTheme {
         style: TextButton.styleFrom(
           foregroundColor: AppColors.hotPink,
           textStyle: textTheme.labelLarge,
+          shape: const RoundedRectangleBorder(borderRadius: AppRadii.button),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          shape: const RoundedRectangleBorder(borderRadius: AppRadii.button),
         ),
       ),
 
+      // Modern "soft field": tinted fill, no outline until focused.
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surface,
+        fillColor: surfaceMuted,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.md,
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(color: AppColors.plumFaint),
         labelStyle: textTheme.labelMedium,
+        prefixIconColor: muted,
+        suffixIconColor: muted,
         border: const OutlineInputBorder(
           borderRadius: AppRadii.field,
           borderSide: BorderSide.none,
         ),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderRadius: AppRadii.field,
-          borderSide: BorderSide(color: border, width: 1),
+          borderSide: BorderSide(color: Colors.transparent, width: 1),
+        ),
+        disabledBorder: const OutlineInputBorder(
+          borderRadius: AppRadii.field,
+          borderSide: BorderSide(color: Colors.transparent, width: 1),
         ),
         focusedBorder: const OutlineInputBorder(
           borderRadius: AppRadii.field,
@@ -131,14 +147,35 @@ abstract final class AppTheme {
 
       chipTheme: ChipThemeData(
         backgroundColor: surfaceMuted,
-        selectedColor: AppColors.hotPink,
-        secondarySelectedColor: AppColors.hotPink,
+        selectedColor: AppColors.berry,
+        secondarySelectedColor: AppColors.berry,
         labelStyle: textTheme.labelMedium!,
         secondaryLabelStyle:
             textTheme.labelMedium!.copyWith(color: Colors.white),
-        side: BorderSide(color: border),
+        side: BorderSide.none,
         shape: const RoundedRectangleBorder(borderRadius: AppRadii.chip),
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+      ),
+
+      tabBarTheme: TabBarThemeData(
+        labelColor: onSurface,
+        unselectedLabelColor: muted,
+        labelStyle: textTheme.titleMedium,
+        unselectedLabelStyle: textTheme.titleMedium,
+        indicatorColor: AppColors.hotPink,
+        indicatorSize: TabBarIndicatorSize.label,
+        dividerColor: Colors.transparent,
+      ),
+
+      listTileTheme: const ListTileThemeData(
+        shape: RoundedRectangleBorder(borderRadius: AppRadii.button),
+      ),
+
+      popupMenuTheme: PopupMenuThemeData(
+        color: surface,
+        elevation: 6,
+        shadowColor: AppColors.plum.withValues(alpha: 0.2),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadii.button),
       ),
 
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -155,11 +192,13 @@ abstract final class AppTheme {
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: surface,
         modalBackgroundColor: surface,
+        showDragHandle: true,
+        dragHandleColor: border,
         shape: const RoundedRectangleBorder(borderRadius: AppRadii.sheet),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: surface,
-        shape: const RoundedRectangleBorder(borderRadius: AppRadii.card),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadii.tile),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,

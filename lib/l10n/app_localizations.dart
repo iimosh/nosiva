@@ -110,12 +110,6 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get language;
 
-  /// No description provided for @languageChanged.
-  ///
-  /// In en, this message translates to:
-  /// **'Language changed'**
-  String get languageChanged;
-
   /// No description provided for @english.
   ///
   /// In en, this message translates to:
@@ -253,6 +247,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I already have an account'**
   String get alreadyHaveAccount;
+
+  /// No description provided for @welcomeHeadlineTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Give fashion'**
+  String get welcomeHeadlineTop;
+
+  /// No description provided for @welcomeHeadlineAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'a second life'**
+  String get welcomeHeadlineAccent;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get getStarted;
+
+  /// No description provided for @otherSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get otherSize;
+
+  /// No description provided for @customSizeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your size'**
+  String get customSizeTitle;
+
+  /// No description provided for @customSizeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 38, W30 L32, One size'**
+  String get customSizeHint;
+
+  /// No description provided for @customSizeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 20 letters or numbers (. / - ( ) allowed)'**
+  String get customSizeInvalid;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @haveAccountQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get haveAccountQuestion;
+
+  /// No description provided for @guestPromptBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a free account in a minute to buy, sell and chat with other members.'**
+  String get guestPromptBody;
+
+  /// No description provided for @guestBuyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to buy this item'**
+  String get guestBuyTitle;
+
+  /// No description provided for @guestOfferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to make an offer'**
+  String get guestOfferTitle;
+
+  /// No description provided for @guestMessageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to send a message'**
+  String get guestMessageTitle;
+
+  /// No description provided for @guestFavoriteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to save favorites'**
+  String get guestFavoriteTitle;
+
+  /// No description provided for @guestFollowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to follow sellers'**
+  String get guestFollowTitle;
+
+  /// No description provided for @guestReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to report'**
+  String get guestReportTitle;
+
+  /// No description provided for @guestCartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to see your cart'**
+  String get guestCartTitle;
+
+  /// No description provided for @guestActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your orders and offers'**
+  String get guestActivityTitle;
+
+  /// No description provided for @guestActivityBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to keep track of everything you buy and sell.'**
+  String get guestActivityBody;
+
+  /// No description provided for @guestSellTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start selling'**
+  String get guestSellTitle;
+
+  /// No description provided for @guestSellBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to list your pieces and reach buyers near you.'**
+  String get guestSellBody;
+
+  /// No description provided for @guestInboxTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your messages'**
+  String get guestInboxTitle;
+
+  /// No description provided for @guestInboxBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to chat with buyers and sellers.'**
+  String get guestInboxBody;
+
+  /// No description provided for @guestProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile'**
+  String get guestProfileTitle;
+
+  /// No description provided for @guestProfileBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to manage your profile, listings and favorites.'**
+  String get guestProfileBody;
+
+  /// No description provided for @guestFollowingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow sellers you love'**
+  String get guestFollowingTitle;
+
+  /// No description provided for @guestFollowingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to see new listings from people you follow.'**
+  String get guestFollowingBody;
 
   /// No description provided for @welcomeBackTitle.
   ///
@@ -467,13 +629,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingTitle.
   ///
   /// In en, this message translates to:
-  /// **'Set your preferences'**
+  /// **'Set up your profile'**
   String get onboardingTitle;
 
   /// No description provided for @onboardingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'We will use this to personalize your feed.'**
+  /// **'Add a photo, your name and city so buyers know who they\'re dealing with. Everything here is optional.'**
   String get onboardingSubtitle;
 
   /// No description provided for @displayNameOptional.
@@ -506,24 +668,6 @@ abstract class AppLocalizations {
   /// **'City, Country'**
   String get cityCountry;
 
-  /// No description provided for @favoriteCategories.
-  ///
-  /// In en, this message translates to:
-  /// **'Favorite categories'**
-  String get favoriteCategories;
-
-  /// No description provided for @yourSizes.
-  ///
-  /// In en, this message translates to:
-  /// **'Your sizes'**
-  String get yourSizes;
-
-  /// No description provided for @stylesYouLove.
-  ///
-  /// In en, this message translates to:
-  /// **'Preferred styles'**
-  String get stylesYouLove;
-
   /// No description provided for @continueButton.
   ///
   /// In en, this message translates to:
@@ -535,12 +679,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn’t save — {error}'**
   String couldNotSave(Object error);
-
-  /// No description provided for @toggleTheme.
-  ///
-  /// In en, this message translates to:
-  /// **'Toggle theme'**
-  String get toggleTheme;
 
   /// No description provided for @nothingHereYet.
   ///
@@ -716,84 +854,6 @@ abstract class AppLocalizations {
   /// **'Size'**
   String get size;
 
-  /// No description provided for @style.
-  ///
-  /// In en, this message translates to:
-  /// **'Style'**
-  String get style;
-
-  /// No description provided for @styleTagY2k.
-  ///
-  /// In en, this message translates to:
-  /// **'Y2K'**
-  String get styleTagY2k;
-
-  /// No description provided for @styleTagCoquette.
-  ///
-  /// In en, this message translates to:
-  /// **'Coquette'**
-  String get styleTagCoquette;
-
-  /// No description provided for @styleTagStreetwear.
-  ///
-  /// In en, this message translates to:
-  /// **'Streetwear'**
-  String get styleTagStreetwear;
-
-  /// No description provided for @styleTagVintage.
-  ///
-  /// In en, this message translates to:
-  /// **'Vintage'**
-  String get styleTagVintage;
-
-  /// No description provided for @styleTagMinimalist.
-  ///
-  /// In en, this message translates to:
-  /// **'Minimalist'**
-  String get styleTagMinimalist;
-
-  /// No description provided for @styleTagCottagecore.
-  ///
-  /// In en, this message translates to:
-  /// **'Cottagecore'**
-  String get styleTagCottagecore;
-
-  /// No description provided for @styleTagGrunge.
-  ///
-  /// In en, this message translates to:
-  /// **'Grunge'**
-  String get styleTagGrunge;
-
-  /// No description provided for @styleTagPreppy.
-  ///
-  /// In en, this message translates to:
-  /// **'Preppy'**
-  String get styleTagPreppy;
-
-  /// No description provided for @styleTagBoho.
-  ///
-  /// In en, this message translates to:
-  /// **'Boho'**
-  String get styleTagBoho;
-
-  /// No description provided for @styleTagAcademia.
-  ///
-  /// In en, this message translates to:
-  /// **'Academia'**
-  String get styleTagAcademia;
-
-  /// No description provided for @styleTagAthleisure.
-  ///
-  /// In en, this message translates to:
-  /// **'Athleisure'**
-  String get styleTagAthleisure;
-
-  /// No description provided for @styleTagGorpcore.
-  ///
-  /// In en, this message translates to:
-  /// **'Gorpcore'**
-  String get styleTagGorpcore;
-
   /// No description provided for @location.
   ///
   /// In en, this message translates to:
@@ -925,12 +985,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'e.g. Pink'**
   String get colorHint;
-
-  /// No description provided for @styleTags.
-  ///
-  /// In en, this message translates to:
-  /// **'Style tags'**
-  String get styleTags;
 
   /// No description provided for @status.
   ///
@@ -1538,12 +1592,6 @@ abstract class AppLocalizations {
   /// **'Message failed — {error}'**
   String messageFailed(Object error);
 
-  /// No description provided for @imageSharingTodo.
-  ///
-  /// In en, this message translates to:
-  /// **'Image sharing is not available yet.'**
-  String get imageSharingTodo;
-
   /// No description provided for @imageSendFailed.
   ///
   /// In en, this message translates to:
@@ -1585,12 +1633,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} followers'**
   String followersCount(int count);
-
-  /// No description provided for @shareTodo.
-  ///
-  /// In en, this message translates to:
-  /// **'Sharing is coming soon'**
-  String get shareTodo;
 
   /// No description provided for @startChatFailed.
   ///
@@ -1736,12 +1778,6 @@ abstract class AppLocalizations {
   /// **'Edit profile'**
   String get editProfile;
 
-  /// No description provided for @editProfileTodo.
-  ///
-  /// In en, this message translates to:
-  /// **'Profile editing is not available yet.'**
-  String get editProfileTodo;
-
   /// No description provided for @bio.
   ///
   /// In en, this message translates to:
@@ -1753,12 +1789,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Short description about you'**
   String get bioHint;
-
-  /// No description provided for @locationAndStyle.
-  ///
-  /// In en, this message translates to:
-  /// **'Location and style'**
-  String get locationAndStyle;
 
   /// No description provided for @profilePhotoInfo.
   ///
@@ -2330,12 +2360,6 @@ abstract class AppLocalizations {
   /// **'New listings will show up here as they are posted.'**
   String get newListingsWillShow;
 
-  /// No description provided for @reportsComingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Reports coming soon'**
-  String get reportsComingSoon;
-
   /// No description provided for @reportsComingSoonBody.
   ///
   /// In en, this message translates to:
@@ -2485,6 +2509,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Action failed - {error}'**
   String actionFailed(Object error);
+
+  /// No description provided for @locationServicesOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on location on your phone to use this.'**
+  String get locationServicesOff;
+
+  /// No description provided for @locationPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location access was denied.'**
+  String get locationPermissionDenied;
+
+  /// No description provided for @locationPermissionBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is blocked. Turn it on in Settings to use this.'**
+  String get locationPermissionBlocked;
+
+  /// No description provided for @locationCityNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find your city. Please type it in.'**
+  String get locationCityNotFound;
+
+  /// No description provided for @locationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t get your location. Try again or type your city.'**
+  String get locationUnavailable;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get errorGeneric;
+
+  /// No description provided for @errorNoInternet.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Check your connection and try again.'**
+  String get errorNoInternet;
+
+  /// No description provided for @errorNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have permission to do that.'**
+  String get errorNotAllowed;
+
+  /// No description provided for @errorAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'That already exists.'**
+  String get errorAlreadyExists;
+
+  /// No description provided for @errorNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This is no longer available.'**
+  String get errorNotFound;
+
+  /// No description provided for @errorInvalidData.
+  ///
+  /// In en, this message translates to:
+  /// **'Some details aren\'t valid. Please check them and try again.'**
+  String get errorInvalidData;
+
+  /// No description provided for @errorTooManyAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please wait a moment and try again.'**
+  String get errorTooManyAttempts;
+
+  /// No description provided for @errorEmailInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists.'**
+  String get errorEmailInUse;
+
+  /// No description provided for @errorWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a stronger password.'**
+  String get errorWeakPassword;
+
+  /// No description provided for @errorInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address.'**
+  String get errorInvalidEmail;
+
+  /// No description provided for @errorSessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please sign in again.'**
+  String get errorSessionExpired;
+
+  /// No description provided for @errorFileTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This photo is too large. Please choose a smaller one.'**
+  String get errorFileTooLarge;
+
+  /// No description provided for @errorFileType.
+  ///
+  /// In en, this message translates to:
+  /// **'This file type isn\'t supported. Please use a JPG, PNG or WebP photo.'**
+  String get errorFileType;
+
+  /// No description provided for @shareListingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Check out \"{title}\" for {price} on Nosiva, the second-hand fashion marketplace.'**
+  String shareListingText(String title, String price);
+
+  /// No description provided for @timeJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get timeJustNow;
+
+  /// No description provided for @timeMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m ago'**
+  String timeMinutesAgo(int count);
+
+  /// No description provided for @timeHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h ago'**
+  String timeHoursAgo(int count);
+
+  /// No description provided for @timeDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d ago'**
+  String timeDaysAgo(int count);
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @themeAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get themeAuto;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @themeAutoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto follows your phone\'s light or dark setting.'**
+  String get themeAutoHint;
+
+  /// No description provided for @sortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sortBy;
+
+  /// No description provided for @sortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get sortNewest;
+
+  /// No description provided for @sortPriceLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: low to high'**
+  String get sortPriceLow;
+
+  /// No description provided for @sortPriceHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: high to low'**
+  String get sortPriceHigh;
+
+  /// No description provided for @sortPopular.
+  ///
+  /// In en, this message translates to:
+  /// **'Most liked'**
+  String get sortPopular;
 }
 
 class _AppLocalizationsDelegate

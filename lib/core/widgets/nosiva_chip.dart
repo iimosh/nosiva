@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 
-/// A selectable pill chip — used for categories, sizes, style tags, filters.
+/// A selectable pill chip — used for categories, sizes, sorting and filters.
 class NosivaChip extends StatelessWidget {
   const NosivaChip({
     super.key,
@@ -21,24 +22,27 @@ class NosivaChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fg = selected ? Colors.white : theme.colorScheme.onSurfaceVariant;
+    final fg = selected ? Colors.white : theme.colorScheme.onSurface;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: AppRadii.chip,
-        onTap: onTap,
+        onTap: onTap == null
+            ? null
+            : () {
+                HapticFeedback.selectionClick();
+                onTap!();
+              },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
           decoration: BoxDecoration(
             color: selected
-                ? AppColors.hotPink
+                ? AppColors.berry
                 : theme.colorScheme.surfaceContainerHighest,
             borderRadius: AppRadii.chip,
-            border: Border.all(
-              color: selected ? AppColors.hotPink : theme.colorScheme.outline,
-            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

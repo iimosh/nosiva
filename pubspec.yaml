@@ -54,6 +54,9 @@ dependencies:
   image_cropper: ^12.2.1
   flutter_cache_manager: ^3.4.1
   image: ^4.8.0
+  share_plus: ^12.0.2
+  video_player: ^2.11.1
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +66,7 @@ dev_dependencies:
   freezed: ^2.5.7
   json_serializable: ^6.8.0
   riverpod_generator: ^2.6.3
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   generate: true
@@ -70,3 +74,34 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/splash/
+    - assets/icon/splash_logo.png
+    - assets/brand/wordmark.png
+
+# App icon — built from assets/brand/nosiva_logo.jpg. Regenerate with:
+# dart run tool/generate_app_icon.dart && dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "assets/icon/icon_background.png"
+  adaptive_icon_foreground: "assets/icon/icon_foreground.png"
+  # The foreground image already keeps the mark inside Android's safe zone.
+  adaptive_icon_foreground_inset: 0
+  min_sdk_android: 21
+
+# The phone's own launch screen: the white n on the intro video's rose, from
+# the moment the app icon is tapped. The in-app splash takes over with the
+# identical image (see SplashScreen) and glides it into the intro video.
+# splash_logo.png is 1152 px drawn for 4x density = 288 dp everywhere, which
+# is also Android 12+'s splash icon size. Regenerate with:
+# dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#B86982"
+  image: assets/icon/splash_logo.png
+  android_12:
+    color: "#B86982"
+    image: assets/icon/splash_logo.png
+  ios: true
+  web: false

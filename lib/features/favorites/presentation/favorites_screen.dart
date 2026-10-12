@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/pull_to_refresh.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../listings/domain/listing.dart';
 import '../../listings/presentation/widgets/listing_card.dart';
 import '../data/favorites_repository.dart';
 import 'favorites_controller.dart';
+import '../../../core/utils/friendly_error.dart';
 
 /// The user's saved items. Rebuilds when favorites are toggled anywhere.
 final favoriteListingsProvider = FutureProvider<List<Listing>>((ref) {
@@ -24,29 +26,35 @@ class FavoritesScreen extends ConsumerWidget {
     final favs = ref.watch(favoriteListingsProvider);
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.favorites)),
-      body: favs.when(
-        loading: () => const ListingGridSkeleton(),
-        error: (e, _) => ErrorStateView(message: '$e'),
-        data: (listings) {
-          if (listings.isEmpty) {
-            return EmptyStateView(
-              icon: Icons.favorite_border_rounded,
-              title: context.l10n.wishlistEmpty,
-              message: context.l10n.wishlistEmptyMessage,
+      body: PullToRefresh(
+        onRefresh: () => ref.refresh(favoriteListingsProvider.future),
+        child: favs.when(
+          loading: () => const ListingGridSkeleton(),
+          error: (e, _) =>
+              ErrorStateView(message: friendlyError(context.l10n, e)),
+          data: (listings) {
+            if (listings.isEmpty) {
+              return EmptyStateView(
+                icon: Icons.favorite_border_rounded,
+                title: context.l10n.wishlistEmpty,
+                message: context.l10n.wishlistEmptyMessage,
+              );
+            }
+            return GridView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: AppSpacing.screen,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: AppSpacing.md,
+                mainAxisSpacing: AppSpacing.md,
+                childAspectRatio: 0.54,
+              ),
+              itemCount: listings.length,
+              itemBuilder: (_, i) => ListingCard(listing: listings[i]),
             );
-          }
-          return GridView.builder(
-            padding: AppSpacing.screen,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: AppSpacing.md,
-              mainAxisSpacing: AppSpacing.md,
-              childAspectRatio: 0.62,
-            ),
-            itemCount: listings.length,
-            itemBuilder: (_, i) => ListingCard(listing: listings[i]),
-          );
-        },
+          },
+        ),
       ),
     );
   }

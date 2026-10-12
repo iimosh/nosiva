@@ -3,22 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
-import '../../../core/l10n/locale_controller.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/nosiva_chip.dart';
+import '../../../core/widgets/pull_to_refresh.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
-import '../../auth/presentation/auth_controller.dart';
-import '../../auth/presentation/delete_account_dialog.dart';
+import 'settings_sheet.dart';
 import '../../listings/data/listings_repository.dart';
 import '../../listings/domain/listing.dart';
-import '../../listings/domain/listing_l10n.dart';
 import '../../listings/presentation/widgets/listing_card.dart';
 import '../domain/profile.dart';
 import 'avatar_actions.dart';
 import 'current_profile_provider.dart';
+import '../../../core/utils/friendly_error.dart';
 
 final myListingsProvider = FutureProvider<List<Listing>>((ref) {
   final profile = ref.watch(currentProfileProvider).valueOrNull;
@@ -32,7 +30,6 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(currentProfileProvider);
-    final isChangingLanguage = ref.watch(languageChangingProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -45,50 +42,19 @@ class ProfileScreen extends ConsumerWidget {
           ),
           IconButton(
             icon: const Icon(Icons.favorite_border),
-            tooltip: context.l10n.orders,
+            tooltip: context.l10n.favorites,
             onPressed: () => context.push(AppRoutes.favorites),
           ),
           IconButton(
-            icon: const Icon(Icons.language),
-            onPressed: isChangingLanguage
-                ? null
-                : () async {
-                    ref.read(languageChangingProvider.notifier).state = true;
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    var currentLanguage = await ref
-                        .read(localeControllerProvider.notifier)
-                        .getCurrentLocale();
-
-                    if (currentLanguage == Locale('en')) {
-                      await ref
-                          .read(localeControllerProvider.notifier)
-                          .setLocale(LocaleController.macedonian);
-                    } else if (currentLanguage == Locale('mk')) {
-                      await ref
-                          .read(localeControllerProvider.notifier)
-                          .setLocale(LocaleController.english);
-                    }
-                    if (!context.mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(context.l10n.languageChanged)),
-                    );
-                    ref.read(languageChangingProvider.notifier).state = false;
-                  },
-          ),
-          IconButton(
-            tooltip: context.l10n.signOut,
-            onPressed: () async {
-              await ref.read(authControllerProvider.notifier).signOut();
-            },
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: context.l10n.settings,
+            onPressed: () => showSettingsSheet(context),
           ),
         ],
       ),
       body: profileAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.hotPink),
-        ),
-        error: (e, _) => ErrorStateView(message: '$e'),
+        loading: () => const ProfileSkeleton(),
+        error: (e, _) => ErrorStateView(message: friendlyError(context.l10n, e)),
         data: (profile) {
           if (profile == null) {
             return EmptyStateView(title: context.l10n.noProfileFound);
@@ -110,7 +76,14 @@ class _ProfileBody extends ConsumerWidget {
     final theme = Theme.of(context);
     final myListings = ref.watch(myListingsProvider);
 
-    return ListView(
+    return PullToRefresh(
+      onRefresh: () async {
+        await ref.read(currentProfileProvider.notifier).reload();
+        ref.invalidate(myListingsProvider);
+        await ref.read(myListingsProvider.future);
+      },
+      child: ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AppSpacing.lg),
       children: [
         Row(
@@ -184,17 +157,6 @@ class _ProfileBody extends ConsumerWidget {
           const SizedBox(height: AppSpacing.md),
           _AdminEntryCard(onTap: () => context.push(AppRoutes.admin)),
         ],
-        if (profile.vibeTags.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.md),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: [
-              for (final tag in profile.vibeTags)
-                NosivaChip(label: '#${localizedStyleTag(tag, context.l10n)}'),
-            ],
-          ),
-        ],
         const SizedBox(height: AppSpacing.md),
         OutlinedButton.icon(
           icon: const Icon(Icons.edit_outlined),
@@ -209,7 +171,7 @@ class _ProfileBody extends ConsumerWidget {
             height: 200,
             child: ListingGridSkeleton(itemCount: 2),
           ),
-          error: (e, _) => ErrorStateView(message: '$e'),
+          error: (e, _) => ErrorStateView(message: friendlyError(context.l10n, e)),
           data: (listings) {
             if (listings.isEmpty) {
               return EmptyStateView(
@@ -233,19 +195,8 @@ class _ProfileBody extends ConsumerWidget {
           },
         ),
         const SizedBox(height: AppSpacing.xl),
-        Center(
-          child: TextButton.icon(
-            icon: const Icon(Icons.delete_forever_outlined,
-                color: AppColors.error),
-            label: Text(
-              context.l10n.deleteAccount,
-              style: const TextStyle(color: AppColors.error),
-            ),
-            onPressed: () => showDeleteAccountDialog(context),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
       ],
+      ),
     );
   }
 }
@@ -287,12 +238,12 @@ class _AdminBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        gradient: AppColors.brandGradient,
+        color: AppColors.berry,
         borderRadius: BorderRadius.circular(99),
       ),
-      child: const Text(
-        'ADMIN',
-        style: TextStyle(
+      child: Text(
+        context.l10n.adminBadge.toUpperCase(),
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 10,
           fontWeight: FontWeight.w800,
@@ -316,7 +267,7 @@ class _AdminEntryCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          gradient: AppColors.brandGradient,
+          color: AppColors.berry,
           borderRadius: AppRadii.card,
           boxShadow: AppShadows.soft(AppColors.hotPink),
         ),

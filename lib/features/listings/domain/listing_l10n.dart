@@ -1,5 +1,17 @@
 import '../../../l10n/app_localizations.dart';
 import 'listing_enums.dart';
+import 'listing_filter.dart';
+
+extension ListingSortL10n on ListingSort {
+  String localizedLabel(AppLocalizations l10n) {
+    return switch (this) {
+      ListingSort.newest => l10n.sortNewest,
+      ListingSort.priceLow => l10n.sortPriceLow,
+      ListingSort.priceHigh => l10n.sortPriceHigh,
+      ListingSort.popular => l10n.sortPopular,
+    };
+  }
+}
 
 extension ListingCategoryL10n on ListingCategory {
   String localizedLabel(AppLocalizations l10n) {
@@ -13,10 +25,6 @@ extension ListingCategoryL10n on ListingCategory {
       ListingCategory.jewelry => l10n.categoryJewelry,
       ListingCategory.outerwear => l10n.categoryOuterwear,
     };
-  }
-
-  String localizedWithEmoji(AppLocalizations l10n) {
-    return '$emoji ${localizedLabel(l10n)}';
   }
 }
 
@@ -39,24 +47,6 @@ extension ListingStatusL10n on ListingStatus {
       ListingStatus.hidden => l10n.hidden,
     };
   }
-}
-
-String localizedStyleTag(String tag, AppLocalizations l10n) {
-  return switch (tag) {
-    'Y2K' => l10n.styleTagY2k,
-    'coquette' => l10n.styleTagCoquette,
-    'streetwear' => l10n.styleTagStreetwear,
-    'vintage' => l10n.styleTagVintage,
-    'minimalist' => l10n.styleTagMinimalist,
-    'cottagecore' => l10n.styleTagCottagecore,
-    'grunge' => l10n.styleTagGrunge,
-    'preppy' => l10n.styleTagPreppy,
-    'boho' => l10n.styleTagBoho,
-    'academia' => l10n.styleTagAcademia,
-    'athleisure' => l10n.styleTagAthleisure,
-    'gorpcore' => l10n.styleTagGorpcore,
-    _ => tag,
-  };
 }
 
 extension OrderStatusL10n on OrderStatus {

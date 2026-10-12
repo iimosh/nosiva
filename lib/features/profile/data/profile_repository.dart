@@ -93,7 +93,6 @@ class ProfileRepository {
     String? displayName,
     String? bio,
     String? location,
-    required List<String> vibeTags,
   }) async {
     final data = await _client
         .from(_table)
@@ -102,7 +101,6 @@ class ProfileRepository {
           'display_name': displayName,
           'bio': bio,
           'location': location,
-          'vibe_tags': vibeTags,
         })
         .eq('id', id)
         .select()
@@ -114,14 +112,12 @@ class ProfileRepository {
     required String id,
     String? displayName,
     String? location,
-    required List<String> vibeTags,
   }) async {
     final data = await _client
         .from(_table)
         .update({
           if (displayName != null) 'display_name': displayName,
           if (location != null) 'location': location,
-          'vibe_tags': vibeTags,
           'onboarded': true,
         })
         .eq('id', id)
