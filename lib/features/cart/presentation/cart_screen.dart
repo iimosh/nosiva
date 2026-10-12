@@ -63,17 +63,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         return;
       }
 
-      // ============================================================
-      // 💳 STRIPE INTEGRATION POINT (stubbed for the MVP)
-      // ------------------------------------------------------------
-      // In production: create a PaymentIntent via a Supabase Edge
-      // Function using your secret key, confirm it client-side with
-      // flutter_stripe, and only then create the order rows below.
-      //   final intent = await supabase.functions.invoke('create-payment-intent',
-      //       body: {'amount': total, 'currency': 'mkd'});
-      //   await Stripe.instance.confirmPayment(intent.clientSecret, ...);
-      // For now we skip straight to creating "pending" orders.
-      // ============================================================
+      // No payment in the app: the buyer pays the courier in cash on
+      // delivery. Placing an order sends a request the seller accepts.
       final repo = ref.read(ordersRepositoryProvider);
       final cart = ref.read(cartControllerProvider.notifier);
       // Each item is removed from the cart as soon as its own order is
@@ -160,14 +151,13 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   prefixIcon: Icons.local_shipping_outlined,
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                _SummaryRow(label: context.l10n.subtotal, value: Formatters.price(total)),
-                _SummaryRow(label: context.l10n.shipping, value: context.l10n.calculatedAtCheckout),
-                const Divider(height: AppSpacing.lg),
                 _SummaryRow(
                   label: context.l10n.total,
                   value: Formatters.price(total),
                   emphasize: true,
                 ),
+                const SizedBox(height: AppSpacing.sm),
+                _CashOnDeliveryNote(theme: theme),
                 const SizedBox(height: AppSpacing.lg),
                 NosivaButton(
                   label: context.l10n.checkout(Formatters.price(total)),
@@ -175,13 +165,42 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   variant: NosivaButtonVariant.primary,
                   onPressed: _checkout,
                 ),
-                const SizedBox(height: AppSpacing.xs),
-                Center(
-                  child: Text(context.l10n.paymentStubbed,
-                      style: theme.textTheme.bodySmall),
-                ),
               ],
             ),
+    );
+  }
+}
+
+/// How paying works on Nosiva: cash to the courier, nothing in the app.
+class _CashOnDeliveryNote extends StatelessWidget {
+  const _CashOnDeliveryNote({required this.theme});
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: AppRadii.card,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.payments_outlined, color: context.palette.emphasis),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(context.l10n.cashOnDelivery, style: theme.textTheme.titleMedium),
+                const SizedBox(height: 2),
+                Text(context.l10n.cashOnDeliveryBody, style: theme.textTheme.bodySmall),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

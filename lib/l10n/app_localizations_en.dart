@@ -591,30 +591,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get seller => 'Seller';
 
   @override
-  String get shipping => 'Shipping';
-
-  @override
-  String shipsFrom(Object location) {
-    return 'Ships from $location';
-  }
-
-  @override
-  String get calculatedAtCheckout => 'Calculated at checkout';
-
-  @override
-  String get buyerProtection => 'Buyer protection';
-
-  @override
-  String get buyerProtectionBody =>
-      'Your payment is held until you confirm delivery.';
-
-  @override
-  String get returns => 'Returns';
-
-  @override
-  String get returnsBody => 'Item as described — returns handled case by case.';
-
-  @override
   String get moreFromSeller => 'More from this seller';
 
   @override
@@ -698,28 +674,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bagEmptyMessage => 'Add an item to continue checkout.';
 
   @override
-  String get shippingAddress => 'Shipping address';
+  String get shippingAddress => 'Delivery address';
 
   @override
-  String get shippingAddressHint => 'Street, City, ZIP, Country';
-
-  @override
-  String get subtotal => 'Subtotal';
+  String get shippingAddressHint => 'Street and number, city';
 
   @override
   String get total => 'Total';
 
   @override
   String checkout(Object price) {
-    return 'Checkout · $price';
+    return 'Place order · $price';
   }
 
   @override
-  String get paymentStubbed =>
-      'Payment is currently in demo mode (Stripe integration point)';
-
-  @override
-  String get addShippingAddress => 'Add a shipping address first';
+  String get addShippingAddress => 'Add a delivery address first';
 
   @override
   String get orderPlaced => 'Order placed successfully.';
@@ -1445,4 +1414,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sortPopular => 'Most liked';
+
+  @override
+  String get cashOnDelivery => 'Pay cash on delivery';
+
+  @override
+  String get cashOnDeliveryBody =>
+      'No payment in the app. You pay the courier in cash when your item arrives.';
 }

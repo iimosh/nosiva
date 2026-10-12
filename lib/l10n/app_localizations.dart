@@ -1190,48 +1190,6 @@ abstract class AppLocalizations {
   /// **'Seller'**
   String get seller;
 
-  /// No description provided for @shipping.
-  ///
-  /// In en, this message translates to:
-  /// **'Shipping'**
-  String get shipping;
-
-  /// No description provided for @shipsFrom.
-  ///
-  /// In en, this message translates to:
-  /// **'Ships from {location}'**
-  String shipsFrom(Object location);
-
-  /// No description provided for @calculatedAtCheckout.
-  ///
-  /// In en, this message translates to:
-  /// **'Calculated at checkout'**
-  String get calculatedAtCheckout;
-
-  /// No description provided for @buyerProtection.
-  ///
-  /// In en, this message translates to:
-  /// **'Buyer protection'**
-  String get buyerProtection;
-
-  /// No description provided for @buyerProtectionBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Your payment is held until you confirm delivery.'**
-  String get buyerProtectionBody;
-
-  /// No description provided for @returns.
-  ///
-  /// In en, this message translates to:
-  /// **'Returns'**
-  String get returns;
-
-  /// No description provided for @returnsBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Item as described — returns handled case by case.'**
-  String get returnsBody;
-
   /// No description provided for @moreFromSeller.
   ///
   /// In en, this message translates to:
@@ -1385,20 +1343,14 @@ abstract class AppLocalizations {
   /// No description provided for @shippingAddress.
   ///
   /// In en, this message translates to:
-  /// **'Shipping address'**
+  /// **'Delivery address'**
   String get shippingAddress;
 
   /// No description provided for @shippingAddressHint.
   ///
   /// In en, this message translates to:
-  /// **'Street, City, ZIP, Country'**
+  /// **'Street and number, city'**
   String get shippingAddressHint;
-
-  /// No description provided for @subtotal.
-  ///
-  /// In en, this message translates to:
-  /// **'Subtotal'**
-  String get subtotal;
 
   /// No description provided for @total.
   ///
@@ -1409,19 +1361,13 @@ abstract class AppLocalizations {
   /// No description provided for @checkout.
   ///
   /// In en, this message translates to:
-  /// **'Checkout · {price}'**
+  /// **'Place order · {price}'**
   String checkout(Object price);
-
-  /// No description provided for @paymentStubbed.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment is currently in demo mode (Stripe integration point)'**
-  String get paymentStubbed;
 
   /// No description provided for @addShippingAddress.
   ///
   /// In en, this message translates to:
-  /// **'Add a shipping address first'**
+  /// **'Add a delivery address first'**
   String get addShippingAddress;
 
   /// No description provided for @orderPlaced.
@@ -2713,6 +2659,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Most liked'**
   String get sortPopular;
+
+  /// No description provided for @cashOnDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay cash on delivery'**
+  String get cashOnDelivery;
+
+  /// No description provided for @cashOnDeliveryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No payment in the app. You pay the courier in cash when your item arrives.'**
+  String get cashOnDeliveryBody;
 }
 
 class _AppLocalizationsDelegate
