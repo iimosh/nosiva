@@ -2671,6 +2671,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No payment in the app. You pay the courier in cash when your item arrives.'**
   String get cashOnDeliveryBody;
+
+  /// No description provided for @markSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as sold'**
+  String get markSold;
+
+  /// No description provided for @markAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as available'**
+  String get markAvailable;
+
+  /// No description provided for @markSoldTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as sold?'**
+  String get markSoldTitle;
+
+  /// No description provided for @markSoldBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyers will see it as sold and won\'t be able to order it. You can make it available again anytime.'**
+  String get markSoldBody;
+
+  /// No description provided for @markedSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as sold'**
+  String get markedSold;
+
+  /// No description provided for @markedAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available again'**
+  String get markedAvailable;
+
+  /// No description provided for @recentSearches.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent searches'**
+  String get recentSearches;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get clearAll;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get phoneNumber;
+
+  /// No description provided for @phoneNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'07X XXX XXX'**
+  String get phoneNumberHint;
+
+  /// No description provided for @addPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a phone number for the courier'**
+  String get addPhoneNumber;
+
+  /// No description provided for @invalidPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid phone number'**
+  String get invalidPhoneNumber;
+
+  /// No description provided for @phoneOnlyForSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the seller sees your number, to arrange delivery.'**
+  String get phoneOnlyForSeller;
+
+  /// No description provided for @buyerPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer\'s phone'**
+  String get buyerPhone;
+
+  /// No description provided for @call.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get call;
+
+  /// No description provided for @validationEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get validationEmailRequired;
+
+  /// No description provided for @validationEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get validationEmailInvalid;
+
+  /// No description provided for @validationPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get validationPasswordRequired;
+
+  /// No description provided for @validationPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 8 characters'**
+  String get validationPasswordTooShort;
+
+  /// No description provided for @validationPriceRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Price is required'**
+  String get validationPriceRequired;
+
+  /// No description provided for @validationNumbersOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter numbers only'**
+  String get validationNumbersOnly;
+
+  /// No description provided for @validationPriceTooLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Price must be more than 0'**
+  String get validationPriceTooLow;
+
+  /// No description provided for @validationPriceTooHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a lower price'**
+  String get validationPriceTooHigh;
+
+  /// No description provided for @validationTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least {min} characters'**
+  String validationTooShort(int min);
+
+  /// No description provided for @offerDeliveryNote.
+  ///
+  /// In en, this message translates to:
+  /// **'If the seller accepts, they\'ll get your address and phone to send the item. You pay the courier in cash on delivery.'**
+  String get offerDeliveryNote;
 }
 
 class _AppLocalizationsDelegate

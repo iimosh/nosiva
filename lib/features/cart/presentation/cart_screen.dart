@@ -15,10 +15,12 @@ import '../../activity/presentation/activity_screen.dart';
 import '../../listings/data/listings_repository.dart';
 import '../../listings/presentation/controllers/feed_controller.dart';
 import '../../listings/presentation/controllers/listing_detail_provider.dart';
+import '../../orders/data/delivery_details.dart';
 import '../../orders/data/orders_repository.dart';
 import 'cart_controller.dart';
 import '../../../core/utils/friendly_error.dart';
 import '../../../core/theme/app_palette.dart';
+import '../../../core/utils/validators.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -29,11 +31,22 @@ class CartScreen extends ConsumerStatefulWidget {
 
 class _CartScreenState extends ConsumerState<CartScreen> {
   final _address = TextEditingController();
+  final _phone = TextEditingController();
   bool _placing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-filled from the last order or offer.
+    final saved = ref.read(deliveryDetailsProvider);
+    _address.text = saved.address;
+    _phone.text = saved.phone;
+  }
 
   @override
   void dispose() {
     _address.dispose();
+    _phone.dispose();
     super.dispose();
   }
 
@@ -42,6 +55,15 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     if (items.isEmpty) return;
     if (_address.text.trim().isEmpty) {
       context.showError(context.l10n.addShippingAddress);
+      return;
+    }
+    if (_phone.text.trim().isEmpty) {
+      context.showError(context.l10n.addPhoneNumber);
+      return;
+    }
+    final phone = Validators.normalizePhone(_phone.text);
+    if (phone == null) {
+      context.showError(context.l10n.invalidPhoneNumber);
       return;
     }
 
@@ -78,6 +100,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           sellerId: item.sellerId,
           total: item.price,
           shippingAddress: _address.text.trim(),
+          buyerPhone: phone,
         );
         cart.remove(item.id);
         ref.invalidate(listingDetailProvider(item.id));
@@ -85,6 +108,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       }
       ref.invalidate(feedControllerProvider);
       ref.invalidate(buyerOrdersProvider);
+      await ref
+          .read(deliveryDetailsProvider)
+          .save(address: _address.text, phone: _phone.text);
       if (mounted) {
         context.showSuccess(context.l10n.orderPlaced);
         ref.read(activityTabRequestProvider.notifier).state = 0;
@@ -148,8 +174,21 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   hint: context.l10n.shippingAddressHint,
                   controller: _address,
                   maxLines: 2,
+                  maxLength: 300,
                   prefixIcon: Icons.local_shipping_outlined,
                 ),
+                const SizedBox(height: AppSpacing.md),
+                NosivaTextField(
+                  label: context.l10n.phoneNumber,
+                  hint: context.l10n.phoneNumberHint,
+                  controller: _phone,
+                  keyboardType: TextInputType.phone,
+                  maxLength: 20,
+                  prefixIcon: Icons.phone_outlined,
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(context.l10n.phoneOnlyForSeller,
+                    style: theme.textTheme.bodySmall),
                 const SizedBox(height: AppSpacing.lg),
                 _SummaryRow(
                   label: context.l10n.total,

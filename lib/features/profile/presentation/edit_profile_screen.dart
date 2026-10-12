@@ -146,11 +146,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       validator: (value) {
                         final text = value?.trim() ?? '';
                         if (text.isEmpty) return null;
-                        return Validators.minLength(
-                          text,
-                          2,
-                          field: context.l10n.displayName,
-                        );
+                        return Validators.minLength(text, 2, context.l10n);
                       },
                     ),
                     const SizedBox(height: AppSpacing.md),

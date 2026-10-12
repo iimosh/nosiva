@@ -53,9 +53,9 @@ class ListingsRepository {
     }
     if (filter.minPrice != null) query = query.gte('price', filter.minPrice!);
     if (filter.maxPrice != null) query = query.lte('price', filter.maxPrice!);
-    if (filter.query != null && filter.query!.trim().isNotEmpty) {
-      query = query.textSearch('search_doc', filter.query!.trim(),
-          config: 'english', type: TextSearchType.websearch);
+    final words = searchPrefixQuery(filter.query);
+    if (words != null) {
+      query = query.textSearch('search_doc', words, config: 'english');
     }
 
     final data = await query
@@ -182,6 +182,22 @@ class ListingsRepository {
 
   Future<void> deleteImage(String imageId) async {
     await _client.from(_imagesTable).delete().eq('id', imageId);
+  }
+
+  /// Turns what someone typed into a search where every word also matches as
+  /// the start of a word ("jea" finds "jeans", "red dre" finds "red dress"),
+  /// so results can update while they type. Only letters and digits are
+  /// kept (any alphabet, including Cyrillic), so the text can't change the
+  /// query itself. Null when there's nothing to search for.
+  static String? searchPrefixQuery(String? input) {
+    if (input == null) return null;
+    final words = RegExp(r'[\p{L}\p{N}]+', unicode: true)
+        .allMatches(input)
+        .map((m) => m.group(0)!)
+        .take(6)
+        .toList();
+    if (words.isEmpty) return null;
+    return words.map((w) => '$w:*').join(' & ');
   }
 
   Future<void> updateListing(String id, Map<String, dynamic> values) async {

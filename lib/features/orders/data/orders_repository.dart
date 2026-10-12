@@ -22,6 +22,7 @@ class OrdersRepository {
     required String sellerId,
     required num total,
     String? shippingAddress,
+    String? buyerPhone,
   }) async {
     final uid = _client.auth.currentUser!.id;
     final data = await _client
@@ -32,6 +33,7 @@ class OrdersRepository {
           'seller_id': sellerId,
           'total': total,
           'shipping_address': shippingAddress,
+          'buyer_phone': buyerPhone,
           'status': 'pending',
         })
         .select(_select)

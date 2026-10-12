@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +26,7 @@ import 'widgets/listing_card.dart';
 import '../../../core/utils/friendly_error.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../shell/scroll_to_top.dart';
+import 'controllers/recent_searches.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -247,6 +250,149 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
+/// Search that updates the results while you type (after a short pause) and
+/// shows your recent searches when the field is empty.
+class _SearchField extends ConsumerStatefulWidget {
+  const _SearchField({required this.controller, required this.onQuery});
+
+  final TextEditingController controller;
+  final ValueChanged<String> onQuery;
+
+  @override
+  ConsumerState<_SearchField> createState() => _SearchFieldState();
+}
+
+class _SearchFieldState extends ConsumerState<_SearchField> {
+  static const _pause = Duration(milliseconds: 350);
+
+  final _focus = FocusNode();
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _focus.addListener(() {
+      if (!_focus.hasFocus) _remember();
+      setState(() {}); // show or hide recent searches
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  void _changed(String value) {
+    setState(() {}); // clear button and recent searches
+    _debounce?.cancel();
+    final query = value.trim();
+    if (query.isEmpty) {
+      widget.onQuery('');
+      return;
+    }
+    // Wait for a pause in typing, and for at least two letters.
+    _debounce = Timer(_pause, () {
+      if (query.length >= 2) widget.onQuery(query);
+    });
+  }
+
+  void _submit(String value) {
+    _debounce?.cancel();
+    widget.onQuery(value.trim());
+    _remember();
+  }
+
+  void _remember() =>
+      ref.read(recentSearchesProvider.notifier).add(widget.controller.text);
+
+  void _pick(String query) {
+    widget.controller.value = TextEditingValue(
+      text: query,
+      selection: TextSelection.collapsed(offset: query.length),
+    );
+    _submit(query);
+    _focus.unfocus();
+  }
+
+  void _clear() {
+    widget.controller.clear();
+    _changed('');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final recents = ref.watch(recentSearchesProvider);
+    final showRecents = _focus.hasFocus &&
+        widget.controller.text.trim().isEmpty &&
+        recents.isNotEmpty;
+
+    return Column(
+      children: [
+        NosivaTextField(
+          hint: context.l10n.homeSearchHint,
+          controller: widget.controller,
+          focusNode: _focus,
+          prefixIcon: Icons.search_rounded,
+          textInputAction: TextInputAction.search,
+          onSubmitted: _submit,
+          onChanged: _changed,
+          suffixIcon: widget.controller.text.isEmpty
+              ? null
+              : IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  onPressed: _clear,
+                ),
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 180),
+          alignment: Alignment.topCenter,
+          child: !showRecents
+              ? const SizedBox(width: double.infinity)
+              : Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.xs),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(context.l10n.recentSearches,
+                              style: theme.textTheme.titleMedium),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () => ref
+                                .read(recentSearchesProvider.notifier)
+                                .clear(),
+                            child: Text(context.l10n.clearAll),
+                          ),
+                        ],
+                      ),
+                      for (final query in recents)
+                        ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.history_rounded),
+                          title: Text(query,
+                              maxLines: 1, overflow: TextOverflow.ellipsis),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.close_rounded, size: 18),
+                            onPressed: () => ref
+                                .read(recentSearchesProvider.notifier)
+                                .remove(query),
+                          ),
+                          onTap: () => _pick(query),
+                        ),
+                    ],
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+}
+
 class _ForYouScrollView extends StatelessWidget {
   const _ForYouScrollView({
     required this.controller,
@@ -282,16 +428,7 @@ class _ForYouScrollView extends StatelessWidget {
               AppSpacing.md,
               AppSpacing.xs,
             ),
-            child: NosivaTextField(
-              hint: context.l10n.homeSearchHint,
-              controller: search,
-              prefixIcon: Icons.search_rounded,
-              textInputAction: TextInputAction.search,
-              onSubmitted: onQuery,
-              onChanged: (v) {
-                if (v.isEmpty) onQuery('');
-              },
-            ),
+            child: _SearchField(controller: search, onQuery: onQuery),
           ),
         ),
         SliverToBoxAdapter(

@@ -333,7 +333,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   hint: context.l10n.listingTitleHint,
                   controller: _title,
                   maxLength: 120,
-                  validator: (v) => Validators.minLength(v, 3, field: 'Title'),
+                  validator: (v) => Validators.minLength(v, 3, context.l10n),
                   onChanged: (_) => _syncDirty(),
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -444,7 +444,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   prefixIcon: Icons.payments_outlined,
-                  validator: Validators.price,
+                  validator: (v) => Validators.price(v, context.l10n),
                   onChanged: (_) => _syncDirty(),
                 ),
                 const SizedBox(height: AppSpacing.xl),

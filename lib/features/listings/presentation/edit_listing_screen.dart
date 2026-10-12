@@ -386,7 +386,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                 hint: context.l10n.listingTitleHint,
                 controller: _title,
                 maxLength: 120,
-                validator: (v) => Validators.minLength(v, 3, field: 'Title'),
+                validator: (v) => Validators.minLength(v, 3, context.l10n),
               ),
               const SizedBox(height: AppSpacing.md),
               NosivaTextField(
@@ -485,7 +485,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 prefixIcon: Icons.payments_outlined,
-                validator: Validators.price,
+                validator: (v) => Validators.price(v, context.l10n),
               ),
               const SizedBox(height: AppSpacing.xl),
               NosivaButton(

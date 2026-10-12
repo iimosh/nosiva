@@ -74,7 +74,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.alternate_email_rounded,
-                  validator: Validators.email,
+                  validator: (v) => Validators.email(v, context.l10n),
                   enabled: !_sent,
                 ),
                 const SizedBox(height: AppSpacing.lg),

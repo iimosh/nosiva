@@ -1421,4 +1421,84 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get cashOnDeliveryBody =>
       'No payment in the app. You pay the courier in cash when your item arrives.';
+
+  @override
+  String get markSold => 'Mark as sold';
+
+  @override
+  String get markAvailable => 'Mark as available';
+
+  @override
+  String get markSoldTitle => 'Mark as sold?';
+
+  @override
+  String get markSoldBody =>
+      'Buyers will see it as sold and won\'t be able to order it. You can make it available again anytime.';
+
+  @override
+  String get markedSold => 'Marked as sold';
+
+  @override
+  String get markedAvailable => 'Available again';
+
+  @override
+  String get recentSearches => 'Recent searches';
+
+  @override
+  String get clearAll => 'Clear all';
+
+  @override
+  String get phoneNumber => 'Phone number';
+
+  @override
+  String get phoneNumberHint => '07X XXX XXX';
+
+  @override
+  String get addPhoneNumber => 'Add a phone number for the courier';
+
+  @override
+  String get invalidPhoneNumber => 'Enter a valid phone number';
+
+  @override
+  String get phoneOnlyForSeller =>
+      'Only the seller sees your number, to arrange delivery.';
+
+  @override
+  String get buyerPhone => 'Buyer\'s phone';
+
+  @override
+  String get call => 'Call';
+
+  @override
+  String get validationEmailRequired => 'Email is required';
+
+  @override
+  String get validationEmailInvalid => 'Enter a valid email address';
+
+  @override
+  String get validationPasswordRequired => 'Password is required';
+
+  @override
+  String get validationPasswordTooShort => 'Use at least 8 characters';
+
+  @override
+  String get validationPriceRequired => 'Price is required';
+
+  @override
+  String get validationNumbersOnly => 'Enter numbers only';
+
+  @override
+  String get validationPriceTooLow => 'Price must be more than 0';
+
+  @override
+  String get validationPriceTooHigh => 'Enter a lower price';
+
+  @override
+  String validationTooShort(int min) {
+    return 'Use at least $min characters';
+  }
+
+  @override
+  String get offerDeliveryNote =>
+      'If the seller accepts, they\'ll get your address and phone to send the item. You pay the courier in cash on delivery.';
 }
