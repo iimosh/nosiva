@@ -15,8 +15,8 @@ class OrdersRepository {
       'buyer:profiles!orders_buyer_id_fkey(*), '
       'seller:profiles!orders_seller_id_fkey(*)';
 
-  /// Creates an order. Payment is stubbed — see Stripe integration point in
-  /// the checkout flow. This simply records a pending order row.
+  /// Creates an order request for the seller to accept. There's no payment in
+  /// the app: the buyer pays the courier in cash on delivery.
   Future<Order> createOrder({
     required String listingId,
     required String sellerId,

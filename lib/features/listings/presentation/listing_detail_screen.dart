@@ -146,8 +146,6 @@ class _DetailBody extends ConsumerWidget {
                 _ExpandableText(text: listing.description),
               ],
 
-              const SizedBox(height: AppSpacing.lg),
-              _InfoCard(listing: listing),
 
               if (listing.seller != null) ...[
                 const SizedBox(height: AppSpacing.lg),
@@ -511,57 +509,6 @@ class _ExpandableTextState extends State<_ExpandableText> {
             onPressed: () => setState(() => _expanded = !_expanded),
             child: Text(_expanded ? context.l10n.readLess : context.l10n.readMore),
           ),
-      ],
-    );
-  }
-}
-
-class _InfoCard extends StatelessWidget {
-  const _InfoCard({required this.listing});
-  final Listing listing;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: AppRadii.card,
-      ),
-      child: Column(
-        children: [
-          _row(context, Icons.local_shipping_outlined, context.l10n.shipping,
-              listing.location != null
-                  ? context.l10n.shipsFrom(listing.location!)
-                  : context.l10n.calculatedAtCheckout),
-          const SizedBox(height: AppSpacing.sm),
-          _row(context, Icons.shield_outlined, context.l10n.buyerProtection,
-              context.l10n.buyerProtectionBody),
-          const SizedBox(height: AppSpacing.sm),
-          _row(context, Icons.replay_outlined, context.l10n.returns,
-              context.l10n.returnsBody),
-        ],
-      ),
-    );
-  }
-
-  Widget _row(BuildContext context, IconData icon, String title, String body) {
-    final theme = Theme.of(context);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 20, color: AppColors.hotPink),
-        const SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: theme.textTheme.titleMedium),
-              Text(body, style: theme.textTheme.bodySmall),
-            ],
-          ),
-        ),
       ],
     );
   }

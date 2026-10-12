@@ -592,31 +592,6 @@ class AppLocalizationsMk extends AppLocalizations {
   String get seller => 'Продавач';
 
   @override
-  String get shipping => 'Испорака';
-
-  @override
-  String shipsFrom(Object location) {
-    return 'Се испраќа од $location';
-  }
-
-  @override
-  String get calculatedAtCheckout => 'Се пресметува при наплата';
-
-  @override
-  String get buyerProtection => 'Заштита за купувач';
-
-  @override
-  String get buyerProtectionBody =>
-      'Плаќањето се задржува додека не потврдиш испорака.';
-
-  @override
-  String get returns => 'Враќање';
-
-  @override
-  String get returnsBody =>
-      'Артиклот треба да одговара на описот — враќањата се разгледуваат по случај.';
-
-  @override
   String get moreFromSeller => 'Повеќе од овој продавач';
 
   @override
@@ -700,28 +675,21 @@ class AppLocalizationsMk extends AppLocalizations {
   String get bagEmptyMessage => 'Додај артикл за да продолжиш со наплата.';
 
   @override
-  String get shippingAddress => 'Адреса за испорака';
+  String get shippingAddress => 'Адреса за достава';
 
   @override
-  String get shippingAddressHint => 'Улица, град, поштенски број, држава';
-
-  @override
-  String get subtotal => 'Вкупно без испорака';
+  String get shippingAddressHint => 'Улица и број, град';
 
   @override
   String get total => 'Вкупно';
 
   @override
   String checkout(Object price) {
-    return 'Наплата · $price';
+    return 'Нарачај · $price';
   }
 
   @override
-  String get paymentStubbed =>
-      'Плаќањето е моментално во демо режим (Stripe integration point)';
-
-  @override
-  String get addShippingAddress => 'Прво внеси адреса за испорака';
+  String get addShippingAddress => 'Прво внеси адреса за достава';
 
   @override
   String get orderPlaced => 'Нарачката е успешно направена.';
@@ -1463,4 +1431,11 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get sortPopular => 'Најомилени';
+
+  @override
+  String get cashOnDelivery => 'Плаќање во готово при достава';
+
+  @override
+  String get cashOnDeliveryBody =>
+      'Нема плаќање во апликацијата. Го плаќаш курирот во готово кога ќе пристигне пратката.';
 }

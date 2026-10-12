@@ -227,18 +227,6 @@
   "hidden": "Hidden",
   "vibe": "Style",
   "seller": "Seller",
-  "shipping": "Shipping",
-  "shipsFrom": "Ships from {location}",
-  "@shipsFrom": {
-    "placeholders": {
-      "location": {}
-    }
-  },
-  "calculatedAtCheckout": "Calculated at checkout",
-  "buyerProtection": "Buyer protection",
-  "buyerProtectionBody": "Your payment is held until you confirm delivery.",
-  "returns": "Returns",
-  "returnsBody": "Item as described — returns handled case by case.",
   "moreFromSeller": "More from this seller",
   "youMightAlsoLike": "You might also like",
   "readMore": "Read more",
@@ -284,18 +272,16 @@
   "cart": "Cart",
   "bagEmpty": "Your bag is empty",
   "bagEmptyMessage": "Add an item to continue checkout.",
-  "shippingAddress": "Shipping address",
-  "shippingAddressHint": "Street, City, ZIP, Country",
-  "subtotal": "Subtotal",
+  "shippingAddress": "Delivery address",
+  "shippingAddressHint": "Street and number, city",
   "total": "Total",
-  "checkout": "Checkout · {price}",
+  "checkout": "Place order · {price}",
   "@checkout": {
     "placeholders": {
       "price": {}
     }
   },
-  "paymentStubbed": "Payment is currently in demo mode (Stripe integration point)",
-  "addShippingAddress": "Add a shipping address first",
+  "addShippingAddress": "Add a delivery address first",
   "orderPlaced": "Order placed successfully.",
   "checkoutFailed": "Checkout failed — {error}",
   "@checkoutFailed": {
@@ -665,5 +651,7 @@
   "sortNewest": "Newest",
   "sortPriceLow": "Price: low to high",
   "sortPriceHigh": "Price: high to low",
-  "sortPopular": "Most liked"
+  "sortPopular": "Most liked",
+  "cashOnDelivery": "Pay cash on delivery",
+  "cashOnDeliveryBody": "No payment in the app. You pay the courier in cash when your item arrives."
 }

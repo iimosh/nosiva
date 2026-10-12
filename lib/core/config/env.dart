@@ -8,9 +8,6 @@ class Env {
   static String get supabaseUrl => _require('SUPABASE_URL');
   static String get supabaseAnonKey => _require('SUPABASE_ANON_KEY');
 
-  static String get stripePublishableKey =>
-      dotenv.maybeGet('STRIPE_PUBLISHABLE_KEY') ?? '';
-
   static bool get isSupabaseConfigured =>
       !supabaseUrl.contains('YOUR-PROJECT-ref') &&
       supabaseAnonKey != 'your-anon-public-key';
