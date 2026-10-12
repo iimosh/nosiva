@@ -2,19 +2,18 @@
 // and a human `label` for the UI.
 
 enum ListingCategory {
-  tops('tops', 'Tops', '👚'),
-  dresses('dresses', 'Dresses', '👗'),
-  bottoms('bottoms', 'Bottoms', '👖'),
-  shoes('shoes', 'Shoes', '👠'),
-  bags('bags', 'Bags', '👜'),
-  accessories('accessories', 'Accessories', '🧣'),
-  jewelry('jewelry', 'Jewelry', '💍'),
-  outerwear('outerwear', 'Outerwear', '🧥');
+  tops('tops', 'Tops'),
+  dresses('dresses', 'Dresses'),
+  bottoms('bottoms', 'Bottoms'),
+  shoes('shoes', 'Shoes'),
+  bags('bags', 'Bags'),
+  accessories('accessories', 'Accessories'),
+  jewelry('jewelry', 'Jewelry'),
+  outerwear('outerwear', 'Outerwear');
 
-  const ListingCategory(this.value, this.label, this.emoji);
+  const ListingCategory(this.value, this.label);
   final String value;
   final String label;
-  final String emoji;
 
   static ListingCategory fromValue(String v) =>
       values.firstWhere((e) => e.value == v, orElse: () => tops);
@@ -75,24 +74,12 @@ enum OrderStatus {
       values.firstWhere((e) => e.value == v, orElse: () => pending);
 }
 
-/// Curated style tags shown in onboarding, listing creation, and filters.
-const kStyleTags = <String>[
-  'Y2K',
-  'coquette',
-  'streetwear',
-  'vintage',
-  'minimalist',
-  'cottagecore',
-  'grunge',
-  'preppy',
-  'boho',
-  'academia',
-  'athleisure',
-  'gorpcore',
-];
+/// Standard letter sizes offered as quick picks. Anything else (shoe sizes,
+/// jeans W/L, "One size", …) the seller types in via "Other".
+const kSizes = <String>['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
-/// Common clothing sizes used in onboarding & filters.
-const kSizes = <String>['XS', 'S', 'M', 'L', 'XL', 'XXL', '6', '8', '10', '12'];
+/// Longest size a seller can type in; the database enforces the same limit.
+const kMaxCustomSizeLength = 20;
 
 /// Max photos per listing (create & edit) — keeps uploads and gallery
 /// scrolling reasonable and discourages accidental bulk-attach.

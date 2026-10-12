@@ -9,7 +9,8 @@ import '../../profile/domain/profile.dart';
 import '../../profile/presentation/user_profile_screen.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/theme_controller.dart';
+import '../../../core/widgets/nosiva_wordmark.dart';
+import '../../auth/presentation/guest_prompt.dart';
 import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
 import '../../../core/widgets/shimmer_box.dart';
@@ -20,6 +21,9 @@ import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
 import 'widgets/filter_sheet.dart';
 import 'widgets/listing_card.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../shell/scroll_to_top.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -70,49 +74,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (f.condition != null) n++;
     if (f.minPrice != null || f.maxPrice != null) n++;
     if (f.location != null && f.location!.isNotEmpty) n++;
-    if (f.styleTags.isNotEmpty) n++;
+    if (f.sort != ListingSort.newest) n++;
     return n;
   }
 
   @override
   Widget build(BuildContext context) {
+    // Tapping Home again jumps back to the newest listings.
+    scrollToTopOnReselect(ref, 0, _scroll);
     final feed = ref.watch(feedControllerProvider);
     final filter = ref.watch(feedFilterProvider);
-    final themeMode = ref.watch(themeModeProvider);
     final activeFilters = _countFilters(filter);
-    final theme = Theme.of(context);
 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
           titleSpacing: AppSpacing.md,
-          title: Text(
-            'Nosiva',
-            style: theme.textTheme.headlineMedium?.copyWith(
-              color: AppColors.berry,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          title: const NosivaWordmark(),
           actions: [
-            IconButton(
-              tooltip: context.l10n.toggleTheme,
-              icon: Icon(
-                themeMode == ThemeMode.dark
-                    ? Icons.light_mode_rounded
-                    : Icons.dark_mode_rounded,
-              ),
-              onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
-            ),
             IconButton(
               icon: const Icon(Icons.shopping_bag_outlined),
               tooltip: context.l10n.cart,
-              onPressed: () => context.push(AppRoutes.cart),
+              onPressed: () {
+                if (!ensureSignedIn(context, ref, GuestAction.cart)) return;
+                context.push(AppRoutes.cart);
+              },
             ),
             IconButton(
               tooltip: context.l10n.favorites,
               icon: const Icon(Icons.favorite_border_rounded),
-              onPressed: () => context.push(AppRoutes.favorites),
+              onPressed: () {
+                if (!ensureSignedIn(context, ref, GuestAction.favorite)) return;
+                context.push(AppRoutes.favorites);
+              },
             ),
             Stack(
               alignment: Alignment.topRight,
@@ -140,9 +135,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const SizedBox(width: AppSpacing.xs),
           ],
           bottom: TabBar(
-            labelColor: AppColors.hotPink,
-            unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
-            indicatorColor: AppColors.hotPink,
             tabs: [
               Tab(text: context.l10n.forYou),
               Tab(text: context.l10n.following),
@@ -186,7 +178,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                   sliver: SliverFillRemaining(
                     child: ErrorStateView(
-                      message: '$e',
+                      message: friendlyError(context.l10n, e),
                       onRetry: () => ref
                           .read(feedControllerProvider.notifier)
                           .refresh(),
@@ -234,7 +226,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 },
               ),
             ),
-            const _FollowingFeed(),
+            const GuestGate(
+              kind: GuestGateKind.following,
+              child: _FollowingFeed(),
+            ),
           ],
         ),
         floatingActionButton: activeFilters > 0
@@ -275,6 +270,7 @@ class _ForYouScrollView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return CustomScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       controller: controller,
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
@@ -319,8 +315,7 @@ class _ForYouScrollView extends StatelessWidget {
                   filter.query?.isNotEmpty == true
                       ? context.l10n.browseItems
                       : context.l10n.latestListings,
-                  style: theme.textTheme.titleLarge
-                      ?.copyWith(color: AppColors.plum),
+                  style: theme.textTheme.titleLarge,
                 ),
                 const Spacer(),
                 if (activeFilters > 0)
@@ -350,7 +345,7 @@ class _FollowingFeed extends ConsumerWidget {
       child: feed.when(
         loading: () => const ListingGridSkeleton(),
         error: (e, _) => ErrorStateView(
-          message: '$e',
+          message: friendlyError(context.l10n, e),
           onRetry: () => ref.invalidate(followingFeedProvider),
         ),
         data: (listings) {
@@ -439,7 +434,7 @@ class _PersonCard extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 28,
-              backgroundColor: AppColors.blush,
+              backgroundColor: context.palette.placeholder,
               backgroundImage: person.avatarUrl != null
                   ? CachedNetworkImageProvider(person.avatarUrl!)
                   : null,
@@ -484,7 +479,7 @@ class _CategoryBar extends StatelessWidget {
           final cat = ListingCategory.values[i];
           return Center(
             child: NosivaChip(
-              label: cat.localizedWithEmoji(context.l10n),
+              label: cat.localizedLabel(context.l10n),
               selected: selected == cat,
               onTap: () => onSelect(cat),
             ),

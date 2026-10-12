@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/forgot_password_screen.dart';
+import '../../features/auth/presentation/guest_prompt.dart';
 import '../../features/auth/presentation/onboarding_screen.dart';
 import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/sign_in_screen.dart';
@@ -27,17 +28,42 @@ import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/user_profile_screen.dart';
 import '../../features/reviews/presentation/reviews_list_screen.dart';
 import '../../shell/main_shell.dart';
+import '../../shell/scroll_to_top.dart';
+import '../storage/app_preferences.dart';
 import '../supabase/supabase_providers.dart';
 import 'app_routes.dart';
+import 'return_after_sign_in.dart';
 
 final _rootKey = GlobalKey<NavigatorState>();
 final _shellKey = GlobalKey<NavigatorState>();
+
+/// Screens a guest (not signed in) may open. Everything else sends them to
+/// sign-in — so any screen added later is protected unless listed here.
+/// The four tabs are listed because their screens show a "sign in" prompt
+/// to guests instead of their content (see [GuestGate]).
+const _guestPrefixes = [
+  AppRoutes.home, // feed, and /home/listing/:id, /home/user/:id
+  '${AppRoutes.listingDetail}/',
+  '${AppRoutes.user}/',
+  '${AppRoutes.followList}/',
+  '${AppRoutes.reviews}/',
+  AppRoutes.activity,
+  AppRoutes.sell,
+  AppRoutes.inbox,
+  AppRoutes.profile,
+];
+
+bool _guestMayOpen(String location) =>
+    _guestPrefixes.any((p) => location == p || location.startsWith(p.endsWith('/') ? p : '$p/'));
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier(0);
   ref.listen(authStateChangesProvider, (_, __) => refresh.value++);
   ref.listen(currentProfileProvider, (_, __) => refresh.value++);
+  ref.listen(welcomeSeenProvider, (_, __) => refresh.value++);
+  ref.listen(introFinishedProvider, (_, __) => refresh.value++);
   ref.onDispose(refresh.dispose);
+  final returnTo = ref.read(returnAfterSignInProvider);
 
   return GoRouter(
     navigatorKey: _rootKey,
@@ -45,6 +71,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
     redirect: (context, state) {
       final loc = state.matchedLocation;
+
+      // Let the opening animation finish before leaving the splash.
+      if (loc == AppRoutes.splash && !ref.read(introFinishedProvider)) {
+        return null;
+      }
 
       // A recovery-email link signs the user in, but they must set a new
       // password before doing anything else — check this first so it
@@ -65,7 +96,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isSplash = loc == AppRoutes.splash;
 
       if (user == null) {
-        return isAuthRoute ? null : AppRoutes.welcome;
+        if (isAuthRoute) return null;
+        // First launch on this device: show the welcome screen once.
+        if (!ref.read(welcomeSeenProvider)) return AppRoutes.welcome;
+        if (isSplash) return AppRoutes.home;
+        if (_guestMayOpen(loc)) return null;
+        // A protected screen: sign in first, then come back here.
+        returnTo.remember(state.uri.toString());
+        return AppRoutes.signIn;
       }
 
       final profile = ref.read(currentProfileProvider);
@@ -82,7 +120,8 @@ final routerProvider = Provider<GoRouter>((ref) {
               isSplash ||
               loc == AppRoutes.onboarding ||
               loc == AppRoutes.resetPassword) {
-            return AppRoutes.home;
+            // Back to where a guest was when they were asked to sign in.
+            return returnTo.take() ?? AppRoutes.home;
           }
           return null;
         },
@@ -113,7 +152,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.home,
-                builder: (_, __) => const HomeScreen(),
+                builder: (_, __) =>
+                    const ScrollToTopOnReselect(tab: 0, child: HomeScreen()),
                 routes: [
                   GoRoute(
                     path: 'listing/:id',
@@ -121,26 +161,71 @@ final routerProvider = Provider<GoRouter>((ref) {
                     builder: (_, state) =>
                         ListingDetailScreen(listingId: state.pathParameters['id']!),
                   ),
+                  GoRoute(
+                    path: 'user/:id',
+                    parentNavigatorKey: _rootKey,
+                    builder: (_, state) =>
+                        UserProfileScreen(userId: state.pathParameters['id']!),
+                  ),
                 ],
               ),
             ],
           ),
           StatefulShellBranch(
-            routes: [GoRoute(path: AppRoutes.activity, builder: (_, __) => const ActivityScreen())],
+            routes: [
+              GoRoute(
+                path: AppRoutes.activity,
+                builder: (_, __) => const ScrollToTopOnReselect(
+                  tab: 1,
+                  child: GuestGate(
+                    kind: GuestGateKind.activity,
+                    child: ActivityScreen(),
+                  ),
+                ),
+              ),
+            ],
           ),
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppRoutes.sell,
-                builder: (_, __) => const CreateListingScreen(),
+                builder: (_, __) => const ScrollToTopOnReselect(
+                  tab: 2,
+                  child: GuestGate(
+                    kind: GuestGateKind.sell,
+                    child: CreateListingScreen(),
+                  ),
+                ),
               ),
             ],
           ),
           StatefulShellBranch(
-            routes: [GoRoute(path: AppRoutes.inbox, builder: (_, __) => const InboxScreen())],
+            routes: [
+              GoRoute(
+                path: AppRoutes.inbox,
+                builder: (_, __) => const ScrollToTopOnReselect(
+                  tab: 3,
+                  child: GuestGate(
+                    kind: GuestGateKind.inbox,
+                    child: InboxScreen(),
+                  ),
+                ),
+              ),
+            ],
           ),
           StatefulShellBranch(
-            routes: [GoRoute(path: AppRoutes.profile, builder: (_, __) => const ProfileScreen())],
+            routes: [
+              GoRoute(
+                path: AppRoutes.profile,
+                builder: (_, __) => const ScrollToTopOnReselect(
+                  tab: 4,
+                  child: GuestGate(
+                    kind: GuestGateKind.profile,
+                    child: ProfileScreen(),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

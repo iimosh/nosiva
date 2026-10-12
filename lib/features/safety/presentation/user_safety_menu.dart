@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/snackbars.dart';
 import '../data/safety_repository.dart';
 import 'report_sheet.dart';
+import '../../../core/utils/friendly_error.dart';
 
 /// Overflow menu with "Report" and "Block / Unblock" for another user.
 class UserSafetyMenu extends ConsumerWidget {
@@ -48,7 +49,7 @@ class UserSafetyMenu extends ConsumerWidget {
       await controller.block(userId);
       if (context.mounted) context.showSuccess(context.l10n.userBlocked);
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.blockFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.blockFailed(friendlyError(context.l10n, e)));
     }
   }
 

@@ -20,8 +20,11 @@ import '../../../core/widgets/nosiva_text_field.dart';
 import '../../../shell/main_shell.dart';
 import '../data/listings_repository.dart';
 import '../domain/listing_enums.dart';
+import 'widgets/size_picker.dart';
 import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
 
 class CreateListingScreen extends ConsumerStatefulWidget {
   const CreateListingScreen({super.key});
@@ -46,7 +49,6 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
   ListingCategory? _category;
   ItemCondition _condition = ItemCondition.good;
   String? _size;
-  final _styleTags = <String>{};
   bool _submitting = false;
   bool _detectingLocation = false;
 
@@ -96,7 +98,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
         _syncDirty();
       }
     } catch (e) {
-      if (mounted) context.showError(context.l10n.photoAddFailed('$e'));
+      if (mounted) context.showError(context.l10n.photoAddFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -236,7 +238,6 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
           'location':
               _location.text.trim().isEmpty ? null : _location.text.trim(),
           'size': _size,
-          'style_tags': _styleTags.toList(),
         },
         images: _images,
       );
@@ -251,7 +252,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
         }
       }
     } catch (e) {
-      if (mounted) context.showError(context.l10n.listFailed('$e'));
+      if (mounted) context.showError(context.l10n.listFailed(friendlyError(context.l10n, e)));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -269,7 +270,6 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
       _category = null;
       _condition = ItemCondition.good;
       _size = null;
-      _styleTags.clear();
     });
     _syncDirty();
   }
@@ -283,8 +283,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
       _price.text.isNotEmpty ||
       _images.isNotEmpty ||
       _category != null ||
-      _size != null ||
-      _styleTags.isNotEmpty;
+      _size != null;
 
   void _syncDirty() {
     ref.read(sellFormDirtyProvider.notifier).state = _isDirty;
@@ -297,7 +296,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
       _location.text = loc;
       _syncDirty();
     } catch (e) {
-      if (mounted) context.showError('$e');
+      if (mounted) context.showError(locationErrorMessage(context.l10n, e));
     } finally {
       if (mounted) setState(() => _detectingLocation = false);
     }
@@ -310,6 +309,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
       appBar: AppBar(title: Text(context.l10n.listAnItem)),
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Form(
             key: _formKey,
@@ -354,7 +354,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   children: [
                     for (final c in ListingCategory.values)
                       NosivaChip(
-                        label: c.localizedWithEmoji(context.l10n),
+                        label: c.localizedLabel(context.l10n),
                         selected: _category == c,
                         onTap: () {
                           setState(() => _category = c);
@@ -379,20 +379,12 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _Label(context.l10n.size),
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    for (final s in kSizes)
-                      NosivaChip(
-                        label: s,
-                        selected: _size == s,
-                        onTap: () {
-                          setState(() => _size = _size == s ? null : s);
-                          _syncDirty();
-                        },
-                      ),
-                  ],
+                SizePicker(
+                  value: _size,
+                  onChanged: (size) {
+                    setState(() => _size = size);
+                    _syncDirty();
+                  },
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Row(
@@ -416,24 +408,6 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                         onChanged: (_) => _syncDirty(),
                       ),
                     ),
-                  ],
-                ),
-                _Label(context.l10n.styleTags),
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    for (final tag in kStyleTags)
-                      NosivaChip(
-                        label: localizedStyleTag(tag, context.l10n),
-                        selected: _styleTags.contains(tag),
-                        onTap: () {
-                          setState(() => _styleTags.contains(tag)
-                              ? _styleTags.remove(tag)
-                              : _styleTags.add(tag));
-                          _syncDirty();
-                        },
-                      ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -477,7 +451,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                 NosivaButton(
                   label: context.l10n.listIt,
                   loading: _submitting,
-                  variant: NosivaButtonVariant.gradient,
+                  variant: NosivaButtonVariant.primary,
                   onPressed: _submit,
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -501,7 +475,7 @@ class _SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Text(
         text,
-        style: theme.textTheme.titleLarge?.copyWith(color: AppColors.berry),
+        style: theme.textTheme.titleLarge?.copyWith(color: context.palette.emphasis),
       ),
     );
   }
@@ -586,7 +560,7 @@ class _AddTile extends StatelessWidget {
         height: 100,
         width: 100,
         decoration: BoxDecoration(
-          color: AppColors.blush,
+          color: context.palette.placeholder,
           borderRadius: AppRadii.field,
           border: Border.all(color: AppColors.hotPinkSoft),
         ),

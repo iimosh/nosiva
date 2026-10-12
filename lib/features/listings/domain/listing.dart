@@ -25,7 +25,6 @@ class Listing with _$Listing {
     String? color,
     required num price,
     @Default('active') String status,
-    @Default(<String>[]) @JsonKey(name: 'style_tags') List<String> styleTags,
     String? location,
     @Default(0) @JsonKey(name: 'favorite_count') int favoriteCount,
     @Default(0) @JsonKey(name: 'view_count') int viewCount,

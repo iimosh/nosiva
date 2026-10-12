@@ -9,10 +9,10 @@ import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/snackbars.dart';
-import '../../../core/widgets/nosiva_chip.dart';
+import '../../../core/widgets/pull_to_refresh.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
-import '../../listings/domain/listing_l10n.dart';
+import '../../auth/presentation/guest_prompt.dart';
 import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../listings/presentation/widgets/listing_card.dart';
 import '../../messaging/data/messaging_repository.dart';
@@ -20,6 +20,8 @@ import '../../safety/presentation/user_safety_menu.dart';
 import '../data/profile_repository.dart';
 import '../domain/profile.dart';
 import 'widgets/follow_button.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
 
 // autoDispose: same reasoning as listingDetailProvider/orderProvider —
 // without it, a profile viewed earlier in the session stays cached, so its
@@ -40,13 +42,14 @@ class UserProfileScreen extends ConsumerWidget {
   final String userId;
 
   Future<void> _startChat(BuildContext context, WidgetRef ref) async {
+    if (!ensureSignedIn(context, ref, GuestAction.message)) return;
     try {
       final convo = await ref
           .read(messagingRepositoryProvider)
           .getOrCreateDirectConversation(userId);
       if (context.mounted) context.push(AppRoutes.chatPath(convo.id));
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.startChatFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.startChatFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -58,24 +61,24 @@ class UserProfileScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.l10n.profile),
         actions: [
-          if (myId != null && myId != userId) ...[
+          if (myId != userId)
             IconButton(
               tooltip: context.l10n.messageUser,
               icon: const Icon(Icons.chat_bubble_outline_rounded),
               onPressed: () => _startChat(context, ref),
             ),
+          // Block/report need an account; hidden for guests.
+          if (myId != null && myId != userId)
             UserSafetyMenu(
               userId: userId,
               name: profileAsync.valueOrNull?.nameOrHandle ?? '',
             ),
-          ],
         ],
       ),
       body: profileAsync.when(
-        loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.hotPink)),
+        loading: () => const ProfileSkeleton(),
         error: (e, _) => ErrorStateView(
-          message: '$e',
+          message: friendlyError(context.l10n, e),
           onRetry: () => ref.invalidate(userProfileProvider(userId)),
         ),
         data: (profile) {
@@ -101,14 +104,20 @@ class _Body extends ConsumerWidget {
     final theme = Theme.of(context);
     final listings = ref.watch(sellerListingsProvider(profile.id));
 
-    return ListView(
+    return PullToRefresh(
+      onRefresh: () => Future.wait([
+        ref.refresh(userProfileProvider(profile.id).future),
+        ref.refresh(sellerListingsProvider(profile.id).future),
+      ]),
+      child: ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AppSpacing.lg),
       children: [
         Row(
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundColor: AppColors.blush,
+              backgroundColor: context.palette.placeholder,
               backgroundImage: profile.avatarUrl != null
                   ? CachedNetworkImageProvider(profile.avatarUrl!)
                   : null,
@@ -168,24 +177,13 @@ class _Body extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         FollowButton(userId: profile.id),
-        if (profile.vibeTags.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.md),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: [
-              for (final tag in profile.vibeTags)
-                NosivaChip(label: '#${localizedStyleTag(tag, context.l10n)}'),
-            ],
-          ),
-        ],
         const SizedBox(height: AppSpacing.lg),
         Text(context.l10n.listings, style: theme.textTheme.titleLarge),
         const SizedBox(height: AppSpacing.sm),
         listings.when(
           loading: () => const SizedBox(
               height: 200, child: ListingGridSkeleton(itemCount: 2)),
-          error: (e, _) => ErrorStateView(message: '$e'),
+          error: (e, _) => ErrorStateView(message: friendlyError(context.l10n, e)),
           data: (items) {
             if (items.isEmpty) {
               return EmptyStateView(
@@ -208,6 +206,7 @@ class _Body extends ConsumerWidget {
           },
         ),
       ],
+      ),
     );
   }
 }

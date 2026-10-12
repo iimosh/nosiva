@@ -19,6 +19,9 @@ import '../../profile/domain/profile.dart';
 import '../../safety/data/safety_repository.dart';
 import '../../safety/domain/report.dart';
 import 'admin_controller.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/widgets/shimmer_box.dart';
 
 class AdminDashboardScreen extends ConsumerWidget {
   const AdminDashboardScreen({super.key});
@@ -150,10 +153,9 @@ class _ListingsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final listings = ref.watch(adminListingsProvider);
     return listings.when(
-      loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.hotPink)),
+      loading: () => const ListSkeleton(leading: SkeletonLeading.square, leadingSize: 56),
       error: (e, _) => ErrorStateView(
-        message: '$e',
+        message: friendlyError(context.l10n, e),
         onRetry: () => ref.invalidate(adminListingsProvider),
       ),
       data: (items) {
@@ -186,10 +188,9 @@ class _ReportsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final reports = ref.watch(adminReportsProvider);
     return reports.when(
-      loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.hotPink)),
+      loading: () => const ListSkeleton(leading: SkeletonLeading.none, lines: 3),
       error: (e, _) => ErrorStateView(
-        message: '$e',
+        message: friendlyError(context.l10n, e),
         onRetry: () => ref.invalidate(adminReportsProvider),
       ),
       data: (items) {
@@ -237,7 +238,7 @@ class _ReportTile extends ConsumerWidget {
       ref.invalidate(adminReportsProvider);
       if (context.mounted) context.showSuccess(context.l10n.reportClosed);
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.actionFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -271,7 +272,7 @@ class _ReportTile extends ConsumerWidget {
               ),
               const Spacer(),
               if (report.createdAt != null)
-                Text(Formatters.timeAgo(report.createdAt!),
+                Text(Formatters.timeAgo(report.createdAt!, context.l10n),
                     style: theme.textTheme.bodySmall),
             ],
           ),
@@ -320,10 +321,9 @@ class _UsersTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final users = ref.watch(adminUsersProvider);
     return users.when(
-      loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.hotPink)),
+      loading: () => const ListSkeleton(),
       error: (e, _) => ErrorStateView(
-        message: '$e',
+        message: friendlyError(context.l10n, e),
         onRetry: () => ref.invalidate(adminUsersProvider),
       ),
       data: (items) {
@@ -382,7 +382,7 @@ class _UserTile extends ConsumerWidget {
         context.showSuccess(makeAdmin ? context.l10n.promotedToAdmin : context.l10n.adminRemoved);
       }
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.updateRoleFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.updateRoleFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -393,7 +393,7 @@ class _UserTile extends ConsumerWidget {
     return ListTile(
       leading: CircleAvatar(
         radius: 22,
-        backgroundColor: AppColors.blush,
+        backgroundColor: context.palette.placeholder,
         backgroundImage: user.avatarUrl != null
             ? CachedNetworkImageProvider(user.avatarUrl!)
             : null,
@@ -436,7 +436,7 @@ class _RoleBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        gradient: AppColors.brandGradient,
+        color: AppColors.berry,
         borderRadius: BorderRadius.circular(99),
       ),
       child: Text(
@@ -468,7 +468,7 @@ class _AdminListingTile extends ConsumerWidget {
       ref.invalidate(feedControllerProvider);
       if (context.mounted) context.showSuccess(success);
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.actionFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -490,8 +490,10 @@ class _AdminListingTile extends ConsumerWidget {
                 height: 56,
                 child: listing.coverImageUrl != null
                     ? CachedNetworkImage(
-                        imageUrl: listing.coverImageUrl!, fit: BoxFit.cover)
-                    : const ColoredBox(color: AppColors.blush),
+                        imageUrl: listing.coverImageUrl!,
+                        fit: BoxFit.cover,
+                        memCacheWidth: 240)
+                    : ColoredBox(color: context.palette.placeholder),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),

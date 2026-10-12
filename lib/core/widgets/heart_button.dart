@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 
 /// The favorite (heart) button with a little pop animation for the
-/// optimistic-like interaction. 💖
+/// optimistic-like interaction.
 class HeartButton extends StatefulWidget {
   const HeartButton({
     super.key,
@@ -37,15 +38,17 @@ class _HeartButtonState extends State<HeartButton>
   }
 
   void _handleTap() {
+    HapticFeedback.lightImpact();
     _controller.forward(from: 0);
     widget.onTap();
   }
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final icon = Icon(
       widget.liked ? Icons.favorite : Icons.favorite_border,
-      color: widget.liked ? AppColors.hotPink : AppColors.plumSoft,
+      color: widget.liked ? AppColors.hotPink : scheme.onSurfaceVariant,
       size: widget.size,
     );
 
@@ -62,7 +65,7 @@ class _HeartButtonState extends State<HeartButton>
           ? Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: scheme.surface.withValues(alpha: 0.92),
                 shape: BoxShape.circle,
                 boxShadow: AppShadows.subtle(AppColors.plum),
               ),

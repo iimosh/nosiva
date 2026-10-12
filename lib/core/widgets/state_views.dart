@@ -36,8 +36,8 @@ class EmptyStateView extends StatelessWidget {
             Container(
               height: 96,
               width: 96,
-              decoration: const BoxDecoration(
-                gradient: AppColors.blushGradient,
+              decoration: BoxDecoration(
+                color: AppColors.hotPink.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
@@ -66,7 +66,7 @@ class EmptyStateView extends StatelessWidget {
                 label: actionLabel!,
                 onPressed: onAction,
                 expand: false,
-                variant: NosivaButtonVariant.gradient,
+                variant: NosivaButtonVariant.primary,
               ),
             ],
           ],

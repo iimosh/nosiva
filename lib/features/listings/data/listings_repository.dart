@@ -39,7 +39,9 @@ class ListingsRepository {
     if (filter.category != null) {
       query = query.eq('category', filter.category!.value);
     }
-    if (filter.size != null) query = query.eq('size', filter.size!);
+    // Case-insensitive exact match, so "w30 l32" finds "W30 L32". Sizes come
+    // from SizePicker, which never lets % or _ (wildcards) through.
+    if (filter.size != null) query = query.ilike('size', filter.size!);
     if (filter.condition != null) {
       query = query.eq('condition', filter.condition!.value);
     }
@@ -51,9 +53,6 @@ class ListingsRepository {
     }
     if (filter.minPrice != null) query = query.gte('price', filter.minPrice!);
     if (filter.maxPrice != null) query = query.lte('price', filter.maxPrice!);
-    if (filter.styleTags.isNotEmpty) {
-      query = query.contains('style_tags', filter.styleTags);
-    }
     if (filter.query != null && filter.query!.trim().isNotEmpty) {
       query = query.textSearch('search_doc', filter.query!.trim(),
           config: 'english', type: TextSearchType.websearch);

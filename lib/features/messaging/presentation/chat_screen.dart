@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,6 +20,9 @@ import '../data/messaging_repository.dart';
 import '../domain/conversation.dart';
 import '../domain/message.dart';
 import 'inbox_screen.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/widgets/shimmer_box.dart';
 
 final conversationProvider =
     FutureProvider.family<Conversation, String>((ref, id) {
@@ -75,6 +79,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Future<void> _send() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
+    HapticFeedback.lightImpact();
     _controller.clear();
 
     final uid = ref.read(currentAuthUserProvider)!.id;
@@ -106,7 +111,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         // (in either direction) produces.
         context.showError(e is PostgrestException && e.code == '42501'
             ? context.l10n.cannotMessage
-            : context.l10n.messageFailed('$e'));
+            : context.l10n.messageFailed(friendlyError(context.l10n, e)));
       }
     }
   }
@@ -130,7 +135,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       );
       _scrollToBottom();
     } catch (e) {
-      if (mounted) context.showError(context.l10n.imageSendFailed('$e'));
+      if (mounted) context.showError(context.l10n.imageSendFailed(friendlyError(context.l10n, e)));
     } finally {
       if (mounted) setState(() => _sendingImage = false);
     }
@@ -210,9 +215,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         children: [
           Expanded(
             child: stream.when(
-              loading: () => const Center(
-                  child: CircularProgressIndicator(color: AppColors.hotPink)),
-              error: (e, _) => ErrorStateView(message: '$e'),
+              loading: () => const ChatSkeleton(),
+              error: (e, _) => ErrorStateView(message: friendlyError(context.l10n, e)),
               data: (messages) {
                 // Merge confirmed + still-pending optimistic messages.
                 final confirmedBodies = messages.map((m) => m.body).toSet();
@@ -236,6 +240,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   _scrollToBottom();
                 }
                 return ListView.builder(
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   controller: _scroll,
                   padding: const EdgeInsets.all(AppSpacing.md),
                   itemCount: merged.length,
@@ -300,12 +305,13 @@ class _ChatHeader extends ConsumerWidget {
           children: [
             CircleAvatar(
               radius: 18,
-              backgroundColor: AppColors.blush,
+              backgroundColor: context.palette.placeholder,
               backgroundImage: other.avatarUrl != null
                   ? CachedNetworkImageProvider(other.avatarUrl!)
                   : null,
               child: other.avatarUrl == null
-                  ? const Text('💁‍♀️', style: TextStyle(fontSize: 16))
+                  ? const Icon(Icons.person_outline_rounded,
+                      color: AppColors.hotPink, size: 20)
                   : null,
             ),
             const SizedBox(width: AppSpacing.sm),
@@ -362,7 +368,7 @@ class _Bubble extends StatelessWidget {
               ),
             if (message.createdAt != null)
               Text(
-                Formatters.chatTimestamp(message.createdAt!),
+                Formatters.chatTimestamp(message.createdAt!, context.l10n),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: isMine
                       ? Colors.white70
@@ -395,18 +401,19 @@ class _BubbleImage extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: url,
           fit: BoxFit.cover,
-          placeholder: (_, __) => const SizedBox(
+          memCacheWidth: 640,
+          placeholder: (_, __) => SizedBox(
             height: 160,
             width: 200,
-            child: ColoredBox(color: AppColors.blush),
+            child: ColoredBox(color: context.palette.placeholder),
           ),
-          errorWidget: (_, __, ___) => const SizedBox(
+          errorWidget: (_, __, ___) => SizedBox(
             height: 160,
             width: 200,
             child: ColoredBox(
-              color: AppColors.blush,
+              color: context.palette.placeholder,
               child: Icon(Icons.broken_image_outlined,
-                  color: AppColors.plumFaint),
+                  color: context.palette.onPlaceholder),
             ),
           ),
         ),

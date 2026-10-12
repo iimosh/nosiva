@@ -26,6 +26,13 @@ class NosivaApp extends ConsumerWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       routerConfig: router,
+      // Tapping anywhere outside a text field closes the keyboard. Taps on
+      // buttons and fields still reach them as usual.
+      builder: (context, child) => GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: child,
+      ),
     );
   }
 }

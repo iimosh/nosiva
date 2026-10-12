@@ -6,6 +6,7 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/snackbars.dart';
+import '../../../core/utils/friendly_error.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
@@ -54,7 +55,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         if (err is UsernameTakenException) {
           context.showError(context.l10n.usernameTaken);
         } else {
-          context.showError(context.l10n.signUpFailed(err ?? context.l10n.tryAgain));
+          context.showError(context.l10n.signUpFailed(friendlyError(context.l10n, err)));
         }
     }
   }
@@ -68,6 +69,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       appBar: AppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Form(
             key: _formKey,
@@ -125,7 +127,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 NosivaButton(
                   label: context.l10n.createAccount,
                   loading: loading,
-                  variant: NosivaButtonVariant.gradient,
+                  variant: NosivaButtonVariant.primary,
                   onPressed: _submit,
                 ),
                 const SizedBox(height: AppSpacing.lg),

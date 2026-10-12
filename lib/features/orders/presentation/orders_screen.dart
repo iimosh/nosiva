@@ -22,6 +22,10 @@ import '../../listings/presentation/controllers/feed_controller.dart';
 import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../data/orders_repository.dart';
 import '../domain/order.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/widgets/pull_to_refresh.dart';
+import '../../../core/widgets/shimmer_box.dart';
 
 enum OrderListRole { buyer, seller }
 
@@ -75,6 +79,16 @@ class OrderListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    return PullToRefresh(
+      onRefresh: () => Future.wait([
+        ref.refresh(provider.future),
+        ref.refresh(offerProvider.future),
+      ]),
+      child: _content(context, ref),
+    );
+  }
+
+  Widget _content(BuildContext context, WidgetRef ref) {
     final orderAsync = ref.watch(provider);
     final offerAsync = ref.watch(offerProvider);
     final loading = orderAsync.isLoading && !orderAsync.hasValue ||
@@ -82,11 +96,11 @@ class OrderListView extends ConsumerWidget {
     final error = orderAsync.error ?? offerAsync.error;
 
     if (loading) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.hotPink),
-      );
+      return const ListSkeleton(leading: SkeletonLeading.square, leadingSize: 64, lines: 3);
     }
-    if (error != null) return ErrorStateView(message: '$error');
+    if (error != null) {
+      return ErrorStateView(message: friendlyError(context.l10n, error));
+    }
 
     final orderList = orderAsync.valueOrNull ?? const <Order>[];
     final offerList = offerAsync.valueOrNull ?? const <Offer>[];
@@ -158,6 +172,7 @@ class OrderListView extends ConsumerWidget {
           );
         }
         return ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(AppSpacing.md),
           itemCount: entries.length,
           separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
@@ -252,7 +267,7 @@ class _OrderActivityCard extends ConsumerWidget {
       ref.invalidate(sellerListingsProvider(order.sellerId));
       if (context.mounted) context.showSuccess(context.l10n.orderUpdated);
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.actionFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -309,7 +324,7 @@ class _OrderActivityCard extends ConsumerWidget {
       });
     } catch (e) {
       _removeOptimisticArchived(ref, key);
-      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.actionFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -330,7 +345,7 @@ class _OrderActivityCard extends ConsumerWidget {
       });
     } catch (e) {
       _removeOptimisticRestored(ref, key);
-      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.actionFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -404,7 +419,7 @@ class _OrderActivityCard extends ConsumerWidget {
                         Text(
                           Formatters.price(order.total),
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: AppColors.berry,
+                            color: context.palette.emphasis,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -419,7 +434,7 @@ class _OrderActivityCard extends ConsumerWidget {
                           const SizedBox(height: AppSpacing.xs),
                           _ActivityBadge(
                             label: context.l10n.actionNeeded,
-                            color: AppColors.berry,
+                            color: context.palette.emphasis,
                           ),
                         ],
                       ],
@@ -439,9 +454,9 @@ class _OrderActivityCard extends ConsumerWidget {
                     Text(
                       status == OrderStatus.pending
                           ? context.l10n
-                              .orderedTime(Formatters.timeAgo(activityTime))
+                              .orderedTime(Formatters.timeAgo(activityTime, context.l10n))
                           : context.l10n
-                              .updatedTime(Formatters.timeAgo(activityTime)),
+                              .updatedTime(Formatters.timeAgo(activityTime, context.l10n)),
                       style: theme.textTheme.bodySmall,
                     ),
                   const SizedBox(width: AppSpacing.xs),
@@ -566,7 +581,7 @@ class _OfferActivityCard extends ConsumerWidget {
         );
       }
     } catch (e) {
-      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.actionFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -616,7 +631,7 @@ class _OfferActivityCard extends ConsumerWidget {
       });
     } catch (e) {
       _removeOptimisticArchived(ref, key);
-      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.actionFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -637,7 +652,7 @@ class _OfferActivityCard extends ConsumerWidget {
       });
     } catch (e) {
       _removeOptimisticRestored(ref, key);
-      if (context.mounted) context.showError(context.l10n.actionFailed('$e'));
+      if (context.mounted) context.showError(context.l10n.actionFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -711,7 +726,7 @@ class _OfferActivityCard extends ConsumerWidget {
                             Formatters.price(offer.amount),
                           ),
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: AppColors.berry,
+                            color: context.palette.emphasis,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -735,7 +750,7 @@ class _OfferActivityCard extends ConsumerWidget {
                           const SizedBox(height: AppSpacing.xs),
                           _ActivityBadge(
                             label: context.l10n.actionNeeded,
-                            color: AppColors.berry,
+                            color: context.palette.emphasis,
                           ),
                         ],
                       ],
@@ -751,7 +766,7 @@ class _OfferActivityCard extends ConsumerWidget {
                   if (activityTime != null)
                     Text(
                       context.l10n.offeredTime(
-                        Formatters.timeAgo(activityTime),
+                        Formatters.timeAgo(activityTime, context.l10n),
                       ),
                       style: theme.textTheme.bodySmall,
                     ),
@@ -779,7 +794,7 @@ class _OfferActivityCard extends ConsumerWidget {
                       Expanded(
                         child: NosivaButton(
                           label: context.l10n.acceptOffer,
-                          variant: NosivaButtonVariant.gradient,
+                          variant: NosivaButtonVariant.primary,
                           onPressed: () => _respond(
                             context,
                             ref,
@@ -882,7 +897,7 @@ class _SellerActions extends StatelessWidget {
                   label: actions[i].label,
                   variant: actions[i].secondary
                       ? NosivaButtonVariant.secondary
-                      : NosivaButtonVariant.gradient,
+                      : NosivaButtonVariant.primary,
                   onPressed: () => onStatus(context, ref, actions[i].next,
                       confirm: actions[i].confirm),
                 ),
@@ -910,8 +925,8 @@ class _OrderImage extends StatelessWidget {
         width: 76,
         height: 76,
         child: url != null
-            ? CachedNetworkImage(imageUrl: url!, fit: BoxFit.cover)
-            : const ColoredBox(color: AppColors.blush),
+            ? CachedNetworkImage(imageUrl: url!, fit: BoxFit.cover, memCacheWidth: 240)
+            : ColoredBox(color: context.palette.placeholder),
       ),
     );
   }

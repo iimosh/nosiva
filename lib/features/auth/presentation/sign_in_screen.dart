@@ -61,6 +61,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       appBar: AppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Form(
             key: _formKey,
@@ -109,7 +110,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 NosivaButton(
                   label: context.l10n.signIn,
                   loading: loading,
-                  variant: NosivaButtonVariant.gradient,
+                  variant: NosivaButtonVariant.primary,
                   onPressed: _submit,
                 ),
                 const SizedBox(height: AppSpacing.lg),

@@ -55,7 +55,6 @@ class CurrentProfile extends AsyncNotifier<Profile?> {
   static String _slug(String input) =>
       input.toLowerCase().replaceAll(RegExp(r'[^a-z0-9_]'), '');
 }
-final languageChangingProvider = StateProvider<bool>((ref) => false);
 
 final currentProfileProvider =
     AsyncNotifierProvider<CurrentProfile, Profile?>(CurrentProfile.new);

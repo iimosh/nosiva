@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +10,7 @@ import '../features/messaging/presentation/inbox_screen.dart';
 import '../features/offers/data/offers_repository.dart';
 import '../features/orders/data/orders_repository.dart';
 import '../features/profile/presentation/current_profile_provider.dart';
+import 'scroll_to_top.dart';
 
 final sellResetSignalProvider = StateProvider<int>((ref) => 0);
 
@@ -45,6 +47,12 @@ class MainShell extends ConsumerWidget {
       if (discard != true) return;
       ref.read(sellFormDirtyProvider.notifier).state = false;
     }
+    HapticFeedback.selectionClick();
+    if (index == shell.currentIndex) {
+      final previous = ref.read(tabReselectedProvider);
+      ref.read(tabReselectedProvider.notifier).state =
+          (tab: index, count: (previous?.count ?? 0) + 1);
+    }
     if (index == 2) ref.read(sellResetSignalProvider.notifier).state++;
     if (index == 3) ref.invalidate(conversationsProvider);
     if (index == 4) ref.read(currentProfileProvider.notifier).reload();
@@ -65,12 +73,12 @@ class MainShell extends ConsumerWidget {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          boxShadow: AppShadows.soft(AppColors.plum),
+          border: Border(top: BorderSide(color: theme.colorScheme.outline)),
         ),
         child: SafeArea(
           top: false,
           child: SizedBox(
-            height: 64,
+            height: 68,
             child: Row(
               children: [
                 _NavItem(
@@ -133,17 +141,37 @@ class _NavItem extends StatelessWidget {
       child: InkResponse(
         onTap: onTap,
         radius: 40,
+        highlightShape: BoxShape.rectangle,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Badge(
-              isLabelVisible: badgeCount > 0,
-              backgroundColor: AppColors.hotPink,
-              label: Text(badgeCount > 99 ? '99+' : '$badgeCount'),
-              child: Icon(icon, color: color, size: 26),
+            // Soft pill behind the selected icon.
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              decoration: BoxDecoration(
+                color: selected
+                    ? AppColors.hotPink.withValues(alpha: 0.12)
+                    : Colors.transparent,
+                borderRadius: AppRadii.chip,
+              ),
+              child: Badge(
+                isLabelVisible: badgeCount > 0,
+                backgroundColor: AppColors.hotPink,
+                label: Text(badgeCount > 99 ? '99+' : '$badgeCount'),
+                child: Icon(icon, color: color, size: 24),
+              ),
             ),
-            const SizedBox(height: 2),
-            Text(label, style: theme.textTheme.labelMedium?.copyWith(color: color)),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: color,
+                fontSize: 11.5,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),
@@ -162,12 +190,11 @@ class _SellButton extends StatelessWidget {
         child: GestureDetector(
           onTap: onTap,
           child: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              gradient: AppColors.brandGradient,
-              borderRadius: BorderRadius.circular(AppRadii.md),
-              boxShadow: AppShadows.soft(AppColors.hotPink),
+            height: 52,
+            width: 52,
+            decoration: const BoxDecoration(
+              color: AppColors.berry,
+              shape: BoxShape.circle,
             ),
             child: const Icon(Icons.add_rounded, color: Colors.white, size: 30),
           ),

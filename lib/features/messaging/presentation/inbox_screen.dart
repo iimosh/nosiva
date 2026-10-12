@@ -11,14 +11,18 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
+import '../../../core/widgets/pull_to_refresh.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../profile/domain/profile.dart';
-import '../../profile/presentation/user_profile_screen.dart' show peopleSearchProvider;
+import '../../profile/presentation/user_profile_screen.dart'
+    show peopleSearchProvider;
 import '../../safety/data/safety_repository.dart';
 import '../data/messaging_repository.dart';
 import '../domain/conversation.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
 
 final conversationsProvider = FutureProvider<List<Conversation>>((ref) {
   ref.watch(currentAuthUserProvider);
@@ -80,7 +84,11 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
       ref.invalidate(conversationsProvider);
       if (mounted) context.push(AppRoutes.chatPath(convo.id));
     } catch (e) {
-      if (mounted) context.showError(context.l10n.startChatFailed('$e'));
+      if (mounted) {
+        context.showError(
+          context.l10n.startChatFailed(friendlyError(context.l10n, e)),
+        );
+      }
     }
   }
 
@@ -125,80 +133,95 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
             ),
           ),
           Expanded(
-            child: convosAsync.when(
-              loading: () => const _InboxSkeleton(),
-              error: (e, _) => ErrorStateView(
-                message: '$e',
-                onRetry: () => ref.invalidate(conversationsProvider),
-              ),
-              data: (allConvos) {
-                final blocked =
-                    ref.watch(blockedIdsProvider).valueOrNull ?? const <String>{};
-                final list = allConvos.where((c) {
-                  final other = uid == null ? null : c.otherParticipant(uid);
-                  return other == null || !blocked.contains(other.id);
-                }).toList();
-                final lowerQuery = query.toLowerCase();
-                final filtered = lowerQuery.isEmpty
-                    ? list
-                    : list.where((c) {
-                        final other = uid == null ? null : c.otherParticipant(uid);
-                        final name = other?.nameOrHandle.toLowerCase() ?? '';
-                        final handle = other?.username.toLowerCase() ?? '';
-                        return name.contains(lowerQuery) || handle.contains(lowerQuery);
-                      }).toList();
+            child: PullToRefresh(
+              onRefresh: () => ref.refresh(conversationsProvider.future),
+              child: convosAsync.when(
+                loading: () => const ListSkeleton(leadingSize: 52),
+                error: (e, _) => ErrorStateView(
+                  message: friendlyError(context.l10n, e),
+                  onRetry: () => ref.invalidate(conversationsProvider),
+                ),
+                data: (allConvos) {
+                  final blocked =
+                      ref.watch(blockedIdsProvider).valueOrNull ??
+                      const <String>{};
+                  final list = allConvos.where((c) {
+                    final other = uid == null ? null : c.otherParticipant(uid);
+                    return other == null || !blocked.contains(other.id);
+                  }).toList();
+                  final lowerQuery = query.toLowerCase();
+                  final filtered = lowerQuery.isEmpty
+                      ? list
+                      : list.where((c) {
+                          final other = uid == null
+                              ? null
+                              : c.otherParticipant(uid);
+                          final name = other?.nameOrHandle.toLowerCase() ?? '';
+                          final handle = other?.username.toLowerCase() ?? '';
+                          return name.contains(lowerQuery) ||
+                              handle.contains(lowerQuery);
+                        }).toList();
 
-                final excludeIds = <String>{
-                  if (uid != null) uid,
-                  for (final c in filtered)
-                    if (uid != null) c.otherParticipant(uid)?.id ?? '',
-                };
-                final people = (peopleAsync.valueOrNull ?? const <Profile>[])
-                    .where((p) => !excludeIds.contains(p.id))
-                    .toList();
-
-                if (list.isEmpty && query.isEmpty) {
-                  return EmptyStateView(
-                    icon: Icons.chat_bubble_outline_rounded,
-                    title: context.l10n.noMessages,
-                    message: context.l10n.noMessagesMessage,
-                    actionLabel: context.l10n.findSomeoneToMessage,
-                    onAction: () => _searchFocus.requestFocus(),
-                  );
-                }
-
-                final peopleStillLoading = peopleAsync.isLoading;
-                if (query.isNotEmpty &&
-                    filtered.isEmpty &&
-                    people.isEmpty &&
-                    !peopleStillLoading) {
-                  return EmptyStateView(
-                    icon: Icons.search_off_rounded,
-                    title: context.l10n.noMatches,
-                    message: context.l10n.noMatchesMessage,
-                  );
-                }
-
-                return ListView(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                  children: [
+                  final excludeIds = <String>{
+                    if (uid != null) uid,
                     for (final c in filtered)
-                      _ConversationTile(
-                        conversation: c,
-                        uid: uid,
-                        onDeleted: () {
-                          ref.invalidate(conversationsProvider);
-                          context.showSuccess(context.l10n.conversationDeleted);
-                        },
-                      ),
-                    if (query.isNotEmpty && people.isNotEmpty) ...[
-                      _SectionHeader(context.l10n.people),
-                      for (final p in people)
-                        _PersonRow(profile: p, onMessage: () => _startChat(p.id)),
+                      if (uid != null) c.otherParticipant(uid)?.id ?? '',
+                  };
+                  final people = (peopleAsync.valueOrNull ?? const <Profile>[])
+                      .where((p) => !excludeIds.contains(p.id))
+                      .toList();
+
+                  if (list.isEmpty && query.isEmpty) {
+                    return EmptyStateView(
+                      icon: Icons.chat_bubble_outline_rounded,
+                      title: context.l10n.noMessages,
+                      message: context.l10n.noMessagesMessage,
+                      actionLabel: context.l10n.findSomeoneToMessage,
+                      onAction: () => _searchFocus.requestFocus(),
+                    );
+                  }
+
+                  final peopleStillLoading = peopleAsync.isLoading;
+                  if (query.isNotEmpty &&
+                      filtered.isEmpty &&
+                      people.isEmpty &&
+                      !peopleStillLoading) {
+                    return EmptyStateView(
+                      icon: Icons.search_off_rounded,
+                      title: context.l10n.noMatches,
+                      message: context.l10n.noMatchesMessage,
+                    );
+                  }
+
+                  return ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                    children: [
+                      for (final c in filtered)
+                        _ConversationTile(
+                          conversation: c,
+                          uid: uid,
+                          onDeleted: () {
+                            ref.invalidate(conversationsProvider);
+                            context.showSuccess(
+                              context.l10n.conversationDeleted,
+                            );
+                          },
+                        ),
+                      if (query.isNotEmpty && people.isNotEmpty) ...[
+                        _SectionHeader(context.l10n.people),
+                        for (final p in people)
+                          _PersonRow(
+                            profile: p,
+                            onMessage: () => _startChat(p.id),
+                          ),
+                      ],
                     ],
-                  ],
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -220,13 +243,7 @@ class _SectionHeader extends StatelessWidget {
         AppSpacing.md,
         AppSpacing.xs,
       ),
-      child: Text(
-        label,
-        style: Theme.of(context)
-            .textTheme
-            .titleMedium
-            ?.copyWith(color: AppColors.plum),
-      ),
+      child: Text(label, style: Theme.of(context).textTheme.titleMedium),
     );
   }
 }
@@ -266,10 +283,12 @@ class _ConversationTile extends ConsumerWidget {
     if (confirmed != true) return false;
 
     try {
-      await ref.read(messagingRepositoryProvider).hideConversation(conversation.id);
+      await ref
+          .read(messagingRepositoryProvider)
+          .hideConversation(conversation.id);
       return true;
     } catch (e) {
-      if (context.mounted) context.showError('$e');
+      if (context.mounted) context.showError(friendlyError(context.l10n, e));
       return false;
     }
   }
@@ -297,17 +316,22 @@ class _ConversationTile extends ConsumerWidget {
         onTap: () => context.push(AppRoutes.chatPath(c.id)),
         leading: CircleAvatar(
           radius: 26,
-          backgroundColor: AppColors.blush,
+          backgroundColor: context.palette.placeholder,
           backgroundImage: other?.avatarUrl != null
               ? CachedNetworkImageProvider(other!.avatarUrl!)
               : null,
           child: other?.avatarUrl == null
-              ? const Icon(Icons.person_outline_rounded, color: AppColors.hotPink)
+              ? const Icon(
+                  Icons.person_outline_rounded,
+                  color: AppColors.hotPink,
+                )
               : null,
         ),
         title: Text(
           other?.nameOrHandle ?? context.l10n.nosivaUser,
-          style: unread > 0 ? const TextStyle(fontWeight: FontWeight.w700) : null,
+          style: unread > 0
+              ? const TextStyle(fontWeight: FontWeight.w700)
+              : null,
         ),
         subtitle: Column(
           mainAxisSize: MainAxisSize.min,
@@ -323,11 +347,16 @@ class _ConversationTile extends ConsumerWidget {
                       child: listing.coverImageUrl != null
                           ? CachedNetworkImage(
                               imageUrl: listing.coverImageUrl!,
+                              memCacheWidth: 64,
                               width: 16,
                               height: 16,
                               fit: BoxFit.cover,
                             )
-                          : Container(width: 16, height: 16, color: AppColors.blush),
+                          : Container(
+                              width: 16,
+                              height: 16,
+                              color: context.palette.placeholder,
+                            ),
                     ),
                     const SizedBox(width: 4),
                     Flexible(
@@ -335,8 +364,7 @@ class _ConversationTile extends ConsumerWidget {
                         listing.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall
-                            ?.copyWith(color: AppColors.plumSoft),
+                        style: theme.textTheme.bodySmall,
                       ),
                     ),
                   ],
@@ -349,7 +377,8 @@ class _ConversationTile extends ConsumerWidget {
               style: unread > 0
                   ? TextStyle(
                       color: theme.colorScheme.onSurface,
-                      fontWeight: FontWeight.w600)
+                      fontWeight: FontWeight.w600,
+                    )
                   : null,
             ),
           ],
@@ -359,8 +388,10 @@ class _ConversationTile extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             if (c.lastMessageAt != null)
-              Text(Formatters.timeAgo(c.lastMessageAt!),
-                  style: theme.textTheme.bodySmall),
+              Text(
+                Formatters.timeAgo(c.lastMessageAt!, context.l10n),
+                style: theme.textTheme.bodySmall,
+              ),
             if (unread > 0) ...[
               const SizedBox(height: 4),
               Container(
@@ -374,7 +405,10 @@ class _ConversationTile extends ConsumerWidget {
                   '$unread',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700),
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
@@ -396,7 +430,7 @@ class _PersonRow extends StatelessWidget {
       onTap: onMessage,
       leading: CircleAvatar(
         radius: 26,
-        backgroundColor: AppColors.blush,
+        backgroundColor: context.palette.placeholder,
         backgroundImage: profile.avatarUrl != null
             ? CachedNetworkImageProvider(profile.avatarUrl!)
             : null,
@@ -409,39 +443,6 @@ class _PersonRow extends StatelessWidget {
       trailing: OutlinedButton(
         onPressed: onMessage,
         child: Text(context.l10n.messageUser),
-      ),
-    );
-  }
-}
-
-class _InboxSkeleton extends StatelessWidget {
-  const _InboxSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      itemCount: 6,
-      separatorBuilder: (_, __) => const Divider(indent: 80),
-      itemBuilder: (_, __) => Padding(
-        padding:
-            const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-        child: Row(
-          children: [
-            const ShimmerBox(width: 52, height: 52, radius: 26),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  ShimmerBox(width: 120, height: 14),
-                  SizedBox(height: 8),
-                  ShimmerBox(width: 180, height: 12),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

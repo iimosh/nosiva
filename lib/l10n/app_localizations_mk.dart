@@ -15,9 +15,6 @@ class AppLocalizationsMk extends AppLocalizations {
   String get language => 'Јазик';
 
   @override
-  String get languageChanged => 'Јазикот е променет';
-
-  @override
   String get english => 'Англиски';
 
   @override
@@ -87,6 +84,97 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get alreadyHaveAccount => 'Веќе имам профил';
+
+  @override
+  String get welcomeHeadlineTop => 'Дај ѝ на модата';
+
+  @override
+  String get welcomeHeadlineAccent => 'втор живот';
+
+  @override
+  String get getStarted => 'Започни';
+
+  @override
+  String get otherSize => 'Друга';
+
+  @override
+  String get customSizeTitle => 'Твоја големина';
+
+  @override
+  String get customSizeHint => 'пр. 38, W30 L32, Една големина';
+
+  @override
+  String get customSizeInvalid =>
+      'До 20 букви или бројки (дозволено . / - ( ))';
+
+  @override
+  String get save => 'Зачувај';
+
+  @override
+  String get remove => 'Отстрани';
+
+  @override
+  String get haveAccountQuestion => 'Веќе имаш профил?';
+
+  @override
+  String get guestPromptBody =>
+      'Креирај бесплатен профил за една минута и купувај, продавај и разговарај со другите.';
+
+  @override
+  String get guestBuyTitle => 'Најави се за да го купиш ова';
+
+  @override
+  String get guestOfferTitle => 'Најави се за да дадеш понуда';
+
+  @override
+  String get guestMessageTitle => 'Најави се за да испратиш порака';
+
+  @override
+  String get guestFavoriteTitle => 'Најави се за да зачуваш омилени';
+
+  @override
+  String get guestFollowTitle => 'Најави се за да следиш продавачи';
+
+  @override
+  String get guestReportTitle => 'Најави се за да пријавиш';
+
+  @override
+  String get guestCartTitle => 'Најави се за да ја видиш кошничката';
+
+  @override
+  String get guestActivityTitle => 'Твоите нарачки и понуди';
+
+  @override
+  String get guestActivityBody =>
+      'Најави се за да ги следиш сите твои купувања и продажби.';
+
+  @override
+  String get guestSellTitle => 'Почни да продаваш';
+
+  @override
+  String get guestSellBody =>
+      'Најави се за да ги објавиш твоите парчиња и да стигнеш до купувачи близу тебе.';
+
+  @override
+  String get guestInboxTitle => 'Твоите пораки';
+
+  @override
+  String get guestInboxBody =>
+      'Најави се за да разговараш со купувачи и продавачи.';
+
+  @override
+  String get guestProfileTitle => 'Твојот профил';
+
+  @override
+  String get guestProfileBody =>
+      'Најави се за да управуваш со твојот профил, огласи и омилени.';
+
+  @override
+  String get guestFollowingTitle => 'Следи продавачи што ги сакаш';
+
+  @override
+  String get guestFollowingBody =>
+      'Најави се за да гледаш нови огласи од луѓето што ги следиш.';
 
   @override
   String get welcomeBackTitle => 'Добредојде назад';
@@ -204,11 +292,11 @@ class AppLocalizationsMk extends AppLocalizations {
   }
 
   @override
-  String get onboardingTitle => 'Постави преференции';
+  String get onboardingTitle => 'Постави го твојот профил';
 
   @override
   String get onboardingSubtitle =>
-      'Ова ќе ни помогне да ти прикажеме порелевантни огласи.';
+      'Додај фотографија, име и град за купувачите да знаат со кого тргуваат. Сè е опционално.';
 
   @override
   String get displayNameOptional => 'Име за приказ (опционално)';
@@ -226,24 +314,12 @@ class AppLocalizationsMk extends AppLocalizations {
   String get cityCountry => 'Град, држава';
 
   @override
-  String get favoriteCategories => 'Омилени категории';
-
-  @override
-  String get yourSizes => 'Твои големини';
-
-  @override
-  String get stylesYouLove => 'Омилени стилови';
-
-  @override
   String get continueButton => 'Продолжи';
 
   @override
   String couldNotSave(Object error) {
     return 'Не можевме да зачуваме — $error';
   }
-
-  @override
-  String get toggleTheme => 'Промени тема';
 
   @override
   String get nothingHereYet => 'Сè уште нема ништо';
@@ -336,45 +412,6 @@ class AppLocalizationsMk extends AppLocalizations {
   String get size => 'Големина';
 
   @override
-  String get style => 'Стил';
-
-  @override
-  String get styleTagY2k => 'Y2K';
-
-  @override
-  String get styleTagCoquette => 'Кокетен';
-
-  @override
-  String get styleTagStreetwear => 'Уличен стил';
-
-  @override
-  String get styleTagVintage => 'Винтиџ';
-
-  @override
-  String get styleTagMinimalist => 'Минималистички';
-
-  @override
-  String get styleTagCottagecore => 'Cottagecore';
-
-  @override
-  String get styleTagGrunge => 'Гранџ';
-
-  @override
-  String get styleTagPreppy => 'Preppy';
-
-  @override
-  String get styleTagBoho => 'Бохо';
-
-  @override
-  String get styleTagAcademia => 'Academia';
-
-  @override
-  String get styleTagAthleisure => 'Спортско-лежерен';
-
-  @override
-  String get styleTagGorpcore => 'Gorpcore';
-
-  @override
   String get location => 'Локација';
 
   @override
@@ -439,9 +476,6 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get colorHint => 'пр. Розова';
-
-  @override
-  String get styleTags => 'Стил ознаки';
 
   @override
   String get status => 'Статус';
@@ -783,9 +817,6 @@ class AppLocalizationsMk extends AppLocalizations {
   }
 
   @override
-  String get imageSharingTodo => 'Споделувањето слика сè уште не е достапно.';
-
-  @override
   String imageSendFailed(Object error) {
     return 'Не можевме да ја испратиме сликата - $error';
   }
@@ -809,9 +840,6 @@ class AppLocalizationsMk extends AppLocalizations {
   String followersCount(int count) {
     return '$count следбеници';
   }
-
-  @override
-  String get shareTodo => 'Споделувањето ќе биде достапно наскоро';
 
   @override
   String startChatFailed(Object error) {
@@ -897,16 +925,10 @@ class AppLocalizationsMk extends AppLocalizations {
   String get editProfile => 'Уреди профил';
 
   @override
-  String get editProfileTodo => 'Уредувањето профил сè уште не е достапно.';
-
-  @override
   String get bio => 'Био';
 
   @override
   String get bioHint => 'Краток опис за тебе';
-
-  @override
-  String get locationAndStyle => 'Локација и стил';
 
   @override
   String get profilePhotoInfo =>
@@ -1224,9 +1246,6 @@ class AppLocalizationsMk extends AppLocalizations {
       'Новите огласи ќе се прикажат тука кога ќе бидат објавени.';
 
   @override
-  String get reportsComingSoon => 'Пријавите доаѓаат наскоро';
-
-  @override
   String get reportsComingSoonBody =>
       'Пријавите за огласи и продавачи ќе се прегледуваат тука.';
 
@@ -1313,4 +1332,135 @@ class AppLocalizationsMk extends AppLocalizations {
   String actionFailed(Object error) {
     return 'Акцијата не успеа - $error';
   }
+
+  @override
+  String get locationServicesOff =>
+      'Вклучи ја локацијата на телефонот за да го користиш ова.';
+
+  @override
+  String get locationPermissionDenied => 'Пристапот до локацијата е одбиен.';
+
+  @override
+  String get locationPermissionBlocked =>
+      'Локацијата е блокирана. Вклучи ја во Поставки за да го користиш ова.';
+
+  @override
+  String get locationCityNotFound =>
+      'Не успеавме да го пронајдеме твојот град. Внеси го рачно.';
+
+  @override
+  String get locationUnavailable =>
+      'Не успеавме да ја добиеме твојата локација. Обиди се повторно или внеси го градот.';
+
+  @override
+  String get errorGeneric => 'Нешто тргна наопаку. Обиди се повторно.';
+
+  @override
+  String get errorNoInternet =>
+      'Нема интернет конекција. Провери ја врската и обиди се повторно.';
+
+  @override
+  String get errorNotAllowed => 'Немаш дозвола за ова.';
+
+  @override
+  String get errorAlreadyExists => 'Ова веќе постои.';
+
+  @override
+  String get errorNotFound => 'Ова повеќе не е достапно.';
+
+  @override
+  String get errorInvalidData =>
+      'Некои податоци не се валидни. Провери ги и обиди се повторно.';
+
+  @override
+  String get errorTooManyAttempts =>
+      'Премногу обиди. Почекај малку и обиди се повторно.';
+
+  @override
+  String get errorEmailInUse => 'Веќе постои профил со оваа е-пошта.';
+
+  @override
+  String get errorWeakPassword => 'Избери посилна лозинка.';
+
+  @override
+  String get errorInvalidEmail => 'Внеси валидна е-пошта.';
+
+  @override
+  String get errorSessionExpired => 'Сесијата истече. Најави се повторно.';
+
+  @override
+  String get errorFileTooLarge => 'Фотографијата е преголема. Избери помала.';
+
+  @override
+  String get errorFileType =>
+      'Овој тип датотека не е поддржан. Користи JPG, PNG или WebP фотографија.';
+
+  @override
+  String shareListingText(String title, String price) {
+    return 'Погледни „$title“ за $price на Nosiva, пазарот за половна мода.';
+  }
+
+  @override
+  String get timeJustNow => 'сега';
+
+  @override
+  String timeMinutesAgo(int count) {
+    return 'пред $count мин';
+  }
+
+  @override
+  String timeHoursAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'пред $count часа',
+      one: 'пред 1 час',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeDaysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'пред $count дена',
+      one: 'пред 1 ден',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settings => 'Поставки';
+
+  @override
+  String get appearance => 'Изглед';
+
+  @override
+  String get themeAuto => 'Авто';
+
+  @override
+  String get themeLight => 'Светла';
+
+  @override
+  String get themeDark => 'Темна';
+
+  @override
+  String get themeAutoHint =>
+      'Авто ја следи светлата или темната поставка на телефонот.';
+
+  @override
+  String get sortBy => 'Подреди по';
+
+  @override
+  String get sortNewest => 'Најнови';
+
+  @override
+  String get sortPriceLow => 'Цена: од најниска';
+
+  @override
+  String get sortPriceHigh => 'Цена: од највисока';
+
+  @override
+  String get sortPopular => 'Најомилени';
 }

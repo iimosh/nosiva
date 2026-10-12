@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/supabase/supabase_providers.dart';
 import '../../data/listings_repository.dart';
 import '../../domain/listing.dart';
 import '../../domain/listing_enums.dart';
@@ -21,9 +22,13 @@ final listingDetailProvider =
 /// left, so reopening the same listing later starts a fresh instance (and
 /// records another view) — while rebuilds within a single visit (e.g. after
 /// favoriting) reuse the same cached instance and don't double-count.
+///
+/// Only signed-in visits count, so guests and bots can't inflate the numbers
+/// (the database enforces the same rule).
 final listingViewTrackerProvider =
-    FutureProvider.autoDispose.family<void, String>((ref, id) {
-  return ref.watch(listingsRepositoryProvider).incrementView(id);
+    FutureProvider.autoDispose.family<void, String>((ref, id) async {
+  if (ref.read(currentAuthUserProvider) == null) return;
+  await ref.watch(listingsRepositoryProvider).incrementView(id);
 });
 
 final sellerListingsProvider =

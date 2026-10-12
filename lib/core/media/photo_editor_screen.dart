@@ -4,6 +4,7 @@ import '../l10n/l10n_extensions.dart';
 import '../theme/app_colors.dart';
 import '../utils/snackbars.dart';
 import 'image_editing.dart';
+import '../utils/friendly_error.dart';
 
 class PhotoEditorScreen extends StatefulWidget {
   const PhotoEditorScreen({super.key, required this.image});
@@ -38,7 +39,7 @@ class _PhotoEditorScreenState extends State<PhotoEditorScreen> {
       final cropped = await cropImage(context, _image.bytes, _image.ext);
       if (cropped != null && mounted) setState(() => _image = cropped);
     } catch (e) {
-      if (mounted) context.showError(context.l10n.photoEditFailed('$e'));
+      if (mounted) context.showError(context.l10n.photoEditFailed(friendlyError(context.l10n, e)));
     } finally {
       if (mounted) setState(() => _busy = false);
     }

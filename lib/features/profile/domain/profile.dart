@@ -14,7 +14,6 @@ class Profile with _$Profile {
     @JsonKey(name: 'avatar_url') String? avatarUrl,
     String? bio,
     String? location,
-    @Default(<String>[]) @JsonKey(name: 'vibe_tags') List<String> vibeTags,
     @Default(0) @JsonKey(name: 'follower_count') int followerCount,
     @Default(0) @JsonKey(name: 'following_count') int followingCount,
     @Default(0.0) @JsonKey(name: 'rating_avg') double ratingAvg,

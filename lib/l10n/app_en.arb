@@ -2,7 +2,6 @@
   "@@locale": "en",
   "appName": "Nosiva",
   "language": "Language",
-  "languageChanged": "Language changed",
   "english": "English",
   "macedonian": "Macedonian",
   "systemDefault": "System default",
@@ -26,6 +25,34 @@
   "welcomeSubtitle": "Buy and sell second-hand clothing and accessories in one simple marketplace.",
   "createAccount": "Create account",
   "alreadyHaveAccount": "I already have an account",
+  "welcomeHeadlineTop": "Give fashion",
+  "welcomeHeadlineAccent": "a second life",
+  "getStarted": "Get started",
+  "otherSize": "Other",
+  "customSizeTitle": "Your size",
+  "customSizeHint": "e.g. 38, W30 L32, One size",
+  "customSizeInvalid": "Up to 20 letters or numbers (. / - ( ) allowed)",
+  "save": "Save",
+  "remove": "Remove",
+  "haveAccountQuestion": "Already have an account?",
+  "guestPromptBody": "Create a free account in a minute to buy, sell and chat with other members.",
+  "guestBuyTitle": "Sign in to buy this item",
+  "guestOfferTitle": "Sign in to make an offer",
+  "guestMessageTitle": "Sign in to send a message",
+  "guestFavoriteTitle": "Sign in to save favorites",
+  "guestFollowTitle": "Sign in to follow sellers",
+  "guestReportTitle": "Sign in to report",
+  "guestCartTitle": "Sign in to see your cart",
+  "guestActivityTitle": "Your orders and offers",
+  "guestActivityBody": "Sign in to keep track of everything you buy and sell.",
+  "guestSellTitle": "Start selling",
+  "guestSellBody": "Sign in to list your pieces and reach buyers near you.",
+  "guestInboxTitle": "Your messages",
+  "guestInboxBody": "Sign in to chat with buyers and sellers.",
+  "guestProfileTitle": "Your profile",
+  "guestProfileBody": "Sign in to manage your profile, listings and favorites.",
+  "guestFollowingTitle": "Follow sellers you love",
+  "guestFollowingBody": "Sign in to see new listings from people you follow.",
   "welcomeBackTitle": "Welcome back",
   "welcomeBackSubtitle": "Sign in to continue managing your listings.",
   "email": "Email",
@@ -76,16 +103,13 @@
       "error": {}
     }
   },
-  "onboardingTitle": "Set your preferences",
-  "onboardingSubtitle": "We will use this to personalize your feed.",
+  "onboardingTitle": "Set up your profile",
+  "onboardingSubtitle": "Add a photo, your name and city so buyers know who they're dealing with. Everything here is optional.",
   "displayNameOptional": "Display name (optional)",
   "displayName": "Display name",
   "displayNameHint": "What should we call you?",
   "locationOptional": "Location (optional)",
   "cityCountry": "City, Country",
-  "favoriteCategories": "Favorite categories",
-  "yourSizes": "Your sizes",
-  "stylesYouLove": "Preferred styles",
   "continueButton": "Continue",
   "couldNotSave": "Couldn’t save — {error}",
   "@couldNotSave": {
@@ -93,7 +117,6 @@
       "error": {}
     }
   },
-  "toggleTheme": "Toggle theme",
   "nothingHereYet": "Nothing here yet",
   "nothingHereYetMessage": "Be the first to publish a listing, or check again later.",
   "favorites": "Favorites",
@@ -123,19 +146,6 @@
   "conditionGood": "Good",
   "conditionFair": "Fair",
   "size": "Size",
-  "style": "Style",
-  "styleTagY2k": "Y2K",
-  "styleTagCoquette": "Coquette",
-  "styleTagStreetwear": "Streetwear",
-  "styleTagVintage": "Vintage",
-  "styleTagMinimalist": "Minimalist",
-  "styleTagCottagecore": "Cottagecore",
-  "styleTagGrunge": "Grunge",
-  "styleTagPreppy": "Preppy",
-  "styleTagBoho": "Boho",
-  "styleTagAcademia": "Academia",
-  "styleTagAthleisure": "Athleisure",
-  "styleTagGorpcore": "Gorpcore",
   "location": "Location",
   "cityOrCountry": "City or country",
   "useMyLocation": "Use my location",
@@ -158,7 +168,6 @@
   "brandHint": "e.g. Brandy Melville",
   "color": "Color",
   "colorHint": "e.g. Pink",
-  "styleTags": "Style tags",
   "status": "Status",
   "priceUsd": "Price (MKD)",
   "priceHint": "0.00",
@@ -325,7 +334,6 @@
       "error": {}
     }
   },
-  "imageSharingTodo": "Image sharing is not available yet.",
   "imageSendFailed": "Could not send image - {error}",
   "@imageSendFailed": {
     "placeholders": {
@@ -345,7 +353,6 @@
       }
     }
   },
-  "shareTodo": "Sharing is coming soon",
   "startChatFailed": "Could not start chat - {error}",
   "@startChatFailed": {
     "placeholders": {
@@ -397,10 +404,8 @@
   "pickRating": "Select a star rating",
   "listings": "Listings",
   "editProfile": "Edit profile",
-  "editProfileTodo": "Profile editing is not available yet.",
   "bio": "Bio",
   "bioHint": "Short description about you",
-  "locationAndStyle": "Location and style",
   "profilePhotoInfo": "Profile photo updates can be added later.",
   "usernameRequired": "Username is required",
   "usernameTooShort": "Username must be at least 3 characters",
@@ -541,7 +546,6 @@
   "adminAdmins": "Admins",
   "nothingToModerate": "Nothing to moderate",
   "newListingsWillShow": "New listings will show up here as they are posted.",
-  "reportsComingSoon": "Reports coming soon",
   "reportsComingSoonBody": "User reports of listings and sellers will land here for review.",
   "noUsersYet": "No users yet",
   "makeAdmin": "Make admin",
@@ -596,5 +600,70 @@
     "placeholders": {
       "error": {}
     }
-  }
+  },
+  "locationServicesOff": "Turn on location on your phone to use this.",
+  "locationPermissionDenied": "Location access was denied.",
+  "locationPermissionBlocked": "Location is blocked. Turn it on in Settings to use this.",
+  "locationCityNotFound": "We couldn't find your city. Please type it in.",
+  "locationUnavailable": "We couldn't get your location. Try again or type your city.",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "errorNoInternet": "No internet connection. Check your connection and try again.",
+  "errorNotAllowed": "You don't have permission to do that.",
+  "errorAlreadyExists": "That already exists.",
+  "errorNotFound": "This is no longer available.",
+  "errorInvalidData": "Some details aren't valid. Please check them and try again.",
+  "errorTooManyAttempts": "Too many attempts. Please wait a moment and try again.",
+  "errorEmailInUse": "An account with this email already exists.",
+  "errorWeakPassword": "Please choose a stronger password.",
+  "errorInvalidEmail": "Please enter a valid email address.",
+  "errorSessionExpired": "Your session has expired. Please sign in again.",
+  "errorFileTooLarge": "This photo is too large. Please choose a smaller one.",
+  "errorFileType": "This file type isn't supported. Please use a JPG, PNG or WebP photo.",
+  "shareListingText": "Check out \"{title}\" for {price} on Nosiva, the second-hand fashion marketplace.",
+  "@shareListingText": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "timeJustNow": "just now",
+  "timeMinutesAgo": "{count}m ago",
+  "@timeMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeHoursAgo": "{count}h ago",
+  "@timeHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeDaysAgo": "{count}d ago",
+  "@timeDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settings": "Settings",
+  "appearance": "Appearance",
+  "themeAuto": "Auto",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeAutoHint": "Auto follows your phone's light or dark setting.",
+  "sortBy": "Sort by",
+  "sortNewest": "Newest",
+  "sortPriceLow": "Price: low to high",
+  "sortPriceHigh": "Price: high to low",
+  "sortPopular": "Most liked"
 }

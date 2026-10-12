@@ -23,10 +23,14 @@ import '../../profile/presentation/profile_screen.dart';
 import '../data/listings_repository.dart';
 import '../domain/listing.dart';
 import '../domain/listing_enums.dart';
+import 'widgets/size_picker.dart';
 import '../domain/listing_image.dart';
 import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
 import 'controllers/listing_detail_provider.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/widgets/shimmer_box.dart';
 
 class EditListingScreen extends ConsumerWidget {
   const EditListingScreen({super.key, required this.listingId});
@@ -40,11 +44,9 @@ class EditListingScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.editListing)),
       body: listingAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.hotPink),
-        ),
+        loading: () => const FormSkeleton(header: FormSkeletonHeader.photos),
         error: (e, _) => ErrorStateView(
-          message: '$e',
+          message: friendlyError(context.l10n, e),
           onRetry: () => ref.invalidate(listingDetailProvider(listingId)),
         ),
         data: (listing) {
@@ -88,7 +90,6 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
   late ItemCondition _condition;
   late ListingStatus _status;
   String? _size;
-  late final Set<String> _styleTags;
   bool _saving = false;
 
   final _picker = ImagePicker();
@@ -110,7 +111,6 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
     _condition = listing.conditionEnum;
     _status = listing.statusEnum;
     _size = listing.size;
-    _styleTags = {...listing.styleTags};
     _photos = ([...listing.images]
           ..sort((a, b) => a.position.compareTo(b.position)))
         .map<_Photo>(_ExistingPhoto.new)
@@ -151,7 +151,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
       }
       if (mounted) setState(() {});
     } catch (e) {
-      if (mounted) context.showError(context.l10n.photoAddFailed('$e'));
+      if (mounted) context.showError(context.l10n.photoAddFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -265,7 +265,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
       // detected as removed on save and deleted).
       setState(() => _photos[i] = _NewPhoto(edited));
     } catch (e) {
-      if (mounted) context.showError(context.l10n.photoEditFailed('$e'));
+      if (mounted) context.showError(context.l10n.photoEditFailed(friendlyError(context.l10n, e)));
     }
   }
 
@@ -311,7 +311,6 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
           'color': _nullable(_color.text),
           'location': _nullable(_location.text),
           'size': _size,
-          'style_tags': _styleTags.toList(),
         },
       );
 
@@ -352,7 +351,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
         context.pop();
       }
     } catch (e) {
-      if (mounted) context.showError(context.l10n.updateListingFailed('$e'));
+      if (mounted) context.showError(context.l10n.updateListingFailed(friendlyError(context.l10n, e)));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -367,6 +366,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Form(
           key: _formKey,
@@ -405,7 +405,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                 children: [
                   for (final c in ListingCategory.values)
                     NosivaChip(
-                      label: c.localizedWithEmoji(context.l10n),
+                      label: c.localizedLabel(context.l10n),
                       selected: _category == c,
                       onTap: () => setState(() => _category = c),
                     ),
@@ -441,18 +441,10 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
               ),
               const SizedBox(height: AppSpacing.md),
               _Label(context.l10n.size),
-              Wrap(
-                spacing: AppSpacing.xs,
-                runSpacing: AppSpacing.xs,
-                children: [
-                  for (final s in kSizes)
-                    NosivaChip(
-                      label: s,
-                      selected: _size == s,
-                      onTap: () =>
-                          setState(() => _size = _size == s ? null : s),
-                    ),
-                ],
+              // A size saved before (e.g. "8") shows as the selected "Other".
+              SizePicker(
+                value: _size,
+                onChanged: (size) => setState(() => _size = size),
               ),
               const SizedBox(height: AppSpacing.md),
               Row(
@@ -473,23 +465,6 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                       controller: _color,
                       maxLength: 40,
                     ),
-                  ),
-                ],
-              ),
-              _Label(context.l10n.styleTags),
-              Wrap(
-                spacing: AppSpacing.xs,
-                runSpacing: AppSpacing.xs,
-                children: [
-                  for (final tag in kStyleTags)
-                    NosivaChip(
-                      label: localizedStyleTag(tag, context.l10n),
-                      selected: _styleTags.contains(tag),
-                      onTap: () => setState(() {
-                        _styleTags.contains(tag)
-                            ? _styleTags.remove(tag)
-                            : _styleTags.add(tag);
-                      }),
                   ),
                 ],
               ),
@@ -516,7 +491,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
               NosivaButton(
                 label: context.l10n.saveChanges,
                 loading: _saving,
-                variant: NosivaButtonVariant.gradient,
+                variant: NosivaButtonVariant.primary,
                 onPressed: _save,
               ),
               const SizedBox(height: AppSpacing.md),
@@ -577,14 +552,15 @@ class _EditPhotoStrip extends StatelessWidget {
                 child: switch (photos[i]) {
                   _ExistingPhoto(:final image) => CachedNetworkImage(
                       imageUrl: image.imageUrl,
+                      memCacheWidth: 320,
                       height: 100,
                       width: 100,
                       fit: BoxFit.cover,
                       placeholder: (_, __) =>
-                          const ColoredBox(color: AppColors.blush),
-                      errorWidget: (_, __, ___) => const ColoredBox(
-                        color: AppColors.blush,
-                        child: Icon(Icons.broken_image_outlined),
+                          ColoredBox(color: context.palette.placeholder),
+                      errorWidget: (_, __, ___) => ColoredBox(
+                        color: context.palette.placeholder,
+                        child: const Icon(Icons.broken_image_outlined),
                       ),
                     ),
                   _NewPhoto(:final picked) => Image.memory(picked.bytes,
@@ -638,7 +614,7 @@ class _AddTile extends StatelessWidget {
         height: 100,
         width: 100,
         decoration: BoxDecoration(
-          color: AppColors.blush,
+          color: context.palette.placeholder,
           borderRadius: AppRadii.field,
           border: Border.all(color: AppColors.hotPinkSoft),
         ),
@@ -667,7 +643,7 @@ class _SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Text(
         text,
-        style: theme.textTheme.titleLarge?.copyWith(color: AppColors.berry),
+        style: theme.textTheme.titleLarge?.copyWith(color: context.palette.emphasis),
       ),
     );
   }

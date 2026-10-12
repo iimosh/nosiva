@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/snackbars.dart';
 import '../data/account_repository.dart';
+import '../../../core/utils/friendly_error.dart';
 
 /// Confirms and performs permanent account deletion. The user must type
 /// DELETE so it can't be triggered by an accidental tap.
@@ -38,18 +41,21 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
 
   Future<void> _delete() async {
     setState(() => _busy = true);
+    final router = GoRouter.of(context);
     try {
       await ref.read(accountRepositoryProvider).deleteAccount();
       if (!mounted) return;
       context.showSuccess(context.l10n.accountDeleted);
       Navigator.of(context).pop();
+      // Carry on browsing as a guest.
+      router.go(AppRoutes.home);
     } on OpenOrdersException {
       if (!mounted) return;
       context.showError(context.l10n.deleteAccountOpenOrders);
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
-      context.showError(context.l10n.deleteAccountFailed('$e'));
+      context.showError(context.l10n.deleteAccountFailed(friendlyError(context.l10n, e)));
       setState(() => _busy = false);
     }
   }

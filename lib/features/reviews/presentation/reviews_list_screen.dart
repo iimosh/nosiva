@@ -12,6 +12,10 @@ import '../../profile/presentation/user_profile_screen.dart';
 import '../data/reviews_repository.dart';
 import '../domain/review.dart';
 import 'widgets/star_rating.dart';
+import '../../../core/utils/friendly_error.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/widgets/shimmer_box.dart';
+import '../../../core/widgets/pull_to_refresh.dart';
 
 class ReviewsListScreen extends ConsumerWidget {
   const ReviewsListScreen({super.key, required this.userId});
@@ -26,31 +30,37 @@ class ReviewsListScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(profile?.nameOrHandle ?? context.l10n.reviews),
       ),
-      body: reviews.when(
-        loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.hotPink)),
-        error: (e, _) => ErrorStateView(
-          message: '$e',
-          onRetry: () => ref.invalidate(userReviewsProvider(userId)),
-        ),
-        data: (list) {
-          if (list.isEmpty) {
-            return EmptyStateView(
-              icon: Icons.star_outline_rounded,
-              title: context.l10n.noReviewsYet,
-              message: context.l10n.noReviewsYetMessage,
+      body: PullToRefresh(
+        onRefresh: () => Future.wait([
+          ref.refresh(userReviewsProvider(userId).future),
+          ref.refresh(userProfileProvider(userId).future),
+        ]),
+        child: reviews.when(
+          loading: () => const ListSkeleton(lines: 3),
+          error: (e, _) => ErrorStateView(
+            message: friendlyError(context.l10n, e),
+            onRetry: () => ref.invalidate(userReviewsProvider(userId)),
+          ),
+          data: (list) {
+            if (list.isEmpty) {
+              return EmptyStateView(
+                icon: Icons.star_outline_rounded,
+                title: context.l10n.noReviewsYet,
+                message: context.l10n.noReviewsYetMessage,
+              );
+            }
+            return ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(AppSpacing.md),
+              itemCount: list.length + 1,
+              separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+              itemBuilder: (_, i) {
+                if (i == 0) return _RatingSummary(profile: profile);
+                return _ReviewCard(review: list[i - 1]);
+              },
             );
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            itemCount: list.length + 1,
-            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
-            itemBuilder: (_, i) {
-              if (i == 0) return _RatingSummary(profile: profile);
-              return _ReviewCard(review: list[i - 1]);
-            },
-          );
-        },
+          },
+        ),
       ),
     );
   }
@@ -109,7 +119,7 @@ class _ReviewCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundColor: AppColors.blush,
+                backgroundColor: context.palette.placeholder,
                 backgroundImage: reviewer?.avatarUrl != null
                     ? CachedNetworkImageProvider(reviewer!.avatarUrl!)
                     : null,
@@ -128,7 +138,7 @@ class _ReviewCard extends StatelessWidget {
                 ),
               ),
               if (review.createdAt != null)
-                Text(Formatters.timeAgo(review.createdAt!),
+                Text(Formatters.timeAgo(review.createdAt!, context.l10n),
                     style: theme.textTheme.bodySmall),
             ],
           ),

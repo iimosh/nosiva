@@ -8,6 +8,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
 import '../data/auth_repository.dart' show authRepositoryProvider;
+import '../../../core/utils/friendly_error.dart';
 
 /// Shown when the app opens via a password-reset email link (see
 /// passwordRecoveryProvider). Once the password is updated, the router
@@ -41,7 +42,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       await ref.read(authRepositoryProvider).updatePassword(_password.text);
       if (mounted) context.showSuccess(context.l10n.passwordUpdated);
     } catch (e) {
-      if (mounted) context.showError(context.l10n.passwordUpdateFailed('$e'));
+      if (mounted) context.showError(context.l10n.passwordUpdateFailed(friendlyError(context.l10n, e)));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -54,6 +55,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Form(
             key: _formKey,
@@ -97,7 +99,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                 NosivaButton(
                   label: context.l10n.updatePasswordCta,
                   loading: _submitting,
-                  variant: NosivaButtonVariant.gradient,
+                  variant: NosivaButtonVariant.primary,
                   onPressed: _submit,
                 ),
               ],

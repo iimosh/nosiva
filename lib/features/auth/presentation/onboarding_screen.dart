@@ -5,16 +5,14 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/nosiva_button.dart';
-import '../../../core/widgets/nosiva_chip.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
-import '../../listings/domain/listing_enums.dart';
-import '../../listings/domain/listing_l10n.dart';
 import '../../profile/data/profile_repository.dart';
 import '../../profile/presentation/avatar_actions.dart';
 import '../../profile/presentation/current_profile_provider.dart';
+import '../../../core/utils/friendly_error.dart';
 
-/// First-run setup: pick favorite categories, sizes & styles. These seed the
-/// home feed and become the user's "vibe tags".
+/// First-run setup: profile photo, display name and location — all optional,
+/// so new members get to the feed quickly.
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -25,9 +23,6 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _displayName = TextEditingController();
   final _location = TextEditingController();
-  final _categories = <ListingCategory>{};
-  final _sizes = <String>{};
-  final _styles = <String>{};
   bool _saving = false;
 
   @override
@@ -52,12 +47,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 location: _location.text.trim().isEmpty
                     ? null
                     : _location.text.trim(),
-                vibeTags: _styles.toList(),
               );
       ref.read(currentProfileProvider.notifier).set(updated);
       // Router redirect picks up `onboarded == true` and lands on home.
     } catch (e) {
-      if (mounted) context.showError(context.l10n.couldNotSave('$e'));
+      if (mounted) context.showError(context.l10n.couldNotSave(friendlyError(context.l10n, e)));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -70,6 +64,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,56 +111,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 prefixIcon: Icons.place_outlined,
               ),
               const SizedBox(height: AppSpacing.xl),
-              _Section(
-                title: context.l10n.favoriteCategories,
-                child: Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    for (final c in ListingCategory.values)
-                      NosivaChip(
-                        label: c.localizedWithEmoji(context.l10n),
-                        selected: _categories.contains(c),
-                        onTap: () => setState(() => _categories.toggle(c)),
-                      ),
-                  ],
-                ),
-              ),
-              _Section(
-                title: context.l10n.yourSizes,
-                child: Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    for (final s in kSizes)
-                      NosivaChip(
-                        label: s,
-                        selected: _sizes.contains(s),
-                        onTap: () => setState(() => _sizes.toggle(s)),
-                      ),
-                  ],
-                ),
-              ),
-              _Section(
-                title: context.l10n.stylesYouLove,
-                child: Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    for (final tag in kStyleTags)
-                      NosivaChip(
-                        label: localizedStyleTag(tag, context.l10n),
-                        selected: _styles.contains(tag),
-                        onTap: () => setState(() => _styles.toggle(tag)),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
               NosivaButton(
                 label: context.l10n.continueButton,
                 loading: _saving,
-                variant: NosivaButtonVariant.gradient,
+                variant: NosivaButtonVariant.primary,
                 onPressed: _finish,
               ),
               const SizedBox(height: AppSpacing.md),
@@ -175,27 +124,4 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       ),
     );
   }
-}
-
-class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.child});
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: AppSpacing.sm),
-        child,
-        const SizedBox(height: AppSpacing.lg),
-      ],
-    );
-  }
-}
-
-extension<T> on Set<T> {
-  void toggle(T value) => contains(value) ? remove(value) : add(value);
 }
