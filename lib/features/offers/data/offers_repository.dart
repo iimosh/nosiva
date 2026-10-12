@@ -18,6 +18,9 @@ class OffersRepository {
     required String sellerId,
     required num amount,
     String? message,
+    // Copied onto the order if the seller accepts (cash on delivery).
+    String? shippingAddress,
+    String? buyerPhone,
   }) async {
     final uid = _client.auth.currentUser!.id;
     final data = await _client
@@ -28,6 +31,8 @@ class OffersRepository {
           'seller_id': sellerId,
           'amount': amount,
           'message': message,
+          'shipping_address': shippingAddress,
+          'buyer_phone': buyerPhone,
         })
         .select(_select)
         .single();

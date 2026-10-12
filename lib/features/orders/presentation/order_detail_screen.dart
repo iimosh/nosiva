@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
@@ -254,6 +255,21 @@ class _Body extends ConsumerWidget {
           label: context.l10n.shippingAddress,
           value: order.shippingAddress ?? '—',
         ),
+        if (order.buyerPhone != null)
+          _InfoRow(
+            icon: Icons.phone_outlined,
+            label: isSeller ? context.l10n.buyerPhone : context.l10n.phoneNumber,
+            value: order.buyerPhone!,
+            // The seller can ring the buyer straight away to arrange delivery.
+            action: isSeller
+                ? IconButton.filledTonal(
+                    tooltip: context.l10n.call,
+                    icon: const Icon(Icons.call_outlined, size: 20),
+                    onPressed: () => launchUrl(
+                        Uri(scheme: 'tel', path: order.buyerPhone!)),
+                  )
+                : null,
+          ),
         if (order.createdAt != null)
           _InfoRow(
             icon: Icons.event_outlined,
@@ -419,10 +435,11 @@ class _StepDot extends StatelessWidget {
 
 class _InfoRow extends StatelessWidget {
   const _InfoRow(
-      {required this.icon, required this.label, required this.value});
+      {required this.icon, required this.label, required this.value, this.action});
   final IconData icon;
   final String label;
   final String value;
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -442,6 +459,10 @@ class _InfoRow extends StatelessWidget {
                 style: theme.textTheme.bodyMedium
                     ?.copyWith(fontWeight: FontWeight.w600)),
           ),
+          if (action != null) ...[
+            const SizedBox(width: AppSpacing.xs),
+            action!,
+          ],
         ],
       ),
     );

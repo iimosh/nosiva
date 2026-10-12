@@ -22,9 +22,12 @@ import '../../cart/presentation/cart_controller.dart';
 import '../../favorites/presentation/favorites_controller.dart';
 import '../../messaging/data/messaging_repository.dart';
 import '../../offers/data/offers_repository.dart';
+import '../../orders/data/delivery_details.dart';
 import '../../profile/presentation/current_profile_provider.dart';
+import '../../profile/presentation/profile_screen.dart' show myListingsProvider;
 import '../../profile/presentation/widgets/follow_button.dart';
 import '../../safety/presentation/report_sheet.dart';
+import '../data/listings_repository.dart';
 import '../domain/listing.dart';
 import '../domain/listing_enums.dart';
 import '../domain/listing_l10n.dart';
@@ -710,6 +713,28 @@ class _ActionBar extends ConsumerWidget {
                       },
                     ),
                   ),
+                  // Quick status change without opening the edit form.
+                  if (listing.statusEnum == ListingStatus.active) ...[
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: NosivaButton(
+                        label: context.l10n.markSold,
+                        icon: Icons.sell_outlined,
+                        onPressed: () => _setStatus(context, ref, ListingStatus.sold),
+                      ),
+                    ),
+                  ] else if (listing.isSold) ...[
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: NosivaButton(
+                        label: context.l10n.markAvailable,
+                        icon: Icons.replay_rounded,
+                        variant: NosivaButtonVariant.secondary,
+                        onPressed: () =>
+                            _setStatus(context, ref, ListingStatus.active),
+                      ),
+                    ),
+                  ],
                 ],
               )
             : listing.isSold
@@ -760,6 +785,47 @@ class _ActionBar extends ConsumerWidget {
     );
   }
 
+  /// The seller marks their own listing sold (after confirming) or available
+  /// again. The database only accepts this from the listing's seller.
+  Future<void> _setStatus(
+      BuildContext context, WidgetRef ref, ListingStatus status) async {
+    final l10n = context.l10n;
+    if (status == ListingStatus.sold) {
+      final sure = await showDialog<bool>(
+        context: context,
+        builder: (dialog) => AlertDialog(
+          title: Text(l10n.markSoldTitle),
+          content: Text(l10n.markSoldBody),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialog, false),
+              child: Text(l10n.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(dialog, true),
+              child: Text(l10n.markSold),
+            ),
+          ],
+        ),
+      );
+      if (sure != true) return;
+    }
+    try {
+      await ref.read(listingsRepositoryProvider).setStatus(listing.id, status);
+      HapticFeedback.mediumImpact();
+      ref.invalidate(listingDetailProvider(listing.id));
+      ref.invalidate(sellerListingsProvider(listing.sellerId));
+      ref.invalidate(myListingsProvider);
+      ref.invalidate(feedControllerProvider);
+      if (context.mounted) {
+        context.showSuccess(
+            status == ListingStatus.sold ? l10n.markedSold : l10n.markedAvailable);
+      }
+    } catch (e) {
+      if (context.mounted) context.showError(friendlyError(l10n, e));
+    }
+  }
+
   Future<void> _message(BuildContext context, WidgetRef ref) async {
     if (!ensureSignedIn(context, ref, GuestAction.message)) return;
     try {
@@ -788,18 +854,23 @@ class _ActionBar extends ConsumerWidget {
 
   Future<void> _makeOffer(BuildContext context, WidgetRef ref) async {
     if (!ensureSignedIn(context, ref, GuestAction.offer)) return;
-    final amount = await showModalBottomSheet<num>(
+    final offer = await showModalBottomSheet<_OfferDetails>(
       context: context,
       isScrollControlled: true,
       builder: (_) => _OfferSheet(listing: listing),
     );
-    if (amount == null) return;
+    if (offer == null) return;
     try {
       await ref.read(offersRepositoryProvider).createOffer(
             listingId: listing.id,
             sellerId: listing.sellerId,
-            amount: amount,
+            amount: offer.amount,
+            shippingAddress: offer.address,
+            buyerPhone: offer.phone,
           );
+      await ref
+          .read(deliveryDetailsProvider)
+          .save(address: offer.address, phone: offer.phone);
       ref.invalidate(buyerOffersProvider);
       ref.invalidate(sellerOffersProvider);
       HapticFeedback.mediumImpact();
@@ -812,63 +883,114 @@ class _ActionBar extends ConsumerWidget {
   }
 }
 
-class _OfferSheet extends StatefulWidget {
+/// What the buyer fills in for an offer. The address and phone go onto the
+/// order if the seller accepts — it's cash on delivery, so the courier needs
+/// them.
+typedef _OfferDetails = ({num amount, String address, String phone});
+
+class _OfferSheet extends ConsumerStatefulWidget {
   const _OfferSheet({required this.listing});
   final Listing listing;
 
   @override
-  State<_OfferSheet> createState() => _OfferSheetState();
+  ConsumerState<_OfferSheet> createState() => _OfferSheetState();
 }
 
-class _OfferSheetState extends State<_OfferSheet> {
+class _OfferSheetState extends ConsumerState<_OfferSheet> {
   final _formKey = GlobalKey<FormState>();
-  final _controller = TextEditingController();
+  final _amount = TextEditingController();
+  final _address = TextEditingController();
+  final _phone = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-filled from the last order or offer.
+    final saved = ref.read(deliveryDetailsProvider);
+    _address.text = saved.address;
+    _phone.text = saved.phone;
+  }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _amount.dispose();
+    _address.dispose();
+    _phone.dispose();
     super.dispose();
+  }
+
+  void _send() {
+    if (!_formKey.currentState!.validate()) return;
+    Navigator.of(context).pop((
+      amount: double.parse(_amount.text.trim()),
+      address: _address.text.trim(),
+      phone: Validators.normalizePhone(_phone.text)!,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     return Padding(
       padding: EdgeInsets.only(
         left: AppSpacing.lg,
         right: AppSpacing.lg,
-        top: AppSpacing.lg,
         bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
       ),
       child: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(context.l10n.makeOfferTitle, style: theme.textTheme.headlineSmall),
-            const SizedBox(height: AppSpacing.xs),
-            Text(context.l10n.listedAt(Formatters.price(widget.listing.price)),
-                style: theme.textTheme.bodyMedium),
-            const SizedBox(height: AppSpacing.md),
-            NosivaTextField(
-              label: context.l10n.yourOffer,
-              hint: context.l10n.priceHint,
-              controller: _controller,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              prefixIcon: Icons.payments_outlined,
-              validator: Validators.price,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            NosivaButton(
-              label: context.l10n.sendOffer,
-              variant: NosivaButtonVariant.primary,
-              onPressed: () {
-                if (!_formKey.currentState!.validate()) return;
-                Navigator.of(context).pop(double.parse(_controller.text.trim()));
-              },
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.makeOfferTitle, style: theme.textTheme.headlineSmall),
+              const SizedBox(height: AppSpacing.xs),
+              Text(l10n.listedAt(Formatters.price(widget.listing.price)),
+                  style: theme.textTheme.bodyMedium),
+              const SizedBox(height: AppSpacing.md),
+              NosivaTextField(
+                label: l10n.yourOffer,
+                hint: l10n.priceHint,
+                controller: _amount,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                prefixIcon: Icons.payments_outlined,
+                validator: (v) => Validators.price(v, l10n),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              NosivaTextField(
+                label: l10n.shippingAddress,
+                hint: l10n.shippingAddressHint,
+                controller: _address,
+                maxLines: 2,
+                maxLength: 300,
+                prefixIcon: Icons.local_shipping_outlined,
+                validator: (v) => (v?.trim().isEmpty ?? true)
+                    ? l10n.addShippingAddress
+                    : null,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              NosivaTextField(
+                label: l10n.phoneNumber,
+                hint: l10n.phoneNumberHint,
+                controller: _phone,
+                keyboardType: TextInputType.phone,
+                maxLength: 20,
+                prefixIcon: Icons.phone_outlined,
+                validator: (v) {
+                  if (v?.trim().isEmpty ?? true) return l10n.addPhoneNumber;
+                  return Validators.normalizePhone(v) == null
+                      ? l10n.invalidPhoneNumber
+                      : null;
+                },
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(l10n.offerDeliveryNote, style: theme.textTheme.bodySmall),
+              const SizedBox(height: AppSpacing.lg),
+              NosivaButton(label: l10n.sendOffer, onPressed: _send),
+            ],
+          ),
         ),
       ),
     );

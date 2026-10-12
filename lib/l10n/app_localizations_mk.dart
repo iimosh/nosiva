@@ -1438,4 +1438,84 @@ class AppLocalizationsMk extends AppLocalizations {
   @override
   String get cashOnDeliveryBody =>
       'Нема плаќање во апликацијата. Го плаќаш курирот во готово кога ќе пристигне пратката.';
+
+  @override
+  String get markSold => 'Означи како продадено';
+
+  @override
+  String get markAvailable => 'Означи како достапно';
+
+  @override
+  String get markSoldTitle => 'Да се означи како продадено?';
+
+  @override
+  String get markSoldBody =>
+      'Купувачите ќе го гледаат како продадено и нема да можат да го нарачаат. Секогаш можеш повторно да го направиш достапно.';
+
+  @override
+  String get markedSold => 'Означено како продадено';
+
+  @override
+  String get markedAvailable => 'Повторно достапно';
+
+  @override
+  String get recentSearches => 'Последни пребарувања';
+
+  @override
+  String get clearAll => 'Избриши сè';
+
+  @override
+  String get phoneNumber => 'Телефонски број';
+
+  @override
+  String get phoneNumberHint => '07X XXX XXX';
+
+  @override
+  String get addPhoneNumber => 'Внеси телефонски број за курирот';
+
+  @override
+  String get invalidPhoneNumber => 'Внеси валиден телефонски број';
+
+  @override
+  String get phoneOnlyForSeller =>
+      'Бројот го гледа само продавачот, за да ја договори доставата.';
+
+  @override
+  String get buyerPhone => 'Телефон на купувачот';
+
+  @override
+  String get call => 'Повикај';
+
+  @override
+  String get validationEmailRequired => 'Е-поштата е задолжителна';
+
+  @override
+  String get validationEmailInvalid => 'Внеси валидна е-пошта';
+
+  @override
+  String get validationPasswordRequired => 'Лозинката е задолжителна';
+
+  @override
+  String get validationPasswordTooShort => 'Користи најмалку 8 знаци';
+
+  @override
+  String get validationPriceRequired => 'Цената е задолжителна';
+
+  @override
+  String get validationNumbersOnly => 'Внеси само бројки';
+
+  @override
+  String get validationPriceTooLow => 'Цената мора да биде поголема од 0';
+
+  @override
+  String get validationPriceTooHigh => 'Внеси пониска цена';
+
+  @override
+  String validationTooShort(int min) {
+    return 'Користи најмалку $min знаци';
+  }
+
+  @override
+  String get offerDeliveryNote =>
+      'Ако продавачот прифати, ќе ги добие твојата адреса и телефон за да го испрати артиклот. Го плаќаш курирот во готово при достава.';
 }

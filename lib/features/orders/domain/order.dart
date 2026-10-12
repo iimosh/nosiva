@@ -19,6 +19,7 @@ class Order with _$Order {
     required num total,
     @Default('pending') String status,
     @JsonKey(name: 'shipping_address') String? shippingAddress,
+    @JsonKey(name: 'buyer_phone') String? buyerPhone,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
     @JsonKey(name: 'activity_at') DateTime? activityAt,

@@ -106,7 +106,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.alternate_email_rounded,
-                  validator: Validators.email,
+                  validator: (v) => Validators.email(v, context.l10n),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 NosivaTextField(
@@ -115,7 +115,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   controller: _password,
                   obscureText: _obscure,
                   prefixIcon: Icons.lock_outline_rounded,
-                  validator: Validators.password,
+                  validator: (v) => Validators.password(v, context.l10n),
                   suffixIcon: IconButton(
                     icon: Icon(_obscure
                         ? Icons.visibility_off_outlined

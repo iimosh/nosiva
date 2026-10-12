@@ -653,5 +653,37 @@
   "sortPriceHigh": "Price: high to low",
   "sortPopular": "Most liked",
   "cashOnDelivery": "Pay cash on delivery",
-  "cashOnDeliveryBody": "No payment in the app. You pay the courier in cash when your item arrives."
+  "cashOnDeliveryBody": "No payment in the app. You pay the courier in cash when your item arrives.",
+  "markSold": "Mark as sold",
+  "markAvailable": "Mark as available",
+  "markSoldTitle": "Mark as sold?",
+  "markSoldBody": "Buyers will see it as sold and won't be able to order it. You can make it available again anytime.",
+  "markedSold": "Marked as sold",
+  "markedAvailable": "Available again",
+  "recentSearches": "Recent searches",
+  "clearAll": "Clear all",
+  "phoneNumber": "Phone number",
+  "phoneNumberHint": "07X XXX XXX",
+  "addPhoneNumber": "Add a phone number for the courier",
+  "invalidPhoneNumber": "Enter a valid phone number",
+  "phoneOnlyForSeller": "Only the seller sees your number, to arrange delivery.",
+  "buyerPhone": "Buyer's phone",
+  "call": "Call",
+  "validationEmailRequired": "Email is required",
+  "validationEmailInvalid": "Enter a valid email address",
+  "validationPasswordRequired": "Password is required",
+  "validationPasswordTooShort": "Use at least 8 characters",
+  "validationPriceRequired": "Price is required",
+  "validationNumbersOnly": "Enter numbers only",
+  "validationPriceTooLow": "Price must be more than 0",
+  "validationPriceTooHigh": "Enter a lower price",
+  "validationTooShort": "Use at least {min} characters",
+  "@validationTooShort": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "offerDeliveryNote": "If the seller accepts, they'll get your address and phone to send the item. You pay the courier in cash on delivery."
 }
