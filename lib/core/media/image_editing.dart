@@ -81,6 +81,12 @@ Future<PickedImage?> cropAvatar(
   final cropped = await ImageCropper().cropImage(
     sourcePath: tmp.path,
     aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+    // Avatars are shown at most ~120px wide; 512px stays sharp on any screen
+    // while keeping the file around 50 KB instead of several MB.
+    maxWidth: 512,
+    maxHeight: 512,
+    compressFormat: ImageCompressFormat.jpg,
+    compressQuality: 85,
     uiSettings: [
       AndroidUiSettings(
         toolbarTitle: title,

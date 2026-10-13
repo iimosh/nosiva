@@ -1501,4 +1501,133 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get offerDeliveryNote =>
       'If the seller accepts, they\'ll get your address and phone to send the item. You pay the courier in cash on delivery.';
+
+  @override
+  String get accountSection => 'Account';
+
+  @override
+  String get changePassword => 'Change password';
+
+  @override
+  String get changePasswordSubtitle =>
+      'Enter your current password, then choose a new one. Any other phone or computer signed in to your account will be signed out.';
+
+  @override
+  String get currentPassword => 'Current password';
+
+  @override
+  String get changeEmail => 'Change email';
+
+  @override
+  String changeEmailSubtitle(String email) {
+    return 'You sign in with $email. Enter the new address and your password to confirm it\'s you.';
+  }
+
+  @override
+  String get newEmail => 'New email';
+
+  @override
+  String get errorWrongPassword => 'Your current password is incorrect.';
+
+  @override
+  String get errorSamePassword =>
+      'The new password must be different from the current one.';
+
+  @override
+  String get errorSameEmail => 'That\'s already your email.';
+
+  @override
+  String get emailChangePending =>
+      'Almost done — open the confirmation link we emailed you to finish the change. Check both your old and new inbox.';
+
+  @override
+  String get emailChanged => 'Your email has been changed.';
+
+  @override
+  String get offlineBanner => 'No internet connection';
+
+  @override
+  String get backOnline => 'Back online';
+
+  @override
+  String get aboutSection => 'About';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get termsOfUse => 'Terms of use';
+
+  @override
+  String get contactUs => 'Contact us';
+
+  @override
+  String supportEmailCopied(String email) {
+    return 'No email app found. Our address was copied: $email';
+  }
+
+  @override
+  String appVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String legalLastUpdated(String date) {
+    return 'Last updated: $date';
+  }
+
+  @override
+  String get legalConsentStart => 'By continuing, you agree to the ';
+
+  @override
+  String get legalConsentMiddle => ' and the ';
+
+  @override
+  String get legalConsentEnd => '.';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get removeFromCart => 'Remove from cart';
+
+  @override
+  String get clearSearch => 'Clear search';
+
+  @override
+  String get removeRecentSearch => 'Remove from recent searches';
+
+  @override
+  String get messageSeller => 'Message the seller';
+
+  @override
+  String get sendPhoto => 'Send a photo';
+
+  @override
+  String get sendMessage => 'Send message';
+
+  @override
+  String get shareListing => 'Share listing';
+
+  @override
+  String get addToFavorites => 'Add to favorites';
+
+  @override
+  String get removeFromFavorites => 'Remove from favorites';
+
+  @override
+  String ratingStars(int count) {
+    return '$count out of 5 stars';
+  }
+
+  @override
+  String newItemsCount(int count) {
+    return '$count new';
+  }
 }

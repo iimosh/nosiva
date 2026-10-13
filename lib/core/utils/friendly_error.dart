@@ -26,6 +26,7 @@ String friendlyError(AppLocalizations l10n, Object? error) {
       return l10n.errorEmailInUse;
     }
     if (code == 'weak_password') return l10n.errorWeakPassword;
+    if (code == 'same_password') return l10n.errorSamePassword;
     if (code == 'email_address_invalid') return l10n.errorInvalidEmail;
     if (code.startsWith('over_') || error.statusCode == '429') {
       return l10n.errorTooManyAttempts;

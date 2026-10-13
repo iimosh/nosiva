@@ -78,6 +78,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   prefixIcon: Icons.lock_outline_rounded,
                   validator: (v) => Validators.password(v, context.l10n),
                   suffixIcon: IconButton(
+                    tooltip: _obscure
+                        ? context.l10n.showPassword
+                        : context.l10n.hidePassword,
                     icon: Icon(_obscure
                         ? Icons.visibility_off_outlined
                         : Icons.visibility_outlined),

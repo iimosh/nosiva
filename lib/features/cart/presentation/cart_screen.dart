@@ -161,6 +161,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           maxLines: 1, overflow: TextOverflow.ellipsis),
                       subtitle: Text(Formatters.price(item.price)),
                       trailing: IconButton(
+                        tooltip: context.l10n.removeFromCart,
                         icon: const Icon(Icons.close_rounded),
                         onPressed: () => ref
                             .read(cartControllerProvider.notifier)

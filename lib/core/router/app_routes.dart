@@ -7,6 +7,8 @@ abstract final class AppRoutes {
   static const forgotPassword = '/forgot-password';
   static const resetPassword = '/reset-password';
   static const onboarding = '/onboarding';
+  static const privacy = '/privacy';
+  static const terms = '/terms';
 
   // Bottom-nav shell branches
   static const home = '/home';
@@ -23,6 +25,8 @@ abstract final class AppRoutes {
   static const cart = '/cart';
   static const orderDetail = '/order'; // /order/:id
   static const editProfile = '/edit-profile';
+  static const changePassword = '/change-password';
+  static const changeEmail = '/change-email';
   static const admin = '/admin';
   static const user = '/user'; // /user/:id (public profile)
   static const followList = '/follows'; // /follows/:id?tab=followers|following

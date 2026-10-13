@@ -1518,4 +1518,133 @@ class AppLocalizationsMk extends AppLocalizations {
   @override
   String get offerDeliveryNote =>
       'Ако продавачот прифати, ќе ги добие твојата адреса и телефон за да го испрати артиклот. Го плаќаш курирот во готово при достава.';
+
+  @override
+  String get accountSection => 'Сметка';
+
+  @override
+  String get changePassword => 'Промени лозинка';
+
+  @override
+  String get changePasswordSubtitle =>
+      'Внесете ја тековната лозинка, а потоа изберете нова. Секој друг телефон или компјутер најавен на вашата сметка ќе биде одјавен.';
+
+  @override
+  String get currentPassword => 'Тековна лозинка';
+
+  @override
+  String get changeEmail => 'Промени е-пошта';
+
+  @override
+  String changeEmailSubtitle(String email) {
+    return 'Се најавувате со $email. Внесете ја новата адреса и лозинката за да потврдите дека сте вие.';
+  }
+
+  @override
+  String get newEmail => 'Нова е-пошта';
+
+  @override
+  String get errorWrongPassword => 'Тековната лозинка не е точна.';
+
+  @override
+  String get errorSamePassword =>
+      'Новата лозинка мора да е различна од тековната.';
+
+  @override
+  String get errorSameEmail => 'Ова веќе е вашата е-пошта.';
+
+  @override
+  String get emailChangePending =>
+      'Уште малку — отворете го линкот за потврда што ви го испративме за да ја завршите промената. Проверете ја и старата и новата е-пошта.';
+
+  @override
+  String get emailChanged => 'Вашата е-пошта е променета.';
+
+  @override
+  String get offlineBanner => 'Нема интернет конекција';
+
+  @override
+  String get backOnline => 'Повторно сте поврзани';
+
+  @override
+  String get aboutSection => 'За апликацијата';
+
+  @override
+  String get privacyPolicy => 'Политика за приватност';
+
+  @override
+  String get termsOfUse => 'Услови за користење';
+
+  @override
+  String get contactUs => 'Контактирајте нè';
+
+  @override
+  String supportEmailCopied(String email) {
+    return 'Не најдовме апликација за е-пошта. Нашата адреса е копирана: $email';
+  }
+
+  @override
+  String appVersion(String version) {
+    return 'Верзија $version';
+  }
+
+  @override
+  String legalLastUpdated(String date) {
+    return 'Последно ажурирано: $date';
+  }
+
+  @override
+  String get legalConsentStart => 'Со продолжување се согласувате со ';
+
+  @override
+  String get legalConsentMiddle => ' и ';
+
+  @override
+  String get legalConsentEnd => '.';
+
+  @override
+  String get showPassword => 'Прикажи ја лозинката';
+
+  @override
+  String get hidePassword => 'Сокриј ја лозинката';
+
+  @override
+  String get refresh => 'Освежи';
+
+  @override
+  String get removeFromCart => 'Отстрани од кошничката';
+
+  @override
+  String get clearSearch => 'Исчисти го пребарувањето';
+
+  @override
+  String get removeRecentSearch => 'Отстрани од последните пребарувања';
+
+  @override
+  String get messageSeller => 'Пиши му на продавачот';
+
+  @override
+  String get sendPhoto => 'Испрати фотографија';
+
+  @override
+  String get sendMessage => 'Испрати порака';
+
+  @override
+  String get shareListing => 'Сподели го огласот';
+
+  @override
+  String get addToFavorites => 'Додај во омилени';
+
+  @override
+  String get removeFromFavorites => 'Отстрани од омилени';
+
+  @override
+  String ratingStars(int count) {
+    return '$count од 5 ѕвезди';
+  }
+
+  @override
+  String newItemsCount(int count) {
+    return '$count нови';
+  }
 }

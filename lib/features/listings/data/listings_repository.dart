@@ -8,6 +8,7 @@ import '../../../core/supabase/supabase_providers.dart';
 import '../domain/listing.dart';
 import '../domain/listing_enums.dart';
 import '../domain/listing_filter.dart';
+import '../../../core/utils/search_text.dart';
 
 class ListingsRepository {
   ListingsRepository(this._client);
@@ -41,15 +42,20 @@ class ListingsRepository {
     }
     // Case-insensitive exact match, so "w30 l32" finds "W30 L32". Sizes come
     // from SizePicker, which never lets % or _ (wildcards) through.
-    if (filter.size != null) query = query.ilike('size', filter.size!);
+    if (filter.size != null) query = query.ilike('size', likeLiteral(filter.size!));
     if (filter.condition != null) {
       query = query.eq('condition', filter.condition!.value);
     }
-    if (filter.color != null) query = query.ilike('color', '%${filter.color}%');
-    if (filter.brand != null) query = query.ilike('brand', '%${filter.brand}%');
+    // Typed text is matched literally — see likeLiteral.
+    if (filter.color != null) {
+      query = query.ilike('color', '%${likeLiteral(filter.color!)}%');
+    }
+    if (filter.brand != null) {
+      query = query.ilike('brand', '%${likeLiteral(filter.brand!)}%');
+    }
     if (filter.location != null && filter.location!.trim().isNotEmpty) {
       final city = filter.location!.split(',').first.trim();
-      query = query.ilike('location', '%$city%');
+      query = query.ilike('location', '%${likeLiteral(city)}%');
     }
     if (filter.minPrice != null) query = query.gte('price', filter.minPrice!);
     if (filter.maxPrice != null) query = query.lte('price', filter.maxPrice!);

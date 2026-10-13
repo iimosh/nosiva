@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../l10n/l10n_extensions.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 
@@ -58,20 +59,35 @@ class _HeartButtonState extends State<HeartButton>
 
     final animated = ScaleTransition(scale: scale, child: icon);
 
-    return GestureDetector(
+    final label = widget.liked
+        ? context.l10n.removeFromFavorites
+        : context.l10n.addToFavorites;
+
+    return Semantics(
+      button: true,
+      toggled: widget.liked,
+      label: label,
+      excludeSemantics: true,
       onTap: _handleTap,
-      behavior: HitTestBehavior.opaque,
-      child: widget.withBackground
-          ? Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: scheme.surface.withValues(alpha: 0.92),
-                shape: BoxShape.circle,
-                boxShadow: AppShadows.subtle(AppColors.plum),
-              ),
-              child: animated,
-            )
-          : animated,
+      child: Tooltip(
+        message: label,
+        excludeFromSemantics: true,
+        child: GestureDetector(
+          onTap: _handleTap,
+          behavior: HitTestBehavior.opaque,
+          child: widget.withBackground
+              ? Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: scheme.surface.withValues(alpha: 0.92),
+                    shape: BoxShape.circle,
+                    boxShadow: AppShadows.subtle(AppColors.plum),
+                  ),
+                  child: animated,
+                )
+              : animated,
+        ),
+      ),
     );
   }
 }

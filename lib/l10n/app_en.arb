@@ -685,5 +685,85 @@
       }
     }
   },
-  "offerDeliveryNote": "If the seller accepts, they'll get your address and phone to send the item. You pay the courier in cash on delivery."
+  "offerDeliveryNote": "If the seller accepts, they'll get your address and phone to send the item. You pay the courier in cash on delivery.",
+  "accountSection": "Account",
+  "changePassword": "Change password",
+  "changePasswordSubtitle": "Enter your current password, then choose a new one. Any other phone or computer signed in to your account will be signed out.",
+  "currentPassword": "Current password",
+  "changeEmail": "Change email",
+  "changeEmailSubtitle": "You sign in with {email}. Enter the new address and your password to confirm it's you.",
+  "@changeEmailSubtitle": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "newEmail": "New email",
+  "errorWrongPassword": "Your current password is incorrect.",
+  "errorSamePassword": "The new password must be different from the current one.",
+  "errorSameEmail": "That's already your email.",
+  "emailChangePending": "Almost done — open the confirmation link we emailed you to finish the change. Check both your old and new inbox.",
+  "emailChanged": "Your email has been changed.",
+  "offlineBanner": "No internet connection",
+  "backOnline": "Back online",
+  "aboutSection": "About",
+  "privacyPolicy": "Privacy policy",
+  "termsOfUse": "Terms of use",
+  "contactUs": "Contact us",
+  "supportEmailCopied": "No email app found. Our address was copied: {email}",
+  "@supportEmailCopied": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "appVersion": "Version {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "legalLastUpdated": "Last updated: {date}",
+  "@legalLastUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "legalConsentStart": "By continuing, you agree to the ",
+  "legalConsentMiddle": " and the ",
+  "legalConsentEnd": ".",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "refresh": "Refresh",
+  "removeFromCart": "Remove from cart",
+  "clearSearch": "Clear search",
+  "removeRecentSearch": "Remove from recent searches",
+  "messageSeller": "Message the seller",
+  "sendPhoto": "Send a photo",
+  "sendMessage": "Send message",
+  "shareListing": "Share listing",
+  "addToFavorites": "Add to favorites",
+  "removeFromFavorites": "Remove from favorites",
+  "ratingStars": "{count} out of 5 stars",
+  "@ratingStars": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newItemsCount": "{count} new",
+  "@newItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../domain/conversation.dart';
 import '../domain/message.dart';
+import 'chat_images.dart';
 
 class MessagingRepository {
   MessagingRepository(this._client);
@@ -14,7 +15,6 @@ class MessagingRepository {
 
   static const _conversations = 'conversations';
   static const _messages = 'messages';
-  static const _chatImagesBucket = 'chat-images';
 
   static const _conversationSelect =
       '*, buyer:profiles!conversations_buyer_id_fkey(*), '
@@ -129,6 +129,9 @@ class MessagingRepository {
     });
   }
 
+  /// Uploads a chat photo to the conversation's private folder and returns
+  /// its storage path (what the message stores). It's shown through a
+  /// short-lived link — see chat_images.dart.
   Future<String> uploadChatImage({
     required String conversationId,
     required Uint8List bytes,
@@ -139,17 +142,17 @@ class MessagingRepository {
     final normalizedExt = ext == 'jpeg' ? 'jpg' : ext;
     final path = '$conversationId/$uid/${uuid.v4()}.$normalizedExt';
 
-    await _client.storage.from(_chatImagesBucket).uploadBinary(
+    await _client.storage.from(chatImagesBucket).uploadBinary(
           path,
           bytes,
           fileOptions: FileOptions(
             contentType:
                 'image/${normalizedExt == 'jpg' ? 'jpeg' : normalizedExt}',
-            upsert: true,
+            upsert: false,
           ),
         );
 
-    return _client.storage.from(_chatImagesBucket).getPublicUrl(path);
+    return path;
   }
 }
 

@@ -13,6 +13,7 @@ import '../../../core/widgets/nosiva_text_field.dart';
 import '../../profile/data/profile_repository.dart';
 import 'auth_controller.dart';
 import 'widgets/oauth_buttons.dart';
+import '../../legal/legal_screen.dart' show LegalConsentText;
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -117,6 +118,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   prefixIcon: Icons.lock_outline_rounded,
                   validator: (v) => Validators.password(v, context.l10n),
                   suffixIcon: IconButton(
+                    tooltip: _obscure
+                        ? context.l10n.showPassword
+                        : context.l10n.hidePassword,
                     icon: Icon(_obscure
                         ? Icons.visibility_off_outlined
                         : Icons.visibility_outlined),
@@ -135,6 +139,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   onProvider: (p) =>
                       ref.read(authControllerProvider.notifier).signInWithOAuth(p),
                 ),
+                const SizedBox(height: AppSpacing.md),
+                const LegalConsentText(),
                 const SizedBox(height: AppSpacing.lg),
                 Center(
                   child: TextButton(

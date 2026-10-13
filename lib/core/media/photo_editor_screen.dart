@@ -54,6 +54,7 @@ class _PhotoEditorScreenState extends State<PhotoEditorScreen> {
         foregroundColor: Colors.white,
         title: Text(context.l10n.editPhoto),
         leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
           icon: const Icon(Icons.close_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),

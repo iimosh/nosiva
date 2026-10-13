@@ -296,6 +296,7 @@ class _GalleryState extends ConsumerState<_Gallery> {
                 Builder(
                   builder: (buttonContext) => _CircleIcon(
                     icon: Icons.ios_share_rounded,
+                    tooltip: context.l10n.shareListing,
                     onTap: () async {
                       try {
                         await shareListing(buttonContext, listing);
@@ -311,6 +312,7 @@ class _GalleryState extends ConsumerState<_Gallery> {
                 if (!isOwn) ...[
                   _CircleIcon(
                     icon: Icons.flag_outlined,
+                    tooltip: context.l10n.reportListing,
                     onTap: () {
                       if (!ensureSignedIn(context, ref, GuestAction.report)) return;
                       showReportSheet(
@@ -661,8 +663,13 @@ class _MiniListingCard extends StatelessWidget {
 }
 
 class _CircleIcon extends StatelessWidget {
-  const _CircleIcon({required this.icon, required this.onTap});
+  const _CircleIcon({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
   final IconData icon;
+  final String tooltip;
   final VoidCallback onTap;
 
   @override
@@ -670,6 +677,7 @@ class _CircleIcon extends StatelessWidget {
     return CircleAvatar(
       backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.92),
       child: IconButton(
+        tooltip: tooltip,
         icon: Icon(icon, color: Theme.of(context).colorScheme.onSurface, size: 20),
         onPressed: onTap,
       ),
@@ -741,6 +749,7 @@ class _ActionBar extends ConsumerWidget {
                 ? Row(
                     children: [
                       IconButton.filledTonal(
+                        tooltip: context.l10n.messageSeller,
                         iconSize: 26,
                         icon: const Icon(Icons.chat_bubble_outline_rounded),
                         onPressed: () => _message(context, ref),
@@ -759,6 +768,7 @@ class _ActionBar extends ConsumerWidget {
                 : Row(
                     children: [
                       IconButton.filledTonal(
+                        tooltip: context.l10n.messageSeller,
                         iconSize: 26,
                         icon: const Icon(Icons.chat_bubble_outline_rounded),
                         onPressed: () => _message(context, ref),
@@ -1095,6 +1105,7 @@ class _CircleBackButton extends StatelessWidget {
       child: CircleAvatar(
         backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.92),
         child: IconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.of(context).maybePop(),
         ),

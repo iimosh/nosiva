@@ -6,6 +6,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_controller.dart';
 import 'l10n/app_localizations.dart';
+import 'shell/connection_banner.dart';
 
 class NosivaApp extends ConsumerWidget {
   const NosivaApp({super.key});
@@ -31,7 +32,7 @@ class NosivaApp extends ConsumerWidget {
       builder: (context, child) => GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: child,
+        child: ConnectionBanner(child: child!),
       ),
     );
   }

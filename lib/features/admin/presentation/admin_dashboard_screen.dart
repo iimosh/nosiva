@@ -41,6 +41,7 @@ class AdminDashboardScreen extends ConsumerWidget {
           title: Text(context.l10n.admin),
           actions: [
             IconButton(
+              tooltip: context.l10n.refresh,
               icon: const Icon(Icons.refresh_rounded),
               onPressed: () => _refresh(ref),
             ),

@@ -2821,6 +2821,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If the seller accepts, they\'ll get your address and phone to send the item. You pay the courier in cash on delivery.'**
   String get offerDeliveryNote;
+
+  /// No description provided for @accountSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get accountSection;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePassword;
+
+  /// No description provided for @changePasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your current password, then choose a new one. Any other phone or computer signed in to your account will be signed out.'**
+  String get changePasswordSubtitle;
+
+  /// No description provided for @currentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get currentPassword;
+
+  /// No description provided for @changeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Change email'**
+  String get changeEmail;
+
+  /// No description provided for @changeEmailSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You sign in with {email}. Enter the new address and your password to confirm it\'s you.'**
+  String changeEmailSubtitle(String email);
+
+  /// No description provided for @newEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'New email'**
+  String get newEmail;
+
+  /// No description provided for @errorWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current password is incorrect.'**
+  String get errorWrongPassword;
+
+  /// No description provided for @errorSamePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The new password must be different from the current one.'**
+  String get errorSamePassword;
+
+  /// No description provided for @errorSameEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s already your email.'**
+  String get errorSameEmail;
+
+  /// No description provided for @emailChangePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost done — open the confirmation link we emailed you to finish the change. Check both your old and new inbox.'**
+  String get emailChangePending;
+
+  /// No description provided for @emailChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Your email has been changed.'**
+  String get emailChanged;
+
+  /// No description provided for @offlineBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get offlineBanner;
+
+  /// No description provided for @backOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Back online'**
+  String get backOnline;
+
+  /// No description provided for @aboutSection.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get aboutSection;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @termsOfUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use'**
+  String get termsOfUse;
+
+  /// No description provided for @contactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us'**
+  String get contactUs;
+
+  /// No description provided for @supportEmailCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'No email app found. Our address was copied: {email}'**
+  String supportEmailCopied(String email);
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String appVersion(String version);
+
+  /// No description provided for @legalLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {date}'**
+  String legalLastUpdated(String date);
+
+  /// No description provided for @legalConsentStart.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you agree to the '**
+  String get legalConsentStart;
+
+  /// No description provided for @legalConsentMiddle.
+  ///
+  /// In en, this message translates to:
+  /// **' and the '**
+  String get legalConsentMiddle;
+
+  /// No description provided for @legalConsentEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'.'**
+  String get legalConsentEnd;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @removeFromCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from cart'**
+  String get removeFromCart;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
+  /// No description provided for @removeRecentSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from recent searches'**
+  String get removeRecentSearch;
+
+  /// No description provided for @messageSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Message the seller'**
+  String get messageSeller;
+
+  /// No description provided for @sendPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a photo'**
+  String get sendPhoto;
+
+  /// No description provided for @sendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Send message'**
+  String get sendMessage;
+
+  /// No description provided for @shareListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Share listing'**
+  String get shareListing;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @removeFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get removeFromFavorites;
+
+  /// No description provided for @ratingStars.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} out of 5 stars'**
+  String ratingStars(int count);
+
+  /// No description provided for @newItemsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} new'**
+  String newItemsCount(int count);
 }
 
 class _AppLocalizationsDelegate

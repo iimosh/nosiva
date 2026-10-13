@@ -137,42 +137,53 @@ class _NavItem extends StatelessWidget {
     final theme = Theme.of(context);
     final color =
         selected ? AppColors.hotPink : theme.colorScheme.onSurfaceVariant;
+    // One announcement per tab: its name, how many new items it has, and
+    // whether it's the open one.
     return Expanded(
-      child: InkResponse(
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: badgeCount > 0
+            ? '$label, ${context.l10n.newItemsCount(badgeCount)}'
+            : label,
+        excludeSemantics: true,
         onTap: onTap,
-        radius: 40,
-        highlightShape: BoxShape.rectangle,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Soft pill behind the selected icon.
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
-                color: selected
-                    ? AppColors.hotPink.withValues(alpha: 0.12)
-                    : Colors.transparent,
-                borderRadius: AppRadii.chip,
+        child: InkResponse(
+          onTap: onTap,
+          radius: 40,
+          highlightShape: BoxShape.rectangle,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Soft pill behind the selected icon.
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(
+                  color: selected
+                      ? AppColors.hotPink.withValues(alpha: 0.12)
+                      : Colors.transparent,
+                  borderRadius: AppRadii.chip,
+                ),
+                child: Badge(
+                  isLabelVisible: badgeCount > 0,
+                  backgroundColor: AppColors.hotPink,
+                  label: Text(badgeCount > 99 ? '99+' : '$badgeCount'),
+                  child: Icon(icon, color: color, size: 24),
+                ),
               ),
-              child: Badge(
-                isLabelVisible: badgeCount > 0,
-                backgroundColor: AppColors.hotPink,
-                label: Text(badgeCount > 99 ? '99+' : '$badgeCount'),
-                child: Icon(icon, color: color, size: 24),
+              const SizedBox(height: 3),
+              Text(
+                label,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: color,
+                  fontSize: 11.5,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: color,
-                fontSize: 11.5,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -187,16 +198,22 @@ class _SellButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Center(
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            height: 52,
-            width: 52,
-            decoration: const BoxDecoration(
-              color: AppColors.berry,
-              shape: BoxShape.circle,
+        child: Semantics(
+          button: true,
+          label: context.l10n.sell,
+          excludeSemantics: true,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              height: 52,
+              width: 52,
+              decoration: const BoxDecoration(
+                color: AppColors.berry,
+                shape: BoxShape.circle,
+              ),
+              child:
+                  const Icon(Icons.add_rounded, color: Colors.white, size: 30),
             ),
-            child: const Icon(Icons.add_rounded, color: Colors.white, size: 30),
           ),
         ),
       ),

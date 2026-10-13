@@ -23,6 +23,7 @@ import 'inbox_screen.dart';
 import '../../../core/utils/friendly_error.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/widgets/shimmer_box.dart';
+import '../data/chat_images.dart';
 
 final conversationProvider =
     FutureProvider.family<Conversation, String>((ref, id) {
@@ -120,7 +121,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     if (_sendingImage) return;
     try {
       setState(() => _sendingImage = true);
-      final file = await _picker.pickImage(source: source, imageQuality: 82);
+      // Phone cameras take 4000px+ photos (several MB); a chat bubble never
+      // needs more than this, and it keeps sending fast on mobile data.
+      final file = await _picker.pickImage(
+        source: source,
+        imageQuality: 82,
+        maxWidth: kChatPhotoMaxDimension,
+        maxHeight: kChatPhotoMaxDimension,
+      );
       if (file == null) return;
       final repo = ref.read(messagingRepositoryProvider);
       final url = await repo.uploadChatImage(
@@ -383,13 +391,26 @@ class _Bubble extends StatelessWidget {
   }
 }
 
-class _BubbleImage extends StatelessWidget {
+class _BubbleImage extends ConsumerWidget {
   const _BubbleImage({required this.url});
 
+  /// What the message stores: the photo's private storage path (or, for
+  /// older messages, its former public link).
   final String url;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final path = chatImagePath(url);
+    final link = path == null ? null : ref.watch(chatImageUrlProvider(path));
+
+    Widget box(Widget child) => SizedBox(
+          height: 160,
+          width: 200,
+          child: ColoredBox(color: context.palette.placeholder, child: child),
+        );
+    final unavailable = box(Icon(Icons.broken_image_outlined,
+        color: context.palette.onPlaceholder));
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadii.md),
       child: ConstrainedBox(
@@ -398,25 +419,23 @@ class _BubbleImage extends StatelessWidget {
           maxHeight: 260,
           minWidth: 160,
         ),
-        child: CachedNetworkImage(
-          imageUrl: url,
-          fit: BoxFit.cover,
-          memCacheWidth: 640,
-          placeholder: (_, __) => SizedBox(
-            height: 160,
-            width: 200,
-            child: ColoredBox(color: context.palette.placeholder),
-          ),
-          errorWidget: (_, __, ___) => SizedBox(
-            height: 160,
-            width: 200,
-            child: ColoredBox(
-              color: context.palette.placeholder,
-              child: Icon(Icons.broken_image_outlined,
-                  color: context.palette.onPlaceholder),
-            ),
-          ),
-        ),
+        // Anything that isn't a photo from this app's private chat storage
+        // is never loaded.
+        child: link == null
+            ? unavailable
+            : link.when(
+                loading: () => box(const SizedBox.shrink()),
+                error: (_, __) => unavailable,
+                data: (signedUrl) => CachedNetworkImage(
+                  imageUrl: signedUrl,
+                  // Links change every hour; cache the photo by its path.
+                  cacheKey: 'chat-image:$path',
+                  fit: BoxFit.cover,
+                  memCacheWidth: 640,
+                  placeholder: (_, __) => box(const SizedBox.shrink()),
+                  errorWidget: (_, __, ___) => unavailable,
+                ),
+              ),
       ),
     );
   }
@@ -442,6 +461,7 @@ class _Composer extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
+              tooltip: context.l10n.sendPhoto,
               icon: sendingImage
                   ? const SizedBox(
                       height: 20,
@@ -470,6 +490,7 @@ class _Composer extends StatelessWidget {
             CircleAvatar(
               backgroundColor: AppColors.hotPink,
               child: IconButton(
+                tooltip: context.l10n.sendMessage,
                 icon: const Icon(Icons.send_rounded, color: Colors.white),
                 onPressed: onSend,
               ),

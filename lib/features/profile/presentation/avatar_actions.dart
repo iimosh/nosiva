@@ -25,7 +25,13 @@ class AvatarController extends Notifier<bool> {
     ImageSource source,
     String userId,
   ) async {
-    final file = await ImagePicker().pickImage(source: source, imageQuality: 85);
+    // Big enough to crop from comfortably; cropAvatar then saves it small.
+    final file = await ImagePicker().pickImage(
+      source: source,
+      imageQuality: 85,
+      maxWidth: 1600,
+      maxHeight: 1600,
+    );
     if (file == null) return;
     final bytes = await file.readAsBytes();
     final ext = pickedImageExt(file.path);

@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/change_email_screen.dart';
+import '../../features/auth/presentation/change_password_screen.dart';
 import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/guest_prompt.dart';
 import '../../features/auth/presentation/onboarding_screen.dart';
@@ -11,6 +13,8 @@ import '../../features/auth/presentation/sign_up_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/auth/presentation/welcome_screen.dart';
 import '../../features/admin/presentation/admin_dashboard_screen.dart';
+import '../../features/legal/legal_content.dart';
+import '../../features/legal/legal_screen.dart';
 import '../../features/cart/presentation/cart_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
 import '../../features/listings/presentation/create_listing_screen.dart';
@@ -85,6 +89,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         return loc == AppRoutes.resetPassword ? null : AppRoutes.resetPassword;
       }
 
+      // The privacy policy and terms are readable by anyone, at any point
+      // (they're linked from sign-up, before an account exists).
+      if (loc == AppRoutes.privacy || loc == AppRoutes.terms) return null;
+
       final user = ref.read(currentAuthUserProvider);
       const authRoutes = {
         AppRoutes.welcome,
@@ -139,6 +147,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.resetPassword,
         builder: (_, __) => const ResetPasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.privacy,
+        parentNavigatorKey: _rootKey,
+        builder: (_, __) =>
+            const LegalScreen(document: LegalDocument.privacy),
+      ),
+      GoRoute(
+        path: AppRoutes.terms,
+        parentNavigatorKey: _rootKey,
+        builder: (_, __) => const LegalScreen(document: LegalDocument.terms),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
@@ -273,6 +292,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.editProfile,
         parentNavigatorKey: _rootKey,
         builder: (_, __) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.changePassword,
+        parentNavigatorKey: _rootKey,
+        builder: (_, __) => const ChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.changeEmail,
+        parentNavigatorKey: _rootKey,
+        builder: (_, __) => const ChangeEmailScreen(),
       ),
       GoRoute(
         path: AppRoutes.admin,

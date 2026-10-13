@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/supabase/supabase_providers.dart';
 import '../domain/profile.dart';
+import '../../../core/utils/search_text.dart';
 
 /// Thrown by sign-up when the chosen username is already claimed.
 class UsernameTakenException implements Exception {}
@@ -45,7 +46,7 @@ class ProfileRepository {
     // strip the characters that carry filter syntax (commas, parentheses,
     // wildcards, quotes). Otherwise a crafted search could append its own
     // conditions to the filter.
-    final q = query.replaceAll(RegExp(r'[,()%*\\"]'), '').trim();
+    final q = likeLiteral(query);
     if (q.isEmpty) return [];
     final data = await _client
         .from(_table)

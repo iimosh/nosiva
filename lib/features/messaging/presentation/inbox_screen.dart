@@ -126,6 +126,7 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
               suffixIcon: _query.isEmpty
                   ? null
                   : IconButton(
+                      tooltip: context.l10n.clearSearch,
                       icon: const Icon(Icons.close_rounded),
                       onPressed: _clearSearch,
                     ),

@@ -342,6 +342,7 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
           suffixIcon: widget.controller.text.isEmpty
               ? null
               : IconButton(
+                  tooltip: context.l10n.clearSearch,
                   icon: const Icon(Icons.close_rounded),
                   onPressed: _clear,
                 ),
@@ -377,6 +378,7 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
                           title: Text(query,
                               maxLines: 1, overflow: TextOverflow.ellipsis),
                           trailing: IconButton(
+                            tooltip: context.l10n.removeRecentSearch,
                             icon: const Icon(Icons.close_rounded, size: 18),
                             onPressed: () => ref
                                 .read(recentSearchesProvider.notifier)

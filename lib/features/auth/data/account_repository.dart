@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/supabase/supabase_providers.dart';
+import '../../messaging/data/chat_images.dart';
 
 /// Thrown when the user still has orders in progress.
 class OpenOrdersException implements Exception {}
@@ -48,7 +49,7 @@ class AccountRepository {
           .select('id')
           .or('buyer_id.eq.$uid,seller_id.eq.$uid');
       for (final c in convos) {
-        await _removeFolder('chat-images', '${c['id']}/$uid');
+        await _removeFolder(chatImagesBucket, '${c['id']}/$uid');
       }
     } catch (_) {}
   }
