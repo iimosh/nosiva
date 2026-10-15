@@ -53,3 +53,10 @@ app.*.map.json
 
 # Claude Code local settings
 .claude/
+
+# Firebase config (downloaded from the Firebase console) and service-account
+# keys: never commit them.
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+*firebase-adminsdk*.json
+*service-account*.json

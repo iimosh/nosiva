@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +26,7 @@ import '../../../core/utils/friendly_error.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../data/chat_images.dart';
+import '../../notifications/push_controller.dart';
 
 final conversationProvider =
     FutureProvider.family<Conversation, String>((ref, id) {
@@ -56,6 +59,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    OpenChat.conversationId = widget.conversationId;
     WidgetsBinding.instance.addPostFrameCallback((_) => _markRead());
   }
 
@@ -72,6 +76,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   void dispose() {
+    if (OpenChat.conversationId == widget.conversationId) {
+      OpenChat.conversationId = null;
+    }
     _controller.dispose();
     _scroll.dispose();
     super.dispose();
@@ -102,6 +109,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             conversationId: widget.conversationId,
             body: text,
           );
+      // So the reply doesn't go unnoticed.
+      unawaited(ref.read(pushControllerProvider.notifier).askPermission());
     } catch (e) {
       // Roll back the optimistic bubble.
       pendingNotifier.state = pendingNotifier.state
@@ -141,6 +150,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         body: '',
         imageUrl: url,
       );
+      unawaited(ref.read(pushControllerProvider.notifier).askPermission());
       _scrollToBottom();
     } catch (e) {
       if (mounted) context.showError(context.l10n.imageSendFailed(friendlyError(context.l10n, e)));

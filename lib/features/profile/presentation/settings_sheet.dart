@@ -17,6 +17,13 @@ import '../../../core/utils/snackbars.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../auth/presentation/delete_account_dialog.dart';
+import '../../notifications/push_controller.dart';
+
+/// Whether notifications are allowed; null when push isn't available.
+final _notificationsAllowedProvider = FutureProvider.autoDispose<bool?>((ref) {
+  if (!ref.watch(pushControllerProvider)) return null;
+  return ref.read(pushControllerProvider.notifier).notificationsAllowed();
+});
 
 /// Language, appearance and account actions, in one place.
 Future<void> showSettingsSheet(BuildContext context) {
@@ -43,6 +50,8 @@ class _SettingsSheet extends ConsumerWidget {
     // Google-only accounts have no password or email of their own to change.
     final hasPassword = ref.watch(authRepositoryProvider).hasPassword;
     final version = ref.watch(appVersionProvider).valueOrNull;
+    final notificationsAllowed =
+        ref.watch(_notificationsAllowedProvider).valueOrNull;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -125,7 +134,33 @@ class _SettingsSheet extends ConsumerWidget {
                 },
               ),
             ],
-            if (hasPassword) const SizedBox(height: AppSpacing.md),
+            if (notificationsAllowed != null) ...[
+              if (hasPassword) const SizedBox(height: AppSpacing.md),
+              _SectionLabel(l10n.notifications),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(notificationsAllowed
+                    ? Icons.notifications_active_outlined
+                    : Icons.notifications_off_outlined),
+                title: Text(l10n.notificationChannelName),
+                subtitle: Text(notificationsAllowed
+                    ? l10n.notificationsOn
+                    : l10n.notificationsOff),
+                onTap: notificationsAllowed
+                    ? null
+                    : () async {
+                        final allowed = await ref
+                            .read(pushControllerProvider.notifier)
+                            .requestFromSettings();
+                        ref.invalidate(_notificationsAllowedProvider);
+                        if (!allowed && context.mounted) {
+                          context.showSnack(l10n.notificationsBlocked);
+                        }
+                      },
+              ),
+            ],
+            if (hasPassword || notificationsAllowed != null)
+              const SizedBox(height: AppSpacing.md),
             _SectionLabel(l10n.aboutSection),
             ListTile(
               contentPadding: EdgeInsets.zero,

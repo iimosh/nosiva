@@ -7,6 +7,7 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/theme_controller.dart';
 import 'l10n/app_localizations.dart';
 import 'shell/connection_banner.dart';
+import 'features/notifications/push_controller.dart';
 
 class NosivaApp extends ConsumerWidget {
   const NosivaApp({super.key});
@@ -14,6 +15,8 @@ class NosivaApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    // Starts push notifications for the app's lifetime (no rebuilds).
+    ref.listen(pushControllerProvider, (_, __) {});
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeControllerProvider);
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +40,7 @@ import '../../../core/widgets/pull_to_refresh.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/utils/friendly_error.dart';
 import '../../../core/theme/app_palette.dart';
+import '../../notifications/push_controller.dart';
 
 class ListingDetailScreen extends ConsumerWidget {
   const ListingDetailScreen({super.key, required this.listingId});
@@ -884,6 +887,8 @@ class _ActionBar extends ConsumerWidget {
       ref.invalidate(buyerOffersProvider);
       ref.invalidate(sellerOffersProvider);
       HapticFeedback.mediumImpact();
+      // So the seller's answer doesn't go unnoticed.
+      unawaited(ref.read(pushControllerProvider.notifier).askPermission());
       if (context.mounted) {
         context.showSuccess(context.l10n.offerSent);
       }

@@ -1647,4 +1647,24 @@ class AppLocalizationsMk extends AppLocalizations {
   String newItemsCount(int count) {
     return '$count нови';
   }
+
+  @override
+  String get notifications => 'Известувања';
+
+  @override
+  String get notificationsOn => 'Вклучени';
+
+  @override
+  String get notificationsOff => 'Исклучени — допрете за да ги вклучите';
+
+  @override
+  String get notificationsBlocked =>
+      'Известувањата се блокирани. Вклучете ги во Поставки на телефонот → Апликации → Nosiva → Известувања.';
+
+  @override
+  String get notificationChannelName => 'Пораки, понуди и нарачки';
+
+  @override
+  String get notificationChannelDescription =>
+      'Нови пораки, понуди и промени во вашите нарачки.';
 }

@@ -3049,6 +3049,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} new'**
   String newItemsCount(int count);
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @notificationsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get notificationsOn;
+
+  /// No description provided for @notificationsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off — tap to turn on'**
+  String get notificationsOff;
+
+  /// No description provided for @notificationsBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are blocked. Turn them on in your phone\'s Settings → Apps → Nosiva → Notifications.'**
+  String get notificationsBlocked;
+
+  /// No description provided for @notificationChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages, offers and orders'**
+  String get notificationChannelName;
+
+  /// No description provided for @notificationChannelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'New messages, offers and updates on your orders.'**
+  String get notificationChannelDescription;
 }
 
 class _AppLocalizationsDelegate

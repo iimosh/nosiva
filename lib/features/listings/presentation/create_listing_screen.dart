@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -25,6 +27,7 @@ import '../domain/listing_l10n.dart';
 import 'controllers/feed_controller.dart';
 import '../../../core/utils/friendly_error.dart';
 import '../../../core/theme/app_palette.dart';
+import '../../notifications/push_controller.dart';
 
 class CreateListingScreen extends ConsumerStatefulWidget {
   const CreateListingScreen({super.key});
@@ -242,6 +245,8 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
         images: _images,
       );
       ref.read(feedControllerProvider.notifier).refresh();
+      // So offers, orders and messages about it don't go unnoticed.
+      unawaited(ref.read(pushControllerProvider.notifier).askPermission());
       if (mounted) {
         context.showSuccess(context.l10n.listedSuccess);
         if (context.canPop()) {

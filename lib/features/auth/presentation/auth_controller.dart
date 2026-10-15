@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../profile/data/profile_repository.dart';
 import '../data/auth_repository.dart';
+import '../../notifications/push_controller.dart';
 
 enum SignUpResult { signedIn, confirmEmail, failed }
 
@@ -69,6 +70,9 @@ class AuthController extends AsyncNotifier<void> {
 
   Future<void> signOut() async {
     state = const AsyncValue.loading();
+    // While still signed in: stop this phone getting the account's
+    // notifications.
+    await ref.read(pushControllerProvider.notifier).forgetDevice();
     state = await AsyncValue.guard(_auth.signOut);
   }
 }
