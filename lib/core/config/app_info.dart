@@ -6,5 +6,5 @@ abstract final class AppInfo {
   static const supportEmail = 'support@nosiva.mk';
 
   /// Shown on the privacy policy and terms; bump when either text changes.
-  static final legalUpdated = DateTime(2026, 10, 13);
+  static final legalUpdated = DateTime(2026, 10, 14);
 }

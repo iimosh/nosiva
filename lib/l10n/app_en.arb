@@ -765,5 +765,11 @@
         "type": "int"
       }
     }
-  }
+  },
+  "notifications": "Notifications",
+  "notificationsOn": "On",
+  "notificationsOff": "Off — tap to turn on",
+  "notificationsBlocked": "Notifications are blocked. Turn them on in your phone's Settings → Apps → Nosiva → Notifications.",
+  "notificationChannelName": "Messages, offers and orders",
+  "notificationChannelDescription": "New messages, offers and updates on your orders."
 }

@@ -86,6 +86,9 @@ const List<LegalSection> _privacyEn = [
       '• Supabase hosts our database, file storage and sign-in, and processes '
           'data only on our behalf.',
       '• Google, only if you choose to sign in with Google.',
+      '• Google Firebase Cloud Messaging delivers notifications to your '
+          'phone, so their text (for example a message preview) passes '
+          'through it.',
       '• Couriers receive your address and phone from the seller who sends '
           'your item, not from Nosiva.',
       'We may share information if the law requires it, for example at the '
@@ -210,6 +213,9 @@ const List<LegalSection> _privacyMk = [
       '• Supabase ги хостира нашата база на податоци, складирањето датотеки и '
           'најавата, и ги обработува податоците само во наше име.',
       '• Google, само ако изберете најава со Google.',
+      '• Google Firebase Cloud Messaging ги доставува известувањата до '
+          'вашиот телефон, па нивниот текст (на пример преглед на порака) '
+          'минува низ него.',
       '• Куририте ја добиваат вашата адреса и телефон од продавачот што го '
           'испраќа предметот, не од Nosiva.',
       'Можеме да споделиме податоци ако тоа го бара законот, на пример на '

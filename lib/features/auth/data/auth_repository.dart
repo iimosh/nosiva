@@ -12,7 +12,7 @@ class AuthRepository {
   AuthRepository(this._client);
   final SupabaseClient _client;
 
-  static const oauthRedirectTo = 'com.example.nosiva://login-callback/';
+  static const oauthRedirectTo = 'mk.nosiva.app://login-callback/';
 
   User? get currentUser => _client.auth.currentUser;
   Session? get currentSession => _client.auth.currentSession;

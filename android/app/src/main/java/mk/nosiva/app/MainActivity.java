@@ -1,4 +1,4 @@
-package com.example.nosiva;
+package mk.nosiva.app;
 
 import io.flutter.embedding.android.FlutterActivity;
 

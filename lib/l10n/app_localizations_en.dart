@@ -1630,4 +1630,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String newItemsCount(int count) {
     return '$count new';
   }
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get notificationsOn => 'On';
+
+  @override
+  String get notificationsOff => 'Off — tap to turn on';
+
+  @override
+  String get notificationsBlocked =>
+      'Notifications are blocked. Turn them on in your phone\'s Settings → Apps → Nosiva → Notifications.';
+
+  @override
+  String get notificationChannelName => 'Messages, offers and orders';
+
+  @override
+  String get notificationChannelDescription =>
+      'New messages, offers and updates on your orders.';
 }

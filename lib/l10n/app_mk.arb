@@ -516,5 +516,11 @@
   "addToFavorites": "Додај во омилени",
   "removeFromFavorites": "Отстрани од омилени",
   "ratingStars": "{count} од 5 ѕвезди",
-  "newItemsCount": "{count} нови"
+  "newItemsCount": "{count} нови",
+  "notifications": "Известувања",
+  "notificationsOn": "Вклучени",
+  "notificationsOff": "Исклучени — допрете за да ги вклучите",
+  "notificationsBlocked": "Известувањата се блокирани. Вклучете ги во Поставки на телефонот → Апликации → Nosiva → Известувања.",
+  "notificationChannelName": "Пораки, понуди и нарачки",
+  "notificationChannelDescription": "Нови пораки, понуди и промени во вашите нарачки."
 }

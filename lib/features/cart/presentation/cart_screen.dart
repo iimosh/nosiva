@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +23,7 @@ import 'cart_controller.dart';
 import '../../../core/utils/friendly_error.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/utils/validators.dart';
+import '../../notifications/push_controller.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -108,6 +111,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       }
       ref.invalidate(feedControllerProvider);
       ref.invalidate(buyerOrdersProvider);
+      // So the seller's updates on the order don't go unnoticed.
+      unawaited(ref.read(pushControllerProvider.notifier).askPermission());
       await ref
           .read(deliveryDetailsProvider)
           .save(address: _address.text, phone: _phone.text);
