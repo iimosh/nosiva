@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app.dart';
 import 'core/config/env.dart';
 import 'core/storage/app_preferences.dart';
-import 'core/supabase/supabase_providers.dart';
+import 'core/backend/backend_providers.dart';
 
 Future<void> main() async {
   final binding = WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +20,7 @@ Future<void> main() async {
   Timer(const Duration(seconds: 3), FlutterNativeSplash.remove);
 
   await Env.load();
-  await initSupabase();
+  await initBackend();
   final prefs = await SharedPreferences.getInstance();
   // Month names etc. for every app language ("3 јул" in Macedonian).
   await initializeDateFormatting();

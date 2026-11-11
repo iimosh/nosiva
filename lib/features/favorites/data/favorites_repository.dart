@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase/supabase.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../../listings/domain/listing.dart';
 
 class FavoritesRepository {
@@ -12,7 +12,7 @@ class FavoritesRepository {
 
   /// The set of listing ids the current user has favorited.
   Future<Set<String>> fetchFavoriteIds() async {
-    final uid = _client.auth.currentUser?.id;
+    final uid = currentUserId();
     if (uid == null) return {};
     final data =
         await _client.from(_table).select('listing_id').eq('user_id', uid);
@@ -20,7 +20,7 @@ class FavoritesRepository {
   }
 
   Future<List<Listing>> fetchFavoriteListings() async {
-    final uid = _client.auth.currentUser?.id;
+    final uid = currentUserId();
     if (uid == null) return [];
     final data = await _client
         .from(_table)
@@ -35,14 +35,14 @@ class FavoritesRepository {
   }
 
   Future<void> add(String listingId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     await _client
         .from(_table)
         .upsert({'user_id': uid, 'listing_id': listingId});
   }
 
   Future<void> remove(String listingId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     await _client
         .from(_table)
         .delete()
@@ -52,5 +52,5 @@ class FavoritesRepository {
 }
 
 final favoritesRepositoryProvider = Provider<FavoritesRepository>((ref) {
-  return FavoritesRepository(ref.watch(supabaseClientProvider));
+  return FavoritesRepository(ref.watch(dataClientProvider));
 });

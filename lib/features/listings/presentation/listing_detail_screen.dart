@@ -17,7 +17,7 @@ import '../../../core/widgets/heart_button.dart';
 import '../../../core/widgets/nosiva_button.dart';
 import '../../../core/widgets/nosiva_text_field.dart';
 import '../../../core/widgets/state_views.dart';
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../../admin/presentation/admin_controller.dart';
 import '../../auth/presentation/guest_prompt.dart';
 import '../../cart/presentation/cart_controller.dart';
@@ -25,6 +25,7 @@ import '../../favorites/presentation/favorites_controller.dart';
 import '../../messaging/data/messaging_repository.dart';
 import '../../offers/data/offers_repository.dart';
 import '../../orders/data/delivery_details.dart';
+import '../../orders/presentation/widgets/saved_details_note.dart';
 import '../../profile/presentation/current_profile_provider.dart';
 import '../../profile/presentation/profile_screen.dart' show myListingsProvider;
 import '../../profile/presentation/widgets/follow_button.dart';
@@ -924,7 +925,18 @@ class _OfferSheetState extends ConsumerState<_OfferSheet> {
     final saved = ref.read(deliveryDetailsProvider);
     _address.text = saved.address;
     _phone.text = saved.phone;
+    _prefilled = saved.address.isNotEmpty || saved.phone.isNotEmpty;
   }
+
+  /// Whether the address and phone came from the last order (see
+  /// SavedDetailsNote).
+  bool _prefilled = false;
+
+  void _clearSaved() => setState(() {
+        _address.clear();
+        _phone.clear();
+        _prefilled = false;
+      });
 
   @override
   void dispose() {
@@ -1000,6 +1012,7 @@ class _OfferSheetState extends ConsumerState<_OfferSheet> {
                       : null;
                 },
               ),
+              if (_prefilled) SavedDetailsNote(onClear: _clearSaved),
               const SizedBox(height: AppSpacing.xs),
               Text(l10n.offerDeliveryNote, style: theme.textTheme.bodySmall),
               const SizedBox(height: AppSpacing.lg),

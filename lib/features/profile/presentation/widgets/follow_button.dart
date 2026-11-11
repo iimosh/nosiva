@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/l10n/l10n_extensions.dart';
-import '../../../../core/supabase/supabase_providers.dart';
+import '../../../../core/backend/backend_providers.dart';
 import '../../../../core/utils/snackbars.dart';
 import '../../../../core/widgets/nosiva_button.dart';
 import '../../../auth/presentation/guest_prompt.dart';

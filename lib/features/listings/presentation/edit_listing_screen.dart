@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/media/image_editing.dart';
 import '../../../core/media/photo_editor_screen.dart';
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/snackbars.dart';

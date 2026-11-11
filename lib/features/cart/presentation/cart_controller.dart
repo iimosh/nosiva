@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../../listings/domain/listing.dart';
 
 /// Local, in-memory cart. Since listings are unique items, the cart is a set

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase/supabase.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../domain/report.dart';
 
 /// Thrown when the same user reports the same target twice.
@@ -12,7 +12,7 @@ class SafetyRepository {
   final SupabaseClient _client;
 
   Future<Set<String>> fetchBlockedIds() async {
-    final uid = _client.auth.currentUser?.id;
+    final uid = currentUserId();
     if (uid == null) return {};
     final data =
         await _client.from('blocks').select('blocked_id').eq('blocker_id', uid);
@@ -20,14 +20,14 @@ class SafetyRepository {
   }
 
   Future<void> block(String userId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     await _client
         .from('blocks')
         .upsert({'blocker_id': uid, 'blocked_id': userId});
   }
 
   Future<void> unblock(String userId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     await _client
         .from('blocks')
         .delete()
@@ -41,7 +41,7 @@ class SafetyRepository {
     required ReportReason reason,
     String? details,
   }) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     try {
       await _client.from('reports').insert({
         'reporter_id': uid,
@@ -72,7 +72,7 @@ class SafetyRepository {
 }
 
 final safetyRepositoryProvider = Provider<SafetyRepository>((ref) {
-  return SafetyRepository(ref.watch(supabaseClientProvider));
+  return SafetyRepository(ref.watch(dataClientProvider));
 });
 
 /// Ids of users the signed-in user has blocked. Rebuilds on every sign-in or

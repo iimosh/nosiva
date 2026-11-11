@@ -47,8 +47,8 @@ class _SettingsSheet extends ConsumerWidget {
     final l10n = context.l10n;
     final locale = ref.watch(localeControllerProvider);
     final themeMode = ref.watch(themeModeProvider);
-    // Google-only accounts have no password or email of their own to change.
-    final hasPassword = ref.watch(authRepositoryProvider).hasPassword;
+    // Google-only accounts have no password of their own to change.
+    final hasPassword = ref.watch(hasPasswordProvider).valueOrNull ?? false;
     final version = ref.watch(appVersionProvider).valueOrNull;
     final notificationsAllowed =
         ref.watch(_notificationsAllowedProvider).valueOrNull;
@@ -113,16 +113,7 @@ class _SettingsSheet extends ConsumerWidget {
             const SizedBox(height: AppSpacing.lg),
             if (hasPassword) ...[
               _SectionLabel(l10n.accountSection),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.alternate_email_rounded),
-                title: Text(l10n.changeEmail),
-                trailing: const Icon(Icons.chevron_right_rounded),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  screenContext.push(AppRoutes.changeEmail);
-                },
-              ),
+              // (Neon Auth can't change an account's email yet.)
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.lock_outline_rounded),

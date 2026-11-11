@@ -1,22 +1,22 @@
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
+import 'package:supabase/supabase.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
+import '../../../core/neon/neon_functions.dart';
 import '../domain/listing.dart';
 import '../domain/listing_enums.dart';
 import '../domain/listing_filter.dart';
 import '../../../core/utils/search_text.dart';
 
 class ListingsRepository {
-  ListingsRepository(this._client);
+  ListingsRepository(this._client, this._functions);
   final SupabaseClient _client;
+  final NeonFunctions _functions;
 
   static const _table = 'listings';
   static const _imagesTable = 'listing_images';
-  static const _bucket = 'listing-images';
   static const _select =
       '*, images:listing_images(*), seller:profiles!listings_seller_id_fkey(*)';
   static const pageSize = 20;
@@ -31,7 +31,7 @@ class ListingsRepository {
 
     var query = _client.from(_table).select(_select);
 
-    final uid = _client.auth.currentUser?.id;
+    final uid = currentUserId();
     if (uid != null) query = query.neq('seller_id', uid);
     if (excludeSellerIds.isNotEmpty) {
       query = query.not('seller_id', 'in', '(${excludeSellerIds.join(',')})');
@@ -133,23 +133,12 @@ class ListingsRepository {
     required List<({Uint8List bytes, String ext})> images,
     int startPosition = 0,
   }) async {
-    const uuid = Uuid();
     final rows = <Map<String, dynamic>>[];
     for (var i = 0; i < images.length; i++) {
       final img = images[i];
-      final path = '$sellerId/$listingId/${uuid.v4()}.${img.ext}';
-      await _client.storage.from(_bucket).uploadBinary(
-            path,
-            img.bytes,
-            fileOptions: FileOptions(
-              contentType: 'image/${img.ext == 'jpg' ? 'jpeg' : img.ext}',
-              upsert: true,
-            ),
-          );
-      final publicUrl = _client.storage.from(_bucket).getPublicUrl(path);
       rows.add({
         'listing_id': listingId,
-        'image_url': publicUrl,
+        'image_url': await _uploadPhoto(listingId, img.bytes, img.ext),
         'position': startPosition + i,
       });
     }
@@ -161,25 +150,27 @@ class ListingsRepository {
     required String listingId,
     required List<({Uint8List bytes, String ext, int position})> images,
   }) async {
-    const uuid = Uuid();
     final rows = <Map<String, dynamic>>[];
     for (final img in images) {
-      final path = '$sellerId/$listingId/${uuid.v4()}.${img.ext}';
-      await _client.storage.from(_bucket).uploadBinary(
-            path,
-            img.bytes,
-            fileOptions: FileOptions(
-              contentType: 'image/${img.ext == 'jpg' ? 'jpeg' : img.ext}',
-              upsert: true,
-            ),
-          );
       rows.add({
         'listing_id': listingId,
-        'image_url': _client.storage.from(_bucket).getPublicUrl(path),
+        'image_url': await _uploadPhoto(listingId, img.bytes, img.ext),
         'position': img.position,
       });
     }
     await _client.from(_imagesTable).insert(rows);
+  }
+
+  /// Uploads one listing photo into the seller's folder (the media function
+  /// picks the folder from the sign-in token) and returns its public address.
+  Future<String> _uploadPhoto(String listingId, Uint8List bytes, String ext) async {
+    final photo = await _functions.uploadPhoto(
+      kind: MediaKind.listing,
+      bytes: bytes,
+      contentType: imageContentType(ext),
+      listingId: listingId,
+    );
+    return photo.publicUrl!;
   }
 
   Future<void> updateImagePosition(String imageId, int position) async {
@@ -244,7 +235,10 @@ Future<Set<String>> soldListingIds(List<String> ids) async {
 }
 
 final listingsRepositoryProvider = Provider<ListingsRepository>((ref) {
-  return ListingsRepository(ref.watch(supabaseClientProvider));
+  return ListingsRepository(
+    ref.watch(dataClientProvider),
+    ref.watch(neonFunctionsProvider),
+  );
 });
 
 int _statusRank(ListingStatus status) => switch (status) {

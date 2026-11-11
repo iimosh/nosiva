@@ -336,7 +336,7 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get wishlistEmptyMessage =>
-      'Допрете на срцето на нешто што ти се допаѓа за да го зачуваш тука.';
+      'Допри го срцето на нешто што ти се допаѓа за да го зачуваш тука.';
 
   @override
   String get searchHint => 'Пребарај огласи...';
@@ -921,7 +921,7 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get emailNotConfirmed =>
-      'Прво потврди ја е-поштата. Провери го сандачето за линкот.';
+      'Прво потврди ја е-поштата. Ти испративме нов код.';
 
   @override
   String get reportUser => 'Пријави корисник';
@@ -1527,7 +1527,7 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get changePasswordSubtitle =>
-      'Внесете ја тековната лозинка, а потоа изберете нова. Секој друг телефон или компјутер најавен на вашата сметка ќе биде одјавен.';
+      'Внеси ја тековната лозинка, а потоа избери нова. Секој друг телефон или компјутер најавен на твојата сметка ќе биде одјавен.';
 
   @override
   String get currentPassword => 'Тековна лозинка';
@@ -1537,7 +1537,7 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String changeEmailSubtitle(String email) {
-    return 'Се најавувате со $email. Внесете ја новата адреса и лозинката за да потврдите дека сте вие.';
+    return 'Се најавуваш со $email. Внеси ја новата адреса и лозинката за да потврдиш дека си ти.';
   }
 
   @override
@@ -1551,20 +1551,20 @@ class AppLocalizationsMk extends AppLocalizations {
       'Новата лозинка мора да е различна од тековната.';
 
   @override
-  String get errorSameEmail => 'Ова веќе е вашата е-пошта.';
+  String get errorSameEmail => 'Ова веќе е твојата е-пошта.';
 
   @override
   String get emailChangePending =>
-      'Уште малку — отворете го линкот за потврда што ви го испративме за да ја завршите промената. Проверете ја и старата и новата е-пошта.';
+      'Уште малку — отвори го линкот за потврда што ти го испративме за да ја завршиш промената. Провери ја и старата и новата е-пошта.';
 
   @override
-  String get emailChanged => 'Вашата е-пошта е променета.';
+  String get emailChanged => 'Твојата е-пошта е променета.';
 
   @override
   String get offlineBanner => 'Нема интернет конекција';
 
   @override
-  String get backOnline => 'Повторно сте поврзани';
+  String get backOnline => 'Повторно онлајн';
 
   @override
   String get aboutSection => 'За апликацијата';
@@ -1655,16 +1655,76 @@ class AppLocalizationsMk extends AppLocalizations {
   String get notificationsOn => 'Вклучени';
 
   @override
-  String get notificationsOff => 'Исклучени — допрете за да ги вклучите';
+  String get notificationsOff => 'Исклучени — допри за да ги вклучиш';
 
   @override
   String get notificationsBlocked =>
-      'Известувањата се блокирани. Вклучете ги во Поставки на телефонот → Апликации → Nosiva → Известувања.';
+      'Известувањата се блокирани. Вклучи ги во Поставки на телефонот → Апликации → Nosiva → Известувања.';
 
   @override
   String get notificationChannelName => 'Пораки, понуди и нарачки';
 
   @override
   String get notificationChannelDescription =>
-      'Нови пораки, понуди и промени во вашите нарачки.';
+      'Нови пораки, понуди и промени во твоите нарачки.';
+
+  @override
+  String get resetCodeSubtitle =>
+      'Внеси ја е-поштата на сметката и ќе ти испратиме код од 6 цифри.';
+
+  @override
+  String get sendResetCode => 'Испрати код';
+
+  @override
+  String get resetCodeSent =>
+      'Ти испративме код од 6 цифри. Внеси го подолу со новата лозинка.';
+
+  @override
+  String get resetCodeLabel => 'Код од е-поштата';
+
+  @override
+  String get resetCodeInvalid => 'Внеси го кодот од 6 цифри';
+
+  @override
+  String get passwordResetDone => 'Лозинката е променета. Најави се со новата.';
+
+  @override
+  String get errorWrongCode => 'Кодот е погрешен или истечен. Побарај нов.';
+
+  @override
+  String get resendCode => 'Испрати нов код';
+
+  @override
+  String get verifyEmailTitle => 'Потврди ја е-поштата';
+
+  @override
+  String verifyEmailSubtitle(String email) {
+    return 'Испративме код од 6 цифри на $email. Внеси го подолу за да ја завршиш сметката.';
+  }
+
+  @override
+  String get verifyEmailCta => 'Потврди';
+
+  @override
+  String get emailConfirmed => 'Е-поштата е потврдена. Добредојде во Nosiva!';
+
+  @override
+  String get newCodeSent => 'Ти испративме нов код.';
+
+  @override
+  String resendCodeIn(int seconds) {
+    return 'Испрати нов код за $seconds с';
+  }
+
+  @override
+  String get verifyEmailSpamHint => 'Не го гледаш? Провери ја папката за спам.';
+
+  @override
+  String get savedDeliveryDetails => 'Пополнето од твојата последна нарачка';
+
+  @override
+  String get clear => 'Исчисти';
+
+  @override
+  String get allMarkedRead => 'Сè е означено како прочитано';
 }

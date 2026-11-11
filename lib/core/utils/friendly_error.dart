@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase/supabase.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../neon/neon_auth.dart';
+import '../neon/neon_functions.dart';
 
 /// Turns any error into a short message a person can act on, in their
 /// language. Raw exception text is never shown: it reads as broken and can
@@ -20,26 +22,29 @@ String friendlyError(AppLocalizations l10n, Object? error) {
     return l10n.errorNoInternet;
   }
 
-  if (error is AuthException) {
+  if (error is NeonAuthException) {
+    // Better Auth's error codes (Neon Auth).
     final code = error.code ?? '';
-    if (code == 'user_already_exists' || code == 'email_exists') {
+    if (code == 'USER_ALREADY_EXISTS' ||
+        code == 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL') {
       return l10n.errorEmailInUse;
     }
-    if (code == 'weak_password') return l10n.errorWeakPassword;
-    if (code == 'same_password') return l10n.errorSamePassword;
-    if (code == 'email_address_invalid') return l10n.errorInvalidEmail;
-    if (code.startsWith('over_') || error.statusCode == '429') {
+    if (code == 'PASSWORD_TOO_SHORT' || code == 'PASSWORD_TOO_LONG') {
+      return l10n.errorWeakPassword;
+    }
+    if (code == 'INVALID_EMAIL') return l10n.errorInvalidEmail;
+    if (code == 'TOO_MANY_REQUESTS' || error.status == 429) {
       return l10n.errorTooManyAttempts;
     }
-    if (code == 'session_expired' ||
-        code == 'session_not_found' ||
-        code == 'refresh_token_not_found') {
-      return l10n.errorSessionExpired;
-    }
+    if (error.sessionInvalid) return l10n.errorSessionExpired;
     return l10n.errorGeneric;
   }
 
   if (error is PostgrestException) {
+    // Over a per-account limit (neon/migrations/0033_rate_limits.sql).
+    if (error.message.startsWith('rate_limited')) {
+      return l10n.errorTooManyAttempts;
+    }
     return switch (error.code) {
       '42501' => l10n.errorNotAllowed, // blocked by a security rule
       '23505' => l10n.errorAlreadyExists, // duplicate
@@ -49,12 +54,14 @@ String friendlyError(AppLocalizations l10n, Object? error) {
     };
   }
 
-  if (error is StorageException) {
-    final text = '${error.statusCode} ${error.message}'.toLowerCase();
-    if (text.contains('413') || text.contains('size')) return l10n.errorFileTooLarge;
-    if (text.contains('mime') || text.contains('type')) return l10n.errorFileType;
-    if (text.contains('403')) return l10n.errorNotAllowed;
-    return l10n.errorGeneric;
+  if (error is MediaException) {
+    return switch (error.status) {
+      413 => l10n.errorFileTooLarge,
+      415 => l10n.errorFileType,
+      401 => l10n.errorSessionExpired,
+      403 => l10n.errorNotAllowed,
+      _ => l10n.errorGeneric,
+    };
   }
 
   return l10n.errorGeneric;

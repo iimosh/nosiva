@@ -62,8 +62,8 @@ class MainShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    ref.watch(inboxRealtimeProvider); // keep the live inbox subscription open
-    ref.watch(profileRealtimeProvider); // live follower/following counts
+    ref.watch(conversationsProvider); // keeps the inbox (and badge) fresh
+    ref.watch(profileLiveProvider); // live follower/following counts
     final unreadMessages = ref.watch(unreadCountProvider);
     final unreadOrders = ref.watch(unreadOrderActivityCountProvider);
     final unreadOffers = ref.watch(unreadOfferActivityCountProvider);

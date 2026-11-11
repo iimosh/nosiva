@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/supabase/supabase_providers.dart';
+import '../../../../core/backend/backend_providers.dart';
 import '../../data/listings_repository.dart';
 import '../../domain/listing.dart';
 import '../../domain/listing_enums.dart';

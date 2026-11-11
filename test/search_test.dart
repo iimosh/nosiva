@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nosiva/core/storage/app_preferences.dart';
-import 'package:nosiva/core/supabase/supabase_providers.dart';
+import 'package:nosiva/core/backend/backend_providers.dart';
 import 'package:nosiva/features/listings/data/listings_repository.dart';
 import 'package:nosiva/features/listings/presentation/controllers/recent_searches.dart';
 import 'package:shared_preferences/shared_preferences.dart';

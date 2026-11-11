@@ -1,12 +1,16 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:async';
 
-import '../../../core/supabase/supabase_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase/supabase.dart';
+
+import '../../../core/backend/backend_providers.dart';
+import '../../../core/neon/neon_functions.dart';
 import '../domain/review.dart';
 
 class ReviewsRepository {
-  ReviewsRepository(this._client);
+  ReviewsRepository(this._client, this._functions);
   final SupabaseClient _client;
+  final NeonFunctions _functions;
 
   static const _table = 'reviews';
   static const _select = '*, reviewer:profiles!reviews_reviewer_id_fkey(*)';
@@ -20,7 +24,7 @@ class ReviewsRepository {
     required int rating,
     String? comment,
   }) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final data = await _client
         .from(_table)
         .upsert({
@@ -32,12 +36,14 @@ class ReviewsRepository {
         }, onConflict: 'order_id,reviewer_id')
         .select(_select)
         .single();
+    // Send their notification now rather than at the next safety check.
+    unawaited(_functions.nudgePush());
     return Review.fromJson(data);
   }
 
   /// The caller's own review for [orderId], if they've already left one.
   Future<Review?> fetchMyReviewForOrder(String orderId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final data = await _client
         .from(_table)
         .select(_select)
@@ -59,7 +65,10 @@ class ReviewsRepository {
 }
 
 final reviewsRepositoryProvider = Provider<ReviewsRepository>((ref) {
-  return ReviewsRepository(ref.watch(supabaseClientProvider));
+  return ReviewsRepository(
+    ref.watch(dataClientProvider),
+    ref.watch(neonFunctionsProvider),
+  );
 });
 
 final myReviewForOrderProvider =

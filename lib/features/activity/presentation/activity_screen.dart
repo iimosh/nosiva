@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/snackbars.dart';
 import '../../offers/data/offers_repository.dart';
 import '../../orders/data/orders_repository.dart';
 import '../../orders/presentation/orders_screen.dart';
@@ -72,9 +73,14 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen>
               ref.invalidate(sellerOffersProvider);
               ref.invalidate(archivedBuyerOffersProvider);
               ref.invalidate(archivedSellerOffersProvider);
+              if (context.mounted) {
+                context.showSnack(context.l10n.allMarkedRead);
+              }
             },
             tooltip: context.l10n.markAllRead,
-            icon: const Icon(Icons.remove_red_eye_outlined),
+            // Two ticks: the usual "mark all as read" sign (an eye was
+            // easily mistaken for "refresh").
+            icon: const Icon(Icons.done_all_rounded),
           ),
           IconButton(
             onPressed: () => ref

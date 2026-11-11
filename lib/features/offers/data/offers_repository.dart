@@ -1,12 +1,18 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:async';
 
-import '../../../core/supabase/supabase_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase/supabase.dart';
+
+import '../../../core/backend/backend_providers.dart';
+import '../../../core/live/live_updates.dart';
+import '../../../core/neon/neon_functions.dart';
 import '../domain/offer.dart';
 
 class OffersRepository {
-  OffersRepository(this._client);
+  OffersRepository(this._client, this._functions, this._live);
   final SupabaseClient _client;
+  final NeonFunctions _functions;
+  final LiveUpdates _live;
   static const _table = 'offers';
   static const _select =
       '*, listing:listings(*, images:listing_images(*)), '
@@ -22,7 +28,7 @@ class OffersRepository {
     String? shippingAddress,
     String? buyerPhone,
   }) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final data = await _client
         .from(_table)
         .insert({
@@ -36,6 +42,10 @@ class OffersRepository {
         })
         .select(_select)
         .single();
+    // Show it right away, and send the other person's notification now
+    // rather than at the next minute.
+    _live.ping();
+    unawaited(_functions.nudgePush());
     return Offer.fromJson(data);
   }
 
@@ -85,24 +95,20 @@ class OffersRepository {
     required String userId,
     bool archived = false,
   }) {
-    return _client
-        .from(_table)
-        .stream(primaryKey: ['id'])
-        .eq('buyer_id', userId)
-        .order('activity_at')
-        .asyncMap((_) => fetchAsBuyer(userId: userId, archived: archived));
+    return _live.watch(
+      () => fetchAsBuyer(userId: userId, archived: archived),
+      every: const Duration(seconds: 30),
+    );
   }
 
   Stream<List<Offer>> watchAsSeller({
     required String userId,
     bool archived = false,
   }) {
-    return _client
-        .from(_table)
-        .stream(primaryKey: ['id'])
-        .eq('seller_id', userId)
-        .order('activity_at')
-        .asyncMap((_) => fetchAsSeller(userId: userId, archived: archived));
+    return _live.watch(
+      () => fetchAsSeller(userId: userId, archived: archived),
+      every: const Duration(seconds: 30),
+    );
   }
 
   Future<List<Offer>> fetchForListing(String listingId) async {
@@ -115,7 +121,7 @@ class OffersRepository {
   }
 
   Future<void> respond(String offerId, String status) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final now = DateTime.now().toUtc().toIso8601String();
     await _client
         .from(_table)
@@ -131,10 +137,14 @@ class OffersRepository {
         .eq('seller_id', uid)
         .select('id')
         .single();
+    // Show it right away, and send the other person's notification now
+    // rather than at the next minute.
+    _live.ping();
+    unawaited(_functions.nudgePush());
   }
 
   Future<void> markRead(String offerId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final now = DateTime.now().toUtc().toIso8601String();
     await _client
         .from(_table)
@@ -149,7 +159,7 @@ class OffersRepository {
   }
 
   Future<void> markAllRead() async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final now = DateTime.now().toUtc().toIso8601String();
     await _client
         .from(_table)
@@ -162,7 +172,7 @@ class OffersRepository {
   }
 
   Future<void> archive(String offerId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final now = DateTime.now().toUtc().toIso8601String();
     await _client
         .from(_table)
@@ -177,7 +187,7 @@ class OffersRepository {
   }
 
   Future<void> unarchive(String offerId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     await _client
         .from(_table)
         .update({'buyer_archived_at': null})
@@ -192,7 +202,11 @@ class OffersRepository {
 }
 
 final offersRepositoryProvider = Provider<OffersRepository>((ref) {
-  return OffersRepository(ref.watch(supabaseClientProvider));
+  return OffersRepository(
+    ref.watch(dataClientProvider),
+    ref.watch(neonFunctionsProvider),
+    ref.watch(liveUpdatesProvider),
+  );
 });
 
 final buyerOffersProvider = StreamProvider<List<Offer>>((ref) {

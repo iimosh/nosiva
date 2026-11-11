@@ -1,0 +1,8 @@
+# Installed packages
+node_modules/
+
+# The Neon CLI writes the project link and secrets here (database URL,
+# storage keys, function secrets). Never commit them.
+.neon
+.env
+.env.*

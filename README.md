@@ -1,200 +1,97 @@
 # Nosiva
 
-Nosiva is a cross-platform mobile application for buying and selling pre-owned fashion items. The project is built with Flutter and Supabase, with support for authentication, marketplace listings, favorites, cart and orders, real-time messaging, notifications, and administrator moderation.
-The application is designed as a second-hand fashion marketplace where users can create profiles, list clothing or accessories for sale, browse available products, save favorites, contact sellers, make offers, and manage purchases.
+Nosiva is a mobile marketplace for buying and selling second-hand fashion in North Macedonia. It is a Flutter app (Android first) with a [Neon](https://neon.com) backend: Postgres with row-level security, Neon Auth, the Neon Data API, Neon Functions and Neon object storage. Push notifications go through Firebase Cloud Messaging. The app is available in English and Macedonian.
 
-## Project Purpose
+Items are paid for in cash to the courier on delivery. The app doesn't take card payments.
 
-The purpose of Nosiva is to provide a complete mobile marketplace experience for sustainable fashion shopping. Instead of focusing only on static product browsing, the project includes account management, listing creation, image uploads, search and filtering, user-to-user communication, order tracking, and basic administration tools.
+## Features
 
-This project demonstrates:
+- **Accounts**
+  - Email and password sign-up with a 6-digit email confirmation code.
+  - Google sign-in.
+  - Password reset by emailed code, and change password.
+  - Account deletion, which also removes the account's photos.
+- **Guest browsing**: browse listings and profiles without an account. Signing in is asked for only when needed.
+- **Listings**
+  - Photos (cropped and compressed on the phone), category, size, condition, brand, colour, price and city.
+  - Mark as sold or available, edit, delete.
+  - View counts.
+- **Search and filters**: as-you-type search with prefix matching, recent searches, filters for category, size, condition, colour, brand, city and price, and sorting.
+- **Buying**
+  - Cart with delivery address and phone, remembered for next time.
+  - Offers, which the seller accepts or declines; accepting creates the order.
+  - Order steps: pending, accepted, sent, delivered or cancelled.
+  - Reviews after delivery.
+- **Chat**: one-to-one chats per listing, with private photos that only the two people can open.
+- **Social**: follows, favourites, reporting and blocking.
+- **Notifications**: push notifications for messages, offers, orders, reviews and new followers, in the person's language. Tapping one opens the right screen.
+- **Admin dashboard**: users and roles, reports, and listing moderation.
+- **Polish**:
+  - light and dark themes
+  - an offline bar
+  - accessibility labels
+  - privacy policy and terms (EN/MK)
 
-- Mobile application development with Flutter
-- Feature-based project architecture
-- Authentication and session handling
-- Supabase database integration
-- Supabase Storage for uploaded images
-- Real-time data updates for chat and notifications
-- Role-based access control for normal users and administrators
-- Clean UI components and reusable design system elements
-
-## Main Features
-
-### Authentication and Onboarding
-
-Users can create an account, sign in, and keep their session active across app launches. After registration, users complete onboarding by selecting personal preferences such as categories, sizes, and styles. The application also includes OAuth button scaffolding for Google and Apple sign-in.
-
-### User Profiles
-
-Each user has a profile connected to their authenticated account. Profiles include information such as username, display name, avatar, biography, location, style tags, rating data, follower counts, and onboarding status.
-
-### Listings
-
-Users can create marketplace listings for fashion items. A listing can contain:
-
-- Title and description
-- Category
-- Brand
-- Size
-- Condition
-- Color
-- Price
-- Style tags
-- Location
-- Multiple uploaded images
-
-Listings are stored in Supabase Postgres, while listing images are uploaded to Supabase Storage. Sellers can manage their own listings, and administrators can moderate listings through additional access policies.
-
-### Browse, Search, and Filtering
-
-The home and search screens allow users to browse active listings. The database includes full-text search support over listing title, description, and brand. Listings can also be organized and filtered using categories, price, status, and style tags.
-
-### Listing Details
-
-The listing detail page displays the selected item with its images, product information, price, seller details, favorite control, and buyer actions such as messaging the seller, making an offer, or buying the item.
-
-### Favorites
-
-Users can save listings to a personal favorites list. Favorite data is stored per user, and the listing favorite count is maintained automatically through database triggers.
-
-### Messaging
-
-Nosiva supports one-to-one conversations between buyers and sellers. Conversations are related to listings, and messages are delivered using Supabase Realtime. This allows users to communicate directly before completing a purchase.
-
-### Offers
-
-Buyers can send offers to sellers for specific listings. Offers include the listing, buyer, seller, amount, status, and optional message. The database supports offer states such as pending, accepted, declined, countered, and expired.
-
-### Notifications
-
-The notifications feature stores and displays user-specific notifications such as messages, offers, sales, follows, reviews, and system events. Notifications are protected so users can only view and update their own records.
-
-### Admin Dashboard
-
-The project includes an administrator role system. Administrators can manage user roles and moderate listings. Supabase Row Level Security policies and helper functions prevent normal users from promoting themselves or accessing admin-only actions.
-
-### Design System
-
-Reusable UI elements are located in the core widgets and theme folders. The application includes shared buttons, chips, text fields, heart buttons, loading states, shimmer placeholders, colors, typography, spacing, and light/dark themes.
-
-## Technology Stack
+## Technology
 
 | Area | Technology |
 | --- | --- |
-| Framework | Flutter |
-| Language | Dart |
-| State management | Riverpod |
-| Routing | go_router |
-| Backend | Supabase |
-| Database | Supabase Postgres |
-| Authentication | Supabase Auth |
-| File storage | Supabase Storage |
-| Realtime features | Supabase Realtime |
-| Models and serialization | Freezed, json_serializable |
-| Environment variables | flutter_dotenv |
-| Image handling | image_picker, cached_network_image |
-| Styling | Custom Flutter theme, Google Fonts |
+| App | Flutter, Dart, Riverpod, go_router, freezed/json_serializable |
+| Database | Neon Postgres, with row-level security on every table |
+| Data access | Neon Data API (PostgREST-compatible), via the `supabase` Dart data client |
+| Auth | Neon Auth (managed Better Auth): email/password, email codes, Google |
+| Server code | Neon Functions (TypeScript), in `neon/functions` |
+| Photos | Neon object storage (S3-compatible), behind the `media` function |
+| Push | Firebase Cloud Messaging and flutter_local_notifications |
+| Live updates | Refresh on notification, on app resume, and on timers while the app is open (`lib/core/live`) |
 | Testing | flutter_test |
 
-## Architecture
-
-Nosiva uses a feature-first architecture. Shared application services are placed in the `core` directory, while each main product area is separated into its own feature folder.
+## Project layout
 
 ```text
 lib/
-|-- main.dart
-|-- app.dart
+|-- main.dart, app.dart
 |-- core/
-|   |-- config/
-|   |-- router/
-|   |-- supabase/
-|   |-- theme/
-|   |-- utils/
-|   `-- widgets/
-|-- shell/
-`-- features/
-    |-- admin/
-    |-- auth/
-    |-- cart/
-    |-- design_system/
-    |-- favorites/
-    |-- listings/
-    |-- messaging/
-    |-- notifications/
-    |-- offers/
-    |-- orders/
-    `-- profile/
+|   |-- backend/     data client, auth and function providers
+|   |-- neon/        Neon Auth client, Neon Functions client
+|   |-- live/        refresh-instead-of-realtime helper
+|   |-- config/      .env addresses, app info
+|   |-- router/, theme/, l10n/, widgets/, utils/, network/, media/, ...
+|-- shell/           bottom navigation, offline bar
+`-- features/        one folder per area (auth, listings, messaging, offers,
+                     orders, profile, notifications, admin, safety, ...),
+                     each with data/ domain/ presentation/
+neon/
+|-- neon.ts          Neon project config: auth, Data API, buckets,
+|                    functions, schedules
+|-- migrations/      database migrations (see migrations/README.md)
+|-- functions/       media.ts, push.ts, authbounce.ts
+`-- scripts/         migrate.mjs, save-fcm-key.mjs
 ```
 
-Most feature folders follow this structure:
+## Backend
 
-```text
-feature_name/
-|-- data/
-|-- domain/
-`-- presentation/
-```
+Everything about the backend lives in `neon/`.
 
-- `data` contains repositories and Supabase queries.
-- `domain` contains models, enums, and business data structures.
-- `presentation` contains screens, widgets, and Riverpod controllers.
+- **Database:** `npm run migrate` (in `neon/`) applies new files in `neon/migrations` in order. Every public table has row-level security, and migration 0027 refuses to finish if one doesn't. Business rules are enforced in the database too: order and offer state changes, one active order per item, blocks, and per-account rate limits.
+- **Functions:**
+  - `media`: upload links with size and type limits, private chat-photo links, deleting an account's photos, and a nightly cleanup of unused photo files.
+  - `push`: sends notifications waiting in the database's outbox.
+  - `authbounce`: the last step of Google sign-in.
+- **Deploy:** `npm run deploy` (in `neon/`) applies `neon.ts`: functions, buckets and schedules.
+- **Secrets** live only in git-ignored files:
+  - `neon/.env.local` (written by `neon deploy`)
+  - `neon/.env.secrets` (the Firebase key)
+  - `android/app/google-services.json`
 
-This structure keeps the code organized and makes each feature easier to maintain independently.
+  None of them is ever committed.
 
-## Application Flow
+The `supabase/` folder holds the previous Supabase backend, kept for reference until the move to Neon is settled.
 
-The application starts in `main.dart`, where Flutter bindings are initialized, environment variables are loaded, Supabase is initialized, and the root application widget is started.
+## Running the app
 
-`app.dart` creates the `MaterialApp.router`, connects the application theme, and uses the router configuration from the core router module.
+1. Copy `.env.example` to `.env` and fill in the Neon addresses (all public; see the comments in the file).
+2. Put the Firebase `google-services.json` in `android/app/`. Without it the app runs, but without push notifications.
+3. Run `flutter pub get`, then `flutter run`.
 
-Routing is handled by `go_router`. The router includes authentication-aware redirects:
-
-- Unauthenticated users are redirected to the welcome and sign-in/sign-up screens.
-- Authenticated users without a completed profile are redirected to onboarding.
-- Onboarded users are redirected to the main home screen.
-- Admin routes are protected so only users with an admin role can access them.
-
-The main application shell uses bottom navigation for the primary sections:
-
-- Home
-- Search
-- Sell
-- Inbox
-- Profile
-
-Additional screens such as listing details, favorites, cart, orders, notifications, chat, design system, and admin dashboard are opened through named application routes.
-
-## Backend and Database
-
-The backend is implemented with Supabase. Database migrations are stored in the `supabase/migrations` directory.
-
-The main database tables include:
-
-| Table | Purpose |
-| --- | --- |
-| `profiles` | User profile information linked to Supabase Auth users |
-| `categories` | Reference table for listing categories |
-| `style_tags` | Reference table for style labels |
-| `listings` | Marketplace items created by sellers |
-| `listing_images` | Images connected to listings |
-| `favorites` | User wishlist records |
-| `follows` | User follow relationships |
-| `conversations` | Buyer-seller conversations |
-| `messages` | Chat messages |
-| `offers` | Buyer offers for listings |
-| `orders` | Purchase records |
-| `reviews` | Ratings and reviews between users |
-| `notifications` | User notifications |
-
-The database also includes triggers for:
-
-- Updating `updated_at` timestamps
-- Maintaining listing favorite counts
-- Maintaining follower and following counts
-- Updating review rating averages
-
-Row Level Security is enabled on the project tables. Policies are used to make sure that users can only modify their own records, while public data such as active listings and reference tables can be read where appropriate. Admin users receive additional permissions through a secure role helper function.
-
-## Conclusion
-
-Nosiva is a full-featured Flutter marketplace application focused on second-hand fashion. It combines a structured mobile frontend with a Supabase backend, secure database policies, storage support, real-time communication, and role-based administration. The project demonstrates practical use of modern mobile development tools and backend-as-a-service architecture in one complete application.
+Tests: `flutter test`. Static checks: `flutter analyze`.

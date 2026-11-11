@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../profile/data/profile_repository.dart';
+import '../../../core/neon/neon_auth.dart';
 import '../data/auth_repository.dart';
 import '../../notifications/push_controller.dart';
 
@@ -42,20 +42,21 @@ class AuthController extends AsyncNotifier<void> {
         throw UsernameTakenException();
       }
 
-      final res = await _auth.signUp(
+      final signedIn = await _auth.signUp(
         email: email.trim(),
         password: password,
         username: trimmedUsername,
       );
-      final user = res.user;
-      if (res.session != null && user != null) {
-        // Signed in straight away (email confirmation off).
+      final user = _auth.currentUser;
+      if (signedIn && user != null) {
+        // Signed in straight away (email confirmation off). The database
+        // already created the profile from the username (migration 0020);
+        // this only makes sure of it.
         await profileRepo.createInitial(id: user.id, username: trimmedUsername);
         result = SignUpResult.signedIn;
       } else {
-        // Email confirmation is on: there is no session yet, so the profile
-        // can't be written from the app. It's created from the username in
-        // the user metadata (database trigger, or on first sign-in).
+        // Email confirmation is on: the profile was created from the
+        // username by the database; the account works once confirmed.
         result = SignUpResult.confirmEmail;
       }
     });
@@ -66,6 +67,18 @@ class AuthController extends AsyncNotifier<void> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() => _auth.signInWithOAuth(provider));
     return !state.hasError;
+  }
+
+  /// Signs in with Google and tells the person if it went wrong (closing the
+  /// Google tab on purpose isn't an error).
+  Future<void> signInWithOAuthFrom(
+    OAuthProvider provider,
+    void Function(Object error) onError,
+  ) async {
+    if (await signInWithOAuth(provider)) return;
+    final err = state.error;
+    if (err is NeonAuthException && err.cancelled) return;
+    if (err != null) onError(err);
   }
 
   Future<void> signOut() async {

@@ -18,6 +18,7 @@ import '../../listings/data/listings_repository.dart';
 import '../../listings/presentation/controllers/feed_controller.dart';
 import '../../listings/presentation/controllers/listing_detail_provider.dart';
 import '../../orders/data/delivery_details.dart';
+import '../../orders/presentation/widgets/saved_details_note.dart';
 import '../../orders/data/orders_repository.dart';
 import 'cart_controller.dart';
 import '../../../core/utils/friendly_error.dart';
@@ -44,7 +45,18 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final saved = ref.read(deliveryDetailsProvider);
     _address.text = saved.address;
     _phone.text = saved.phone;
+    _prefilled = saved.address.isNotEmpty || saved.phone.isNotEmpty;
   }
+
+  /// Whether the address and phone came from the last order (see
+  /// SavedDetailsNote).
+  bool _prefilled = false;
+
+  void _clearSaved() => setState(() {
+        _address.clear();
+        _phone.clear();
+        _prefilled = false;
+      });
 
   @override
   void dispose() {
@@ -195,6 +207,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 const SizedBox(height: AppSpacing.xxs),
                 Text(context.l10n.phoneOnlyForSeller,
                     style: theme.textTheme.bodySmall),
+                if (_prefilled) SavedDetailsNote(onClear: _clearSaved),
                 const SizedBox(height: AppSpacing.lg),
                 _SummaryRow(
                   label: context.l10n.total,

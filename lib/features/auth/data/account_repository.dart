@@ -1,20 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase/supabase.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
-import '../../messaging/data/chat_images.dart';
+import '../../../core/backend/backend_providers.dart';
+import '../../../core/neon/neon_auth.dart';
+import '../../../core/neon/neon_functions.dart';
 
 /// Thrown when the user still has orders in progress.
 class OpenOrdersException implements Exception {}
 
 class AccountRepository {
-  AccountRepository(this._client);
+  AccountRepository(this._client, this._functions, this._auth);
   final SupabaseClient _client;
+  final NeonFunctions _functions;
+  final NeonAuth _auth;
 
   /// Permanently deletes the signed-in user's account and their uploaded
-  /// files. Refuses (before touching anything) while they have open orders.
+  /// photos. Refuses (before touching anything) while they have open orders.
   Future<void> deleteAccount() async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
 
     final open = await _client
         .from('orders')
@@ -24,57 +27,28 @@ class AccountRepository {
         .limit(1);
     if (open.isNotEmpty) throw OpenOrdersException();
 
-    await _removeUploadedFiles(uid);
+    // Photos first, while the session still exists. Best effort: a leftover
+    // file must never block the deletion itself.
+    try {
+      await _functions.deleteMyPhotos();
+    } catch (_) {}
 
     try {
-      await _client.rpc('delete_my_account');
+      await _client.rpc('delete_my_account', params: const {});
     } on PostgrestException catch (e) {
       if (e.message.contains('open_orders')) throw OpenOrdersException();
       rethrow;
     }
 
-    // The account no longer exists server-side, so only clear the local session.
-    try {
-      await _client.auth.signOut(scope: SignOutScope.local);
-    } catch (_) {}
-  }
-
-  /// Best effort: a leftover file must never block the deletion itself.
-  Future<void> _removeUploadedFiles(String uid) async {
-    await _removeFolder('avatars', uid);
-    await _removeFolder('listing-images', uid);
-    try {
-      final convos = await _client
-          .from('conversations')
-          .select('id')
-          .or('buyer_id.eq.$uid,seller_id.eq.$uid');
-      for (final c in convos) {
-        await _removeFolder(chatImagesBucket, '${c['id']}/$uid');
-      }
-    } catch (_) {}
-  }
-
-  Future<void> _removeFolder(String bucket, String prefix) async {
-    try {
-      final storage = _client.storage.from(bucket);
-      final items = await storage.list(
-        path: prefix,
-        searchOptions: const SearchOptions(limit: 1000),
-      );
-      final files = <String>[];
-      for (final item in items) {
-        final path = '$prefix/${item.name}';
-        if (item.id == null) {
-          await _removeFolder(bucket, path);
-        } else {
-          files.add(path);
-        }
-      }
-      if (files.isNotEmpty) await storage.remove(files);
-    } catch (_) {}
+    // The account no longer exists server-side; clear this phone's session.
+    await _auth.forgetLocalSession();
   }
 }
 
 final accountRepositoryProvider = Provider<AccountRepository>((ref) {
-  return AccountRepository(ref.watch(supabaseClientProvider));
+  return AccountRepository(
+    ref.watch(dataClientProvider),
+    ref.watch(neonFunctionsProvider),
+    ref.watch(neonAuthProvider),
+  );
 });

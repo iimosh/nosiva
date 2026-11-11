@@ -5,7 +5,7 @@ abstract final class AppRoutes {
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
   static const forgotPassword = '/forgot-password';
-  static const resetPassword = '/reset-password';
+  static const verifyEmail = '/verify-email'; // email passed as `extra`
   static const onboarding = '/onboarding';
   static const privacy = '/privacy';
   static const terms = '/terms';
@@ -26,7 +26,6 @@ abstract final class AppRoutes {
   static const orderDetail = '/order'; // /order/:id
   static const editProfile = '/edit-profile';
   static const changePassword = '/change-password';
-  static const changeEmail = '/change-email';
   static const admin = '/admin';
   static const user = '/user'; // /user/:id (public profile)
   static const followList = '/follows'; // /follows/:id?tab=followers|following
