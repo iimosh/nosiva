@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
@@ -14,7 +13,8 @@ import '../../../core/widgets/nosiva_text_field.dart';
 import '../../../core/widgets/pull_to_refresh.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../../core/widgets/state_views.dart';
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
+import '../../../core/live/live_updates.dart';
 import '../../profile/domain/profile.dart';
 import '../../profile/presentation/user_profile_screen.dart'
     show peopleSearchProvider;
@@ -24,25 +24,14 @@ import '../domain/conversation.dart';
 import '../../../core/utils/friendly_error.dart';
 import '../../../core/theme/app_palette.dart';
 
-final conversationsProvider = FutureProvider<List<Conversation>>((ref) {
-  ref.watch(currentAuthUserProvider);
-  return ref.watch(messagingRepositoryProvider).fetchConversations();
-});
-
-final inboxRealtimeProvider = Provider<void>((ref) {
-  final client = ref.watch(supabaseClientProvider);
-  final uid = ref.watch(currentAuthUserProvider)?.id;
-  if (uid == null) return;
-  final channel = client
-      .channel('inbox:$uid')
-      .onPostgresChanges(
-        event: PostgresChangeEvent.all,
-        schema: 'public',
-        table: 'conversations',
-        callback: (_) => ref.invalidate(conversationsProvider),
-      )
-      .subscribe();
-  ref.onDispose(() => client.removeChannel(channel));
+/// The inbox, kept fresh: checked every 20 seconds while the app is open,
+/// and straight away when a notification arrives or a message is sent.
+final conversationsProvider = StreamProvider<List<Conversation>>((ref) {
+  if (ref.watch(currentAuthUserProvider) == null) return Stream.value(const []);
+  final repo = ref.watch(messagingRepositoryProvider);
+  return ref
+      .watch(liveUpdatesProvider)
+      .watch(repo.fetchConversations, every: const Duration(seconds: 20));
 });
 
 final unreadCountProvider = Provider<int>((ref) {

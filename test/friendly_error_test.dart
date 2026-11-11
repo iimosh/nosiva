@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nosiva/core/utils/friendly_error.dart';
 import 'package:nosiva/l10n/app_localizations.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:nosiva/core/neon/neon_auth.dart';
+import 'package:nosiva/core/neon/neon_functions.dart';
+import 'package:supabase/supabase.dart';
 
 void main() {
   final en = lookupAppLocalizations(const Locale('en'));
@@ -32,16 +34,22 @@ void main() {
   });
 
   test('account errors are specific and translated', () {
-    expect(friendlyError(en, const AuthException('x', code: 'user_already_exists')),
+    expect(friendlyError(en, NeonAuthException('x', code: 'USER_ALREADY_EXISTS')),
         en.errorEmailInUse);
-    expect(friendlyError(mk, const AuthException('x', code: 'over_email_send_rate_limit')),
+    expect(friendlyError(mk, NeonAuthException('x', status: 429)),
         mk.errorTooManyAttempts);
   });
 
+  test('rate limits say "too many attempts"', () {
+    const e = PostgrestException(
+        message: 'rate_limited: too many messages in a short time', code: 'P0001');
+    expect(friendlyError(en, e), en.errorTooManyAttempts);
+  });
+
   test('photo upload errors', () {
-    expect(friendlyError(en, StorageException('Payload too large', statusCode: '413')),
+    expect(friendlyError(en, MediaException(413, 'Image too large')),
         en.errorFileTooLarge);
-    expect(friendlyError(en, StorageException('invalid_mime_type')), en.errorFileType);
+    expect(friendlyError(en, MediaException(415, 'Only images')), en.errorFileType);
   });
 
   test('anything unknown gets the generic message, never raw text', () {

@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
+import 'package:supabase/supabase.dart' show PostgrestException;
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
@@ -15,7 +15,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/snackbars.dart';
 import '../../../core/widgets/state_views.dart';
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../../safety/data/safety_repository.dart';
 import '../../safety/presentation/user_safety_menu.dart';
 import '../data/messaging_repository.dart';

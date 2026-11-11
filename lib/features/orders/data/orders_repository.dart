@@ -1,14 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase/supabase.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
+import '../../../core/live/live_updates.dart';
+import '../../../core/neon/neon_functions.dart';
 import '../domain/order.dart';
 
 class OrdersRepository {
-  OrdersRepository(this._client);
+  OrdersRepository(this._client, this._functions, this._live);
   final SupabaseClient _client;
+  final NeonFunctions _functions;
+  final LiveUpdates _live;
   static const _table = 'orders';
   static const _select =
       '*, listing:listings(*, images:listing_images(*)), '
@@ -24,7 +28,7 @@ class OrdersRepository {
     String? shippingAddress,
     String? buyerPhone,
   }) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final data = await _client
         .from(_table)
         .insert({
@@ -38,6 +42,10 @@ class OrdersRepository {
         })
         .select(_select)
         .single();
+    // Show it right away, and send the other person's notification now
+    // rather than at the next minute.
+    _live.ping();
+    unawaited(_functions.nudgePush());
     return Order.fromJson(data);
   }
 
@@ -79,24 +87,20 @@ class OrdersRepository {
     required String userId,
     bool archived = false,
   }) {
-    return _client
-        .from(_table)
-        .stream(primaryKey: ['id'])
-        .eq('buyer_id', userId)
-        .order('activity_at')
-        .asyncMap((_) => fetchAsBuyer(userId: userId, archived: archived));
+    return _live.watch(
+      () => fetchAsBuyer(userId: userId, archived: archived),
+      every: const Duration(seconds: 30),
+    );
   }
 
   Stream<List<Order>> watchAsSeller({
     required String userId,
     bool archived = false,
   }) {
-    return _client
-        .from(_table)
-        .stream(primaryKey: ['id'])
-        .eq('seller_id', userId)
-        .order('activity_at')
-        .asyncMap((_) => fetchAsSeller(userId: userId, archived: archived));
+    return _live.watch(
+      () => fetchAsSeller(userId: userId, archived: archived),
+      every: const Duration(seconds: 30),
+    );
   }
 
   Future<Order> fetchById(String id) async {
@@ -111,10 +115,14 @@ class OrdersRepository {
         .eq('id', orderId)
         .select('id')
         .single();
+    // Show it right away, and send the other person's notification now
+    // rather than at the next minute.
+    _live.ping();
+    unawaited(_functions.nudgePush());
   }
 
   Future<void> markRead(String orderId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final now = DateTime.now().toUtc().toIso8601String();
     await _client
         .from(_table)
@@ -129,7 +137,7 @@ class OrdersRepository {
   }
 
   Future<void> markAllRead() async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final now = DateTime.now().toUtc().toIso8601String();
     await _client
         .from(_table)
@@ -142,7 +150,7 @@ class OrdersRepository {
   }
 
   Future<void> archive(String orderId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final now = DateTime.now().toUtc().toIso8601String();
     await _client
         .from(_table)
@@ -157,7 +165,7 @@ class OrdersRepository {
   }
 
   Future<void> unarchive(String orderId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     await _client
         .from(_table)
         .update({'buyer_archived_at': null})
@@ -180,7 +188,11 @@ class OrdersRepository {
 }
 
 final ordersRepositoryProvider = Provider<OrdersRepository>((ref) {
-  return OrdersRepository(ref.watch(supabaseClientProvider));
+  return OrdersRepository(
+    ref.watch(dataClientProvider),
+    ref.watch(neonFunctionsProvider),
+    ref.watch(liveUpdatesProvider),
+  );
 });
 
 final buyerOrdersProvider = StreamProvider<List<Order>>((ref) {

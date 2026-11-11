@@ -398,7 +398,7 @@
   "usernameInvalid": "Use only letters, numbers, and underscores",
   "usernameTaken": "That username is already taken",
   "confirmEmailSent": "Check your email to confirm your account, then sign in.",
-  "emailNotConfirmed": "Please confirm your email first. Check your inbox for the link.",
+  "emailNotConfirmed": "Please confirm your email first. We've sent you a new code.",
   "reportUser": "Report user",
   "reportListing": "Report listing",
   "blockUser": "Block user",
@@ -771,5 +771,37 @@
   "notificationsOff": "Off — tap to turn on",
   "notificationsBlocked": "Notifications are blocked. Turn them on in your phone's Settings → Apps → Nosiva → Notifications.",
   "notificationChannelName": "Messages, offers and orders",
-  "notificationChannelDescription": "New messages, offers and updates on your orders."
+  "notificationChannelDescription": "New messages, offers and updates on your orders.",
+  "resetCodeSubtitle": "Enter your account's email and we'll send you a 6-digit code.",
+  "sendResetCode": "Send code",
+  "resetCodeSent": "We emailed you a 6-digit code. Enter it below with your new password.",
+  "resetCodeLabel": "Code from the email",
+  "resetCodeInvalid": "Enter the 6-digit code",
+  "passwordResetDone": "Your password was changed. Sign in with the new one.",
+  "errorWrongCode": "That code is wrong or has expired. Ask for a new one.",
+  "resendCode": "Send a new code",
+  "verifyEmailTitle": "Confirm your email",
+  "verifyEmailSubtitle": "We sent a 6-digit code to {email}. Enter it below to finish creating your account.",
+  "@verifyEmailSubtitle": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "verifyEmailCta": "Confirm",
+  "emailConfirmed": "Email confirmed. Welcome to Nosiva!",
+  "newCodeSent": "We sent you a new code.",
+  "resendCodeIn": "Send a new code in {seconds} s",
+  "@resendCodeIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "verifyEmailSpamHint": "Can't find it? Check your spam folder.",
+  "savedDeliveryDetails": "Filled in from your last order",
+  "clear": "Clear",
+  "allMarkedRead": "Everything marked as read"
 }

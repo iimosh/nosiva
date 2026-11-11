@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
+import '../../../core/live/live_updates.dart';
 import '../data/profile_repository.dart';
 import '../domain/profile.dart';
 
@@ -15,9 +15,9 @@ class CurrentProfile extends AsyncNotifier<Profile?> {
     final existing = await repo.fetchById(user.id);
     if (existing != null) return existing;
 
-    // Email sign-ups carry their chosen username in the user metadata
-    // (they had no session to create the profile with at sign-up time).
-    final chosen = user.userMetadata?['username'];
+    // Email sign-ups carry their chosen username as the account's name (the
+    // database normally creates the profile from it already, migration 0020).
+    final chosen = user.name;
     if (chosen is String && RegExp(r'^[A-Za-z0-9_]{3,30}$').hasMatch(chosen)) {
       try {
         return await repo.createInitial(id: user.id, username: chosen);
@@ -63,23 +63,18 @@ final isAdminProvider = Provider<bool>((ref) {
   return ref.watch(currentProfileProvider).valueOrNull?.isAdmin ?? false;
 });
 
-final profileRealtimeProvider = Provider<void>((ref) {
-  final client = ref.watch(supabaseClientProvider);
+/// Keeps the signed-in person's profile fresh (follower counts, ratings):
+/// checked every minute while the app is open, and when a notification
+/// arrives or the app comes back to the foreground.
+final profileLiveProvider = Provider<void>((ref) {
   final uid = ref.watch(currentAuthUserProvider)?.id;
   if (uid == null) return;
-  final channel = client
-      .channel('profile:$uid')
-      .onPostgresChanges(
-        event: PostgresChangeEvent.update,
-        schema: 'public',
-        table: 'profiles',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'id',
-          value: uid,
-        ),
-        callback: (_) => ref.read(currentProfileProvider.notifier).reload(),
-      )
-      .subscribe();
-  ref.onDispose(() => client.removeChannel(channel));
+  final repo = ref.watch(profileRepositoryProvider);
+  final sub = ref
+      .watch(liveUpdatesProvider)
+      .watch(() => repo.fetchById(uid), every: const Duration(minutes: 1))
+      .listen((profile) {
+    if (profile != null) ref.read(currentProfileProvider.notifier).set(profile);
+  }, onError: (_) {});
+  ref.onDispose(sub.cancel);
 });

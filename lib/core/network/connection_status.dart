@@ -25,7 +25,7 @@ final internetProbeProvider = Provider<Future<bool> Function()>((ref) {
     // Browsers can't look up addresses; trust the network state there.
     if (kIsWeb) return true;
     try {
-      final host = Uri.parse(Env.supabaseUrl).host;
+      final host = Uri.parse(Env.neonDataApiUrl).host;
       final result = await InternetAddress.lookup(host)
           .timeout(const Duration(seconds: 5));
       return result.isNotEmpty && result.first.rawAddress.isNotEmpty;

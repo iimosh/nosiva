@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/storage/app_preferences.dart';
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 
 /// The delivery address and phone from this account's last order or offer,
 /// so repeat buyers don't retype them. Kept on this phone only, separately

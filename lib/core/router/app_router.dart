@@ -2,15 +2,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/auth/presentation/change_email_screen.dart';
 import '../../features/auth/presentation/change_password_screen.dart';
 import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/guest_prompt.dart';
 import '../../features/auth/presentation/onboarding_screen.dart';
-import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/sign_in_screen.dart';
 import '../../features/auth/presentation/sign_up_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
+import '../../features/auth/presentation/verify_email_screen.dart';
 import '../../features/auth/presentation/welcome_screen.dart';
 import '../../features/admin/presentation/admin_dashboard_screen.dart';
 import '../../features/legal/legal_content.dart';
@@ -34,7 +33,7 @@ import '../../features/reviews/presentation/reviews_list_screen.dart';
 import '../../shell/main_shell.dart';
 import '../../shell/scroll_to_top.dart';
 import '../storage/app_preferences.dart';
-import '../supabase/supabase_providers.dart';
+import '../backend/backend_providers.dart';
 import 'app_routes.dart';
 import 'return_after_sign_in.dart';
 
@@ -81,14 +80,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
-      // A recovery-email link signs the user in, but they must set a new
-      // password before doing anything else — check this first so it
-      // overrides every other redirect rule below, including "already
-      // signed in -> go home".
-      if (ref.read(passwordRecoveryProvider)) {
-        return loc == AppRoutes.resetPassword ? null : AppRoutes.resetPassword;
-      }
-
       // The privacy policy and terms are readable by anyone, at any point
       // (they're linked from sign-up, before an account exists).
       if (loc == AppRoutes.privacy || loc == AppRoutes.terms) return null;
@@ -99,6 +90,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         AppRoutes.signIn,
         AppRoutes.signUp,
         AppRoutes.forgotPassword,
+        AppRoutes.verifyEmail,
       };
       final isAuthRoute = authRoutes.contains(loc);
       final isSplash = loc == AppRoutes.splash;
@@ -124,10 +116,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             return loc == AppRoutes.onboarding ? null : AppRoutes.onboarding;
           }
           if (loc == AppRoutes.admin && !p.isAdmin) return AppRoutes.home;
-          if (isAuthRoute ||
-              isSplash ||
-              loc == AppRoutes.onboarding ||
-              loc == AppRoutes.resetPassword) {
+          if (isAuthRoute || isSplash || loc == AppRoutes.onboarding) {
             // Back to where a guest was when they were asked to sign in.
             return returnTo.take() ?? AppRoutes.home;
           }
@@ -145,10 +134,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const ForgotPasswordScreen(),
       ),
       GoRoute(
-        path: AppRoutes.resetPassword,
-        builder: (_, __) => const ResetPasswordScreen(),
-      ),
-      GoRoute(
         path: AppRoutes.privacy,
         parentNavigatorKey: _rootKey,
         builder: (_, __) =>
@@ -158,6 +143,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.terms,
         parentNavigatorKey: _rootKey,
         builder: (_, __) => const LegalScreen(document: LegalDocument.terms),
+      ),
+      GoRoute(
+        path: AppRoutes.verifyEmail,
+        // The address comes in `extra` (never in the URL); without one
+        // there's nothing to confirm, so back to sign-in.
+        redirect: (_, state) =>
+            state.extra is String ? null : AppRoutes.signIn,
+        builder: (_, state) => VerifyEmailScreen(email: state.extra! as String),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
@@ -297,11 +290,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.changePassword,
         parentNavigatorKey: _rootKey,
         builder: (_, __) => const ChangePasswordScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.changeEmail,
-        parentNavigatorKey: _rootKey,
-        builder: (_, __) => const ChangeEmailScreen(),
       ),
       GoRoute(
         path: AppRoutes.admin,

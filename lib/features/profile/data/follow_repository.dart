@@ -1,16 +1,20 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:async';
 
-import '../../../core/supabase/supabase_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase/supabase.dart';
+
+import '../../../core/backend/backend_providers.dart';
+import '../../../core/neon/neon_functions.dart';
 import '../domain/profile.dart';
 
 class FollowRepository {
-  FollowRepository(this._client);
+  FollowRepository(this._client, this._functions);
   final SupabaseClient _client;
+  final NeonFunctions _functions;
   static const _table = 'follows';
 
   Future<Set<String>> fetchFollowingIds() async {
-    final uid = _client.auth.currentUser?.id;
+    final uid = currentUserId();
     if (uid == null) return {};
     final data =
         await _client.from(_table).select('following_id').eq('follower_id', uid);
@@ -18,14 +22,16 @@ class FollowRepository {
   }
 
   Future<void> follow(String userId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     await _client
         .from(_table)
         .upsert({'follower_id': uid, 'following_id': userId});
+    // Send their notification now rather than at the next safety check.
+    unawaited(_functions.nudgePush());
   }
 
   Future<void> unfollow(String userId) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     await _client
         .from(_table)
         .delete()
@@ -57,5 +63,8 @@ class FollowRepository {
 }
 
 final followRepositoryProvider = Provider<FollowRepository>((ref) {
-  return FollowRepository(ref.watch(supabaseClientProvider));
+  return FollowRepository(
+    ref.watch(dataClientProvider),
+    ref.watch(neonFunctionsProvider),
+  );
 });

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
 import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/neon/neon_auth.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/friendly_error.dart';
 import '../../../core/utils/snackbars.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/nosiva_button.dart';
@@ -44,12 +45,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       context.showSuccess(context.l10n.welcomeBackSuccess);
     } else {
       final err = ref.read(authControllerProvider).error;
-      final notConfirmed = err is AuthException &&
-          (err.code == 'email_not_confirmed' ||
-              err.message.toLowerCase().contains('not confirmed'));
-      context.showError(notConfirmed
-          ? context.l10n.emailNotConfirmed
-          : context.l10n.signInFailed);
+      if (err is NeonAuthException && err.code == 'EMAIL_NOT_VERIFIED') {
+        // Neon has just emailed a fresh code: confirm the address first.
+        context.showSnack(context.l10n.emailNotConfirmed);
+        context.push(AppRoutes.verifyEmail, extra: _email.text.trim());
+        return;
+      }
+      context.showError(context.l10n.signInFailed);
     }
   }
 
@@ -119,8 +121,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 OAuthButtons(
-                  onProvider: (p) =>
-                      ref.read(authControllerProvider.notifier).signInWithOAuth(p),
+                  onProvider: (p) => ref
+                      .read(authControllerProvider.notifier)
+                      .signInWithOAuthFrom(p, (e) {
+                    if (context.mounted) {
+                      context.showError(friendlyError(context.l10n, e));
+                    }
+                  }),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 const LegalConsentText(),

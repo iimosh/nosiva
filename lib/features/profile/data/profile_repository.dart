@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
+import 'package:supabase/supabase.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
+import '../../../core/neon/neon_functions.dart';
 import '../domain/profile.dart';
 import '../../../core/utils/search_text.dart';
 
@@ -12,11 +12,11 @@ import '../../../core/utils/search_text.dart';
 class UsernameTakenException implements Exception {}
 
 class ProfileRepository {
-  ProfileRepository(this._client);
+  ProfileRepository(this._client, this._functions);
   final SupabaseClient _client;
+  final NeonFunctions _functions;
 
   static const _table = 'profiles';
-  static const _avatarsBucket = 'avatars';
 
   Future<Profile?> fetchById(String id) async {
     final data = await _withTransientRetry(
@@ -131,18 +131,13 @@ class ProfileRepository {
     required Uint8List bytes,
     required String ext,
   }) async {
-    final normalizedExt = ext == 'jpeg' ? 'jpg' : ext;
-    final path = '$userId/${const Uuid().v4()}.$normalizedExt';
-    await _client.storage.from(_avatarsBucket).uploadBinary(
-          path,
-          bytes,
-          fileOptions: FileOptions(
-            contentType:
-                'image/${normalizedExt == 'jpg' ? 'jpeg' : normalizedExt}',
-            upsert: true,
-          ),
-        );
-    return _client.storage.from(_avatarsBucket).getPublicUrl(path);
+    // The media function puts it in the signed-in person's own folder.
+    final photo = await _functions.uploadPhoto(
+      kind: MediaKind.avatar,
+      bytes: bytes,
+      contentType: imageContentType(ext),
+    );
+    return photo.publicUrl!;
   }
 
   Future<Profile> updateAvatar({
@@ -194,5 +189,8 @@ class ProfileRepository {
 }
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
-  return ProfileRepository(ref.watch(supabaseClientProvider));
+  return ProfileRepository(
+    ref.watch(dataClientProvider),
+    ref.watch(neonFunctionsProvider),
+  );
 });

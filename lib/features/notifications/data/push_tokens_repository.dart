@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase/supabase.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 
 /// Tells the server which phones belong to the signed-in account, so
 /// notifications reach them (see migration 0026).
@@ -24,5 +24,5 @@ class PushTokensRepository {
 }
 
 final pushTokensRepositoryProvider = Provider<PushTokensRepository>((ref) {
-  return PushTokensRepository(ref.watch(supabaseClientProvider));
+  return PushTokensRepository(ref.watch(dataClientProvider));
 });

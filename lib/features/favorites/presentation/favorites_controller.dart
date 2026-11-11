@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../data/favorites_repository.dart';
 
 /// Holds the set of favorited listing ids and toggles them optimistically.

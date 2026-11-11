@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 
 /// Chat photos live in the private 'chat-images' bucket and are shown
-/// through short-lived signed links, readable only by the two people in the
-/// conversation (see migration 0025).
+/// through short-lived signed links, which the media function gives only to
+/// the two people in the conversation (neon/functions/media.ts).
 const chatImagesBucket = 'chat-images';
 
 /// Longest side, in pixels, a chat photo is scaled down to before upload.
@@ -33,11 +33,7 @@ String? chatImagePath(String stored) {
 /// on the phone by its path, not by the link.
 final chatImageUrlProvider =
     FutureProvider.autoDispose.family<String, String>((ref, path) async {
-  final url = await ref
-      .watch(supabaseClientProvider)
-      .storage
-      .from(chatImagesBucket)
-      .createSignedUrl(path, 3600);
+  final url = await ref.watch(neonFunctionsProvider).chatPhotoUrl(path);
   final keep = ref.keepAlive();
   final timer = Timer(const Duration(minutes: 50), keep.close);
   ref.onDispose(timer.cancel);

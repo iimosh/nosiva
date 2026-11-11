@@ -19,6 +19,10 @@ sealed class PushTarget {
         return OrderTarget(id);
       case 'activity':
         return ActivityTarget(selling: data['tab'] == 'selling');
+      case 'reviews' when id is String && _uuid.hasMatch(id):
+        return ReviewsTarget(id);
+      case 'user' when id is String && _uuid.hasMatch(id):
+        return UserTarget(id);
     }
     return null;
   }
@@ -32,6 +36,18 @@ class ChatTarget extends PushTarget {
 class OrderTarget extends PushTarget {
   const OrderTarget(this.orderId);
   final String orderId;
+}
+
+/// Someone's reviews — yours, after someone reviewed you.
+class ReviewsTarget extends PushTarget {
+  const ReviewsTarget(this.userId);
+  final String userId;
+}
+
+/// A person's profile — a new follower's.
+class UserTarget extends PushTarget {
+  const UserTarget(this.userId);
+  final String userId;
 }
 
 /// Offers, which live in Activity under Buying or Selling.

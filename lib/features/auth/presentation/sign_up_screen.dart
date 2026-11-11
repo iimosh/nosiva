@@ -49,8 +49,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       case SignUpResult.signedIn:
         context.showSuccess(context.l10n.accountCreated);
       case SignUpResult.confirmEmail:
-        context.showSuccess(context.l10n.confirmEmailSent);
-        context.pushReplacement(AppRoutes.signIn);
+        // Neon has emailed a 6-digit code; type it in on the next screen.
+        context.pushReplacement(AppRoutes.verifyEmail,
+            extra: _email.text.trim());
       case SignUpResult.failed:
         final err = ref.read(authControllerProvider).error;
         if (err is UsernameTakenException) {
@@ -136,8 +137,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 OAuthButtons(
-                  onProvider: (p) =>
-                      ref.read(authControllerProvider.notifier).signInWithOAuth(p),
+                  onProvider: (p) => ref
+                      .read(authControllerProvider.notifier)
+                      .signInWithOAuthFrom(p, (e) {
+                    if (context.mounted) {
+                      context.showError(friendlyError(context.l10n, e));
+                    }
+                  }),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 const LegalConsentText(),

@@ -1,17 +1,20 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
+import 'package:supabase/supabase.dart';
 
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
+import '../../../core/live/live_updates.dart';
+import '../../../core/neon/neon_functions.dart';
 import '../domain/conversation.dart';
 import '../domain/message.dart';
-import 'chat_images.dart';
 
 class MessagingRepository {
-  MessagingRepository(this._client);
+  MessagingRepository(this._client, this._functions, this._live);
   final SupabaseClient _client;
+  final NeonFunctions _functions;
+  final LiveUpdates _live;
 
   static const _conversations = 'conversations';
   static const _messages = 'messages';
@@ -26,7 +29,7 @@ class MessagingRepository {
     required String listingId,
     required String sellerId,
   }) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final existing = await _client
         .from(_conversations)
         .select()
@@ -57,7 +60,7 @@ class MessagingRepository {
     if (!_uuidPattern.hasMatch(otherUserId)) {
       throw ArgumentError.value(otherUserId, 'otherUserId', 'Not a valid user id');
     }
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final rows = await _client
         .from(_conversations)
         .select()
@@ -96,23 +99,35 @@ class MessagingRepository {
   }
 
   Future<List<Conversation>> fetchConversations() async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     final data = await _client
         .from(_conversations)
         .select(_conversationSelect)
         .or('and(buyer_id.eq.$uid,deleted_by_buyer.eq.false),'
             'and(seller_id.eq.$uid,deleted_by_seller.eq.false)')
+        // Opening a chat creates the conversation; it only shows in the
+        // inbox (for either person) once someone has written something.
+        .not('last_message_at', 'is', null)
         .order('last_message_at', ascending: false);
     return data.map<Conversation>((e) => Conversation.fromJson(e)).toList();
   }
 
+  /// The chat's messages, kept fresh while it's open: checked every few
+  /// seconds, and straight away when a notification arrives.
   Stream<List<Message>> messageStream(String conversationId) {
-    return _client
+    return _live.watch(
+      () => fetchMessages(conversationId),
+      every: const Duration(seconds: 3),
+    );
+  }
+
+  Future<List<Message>> fetchMessages(String conversationId) async {
+    final rows = await _client
         .from(_messages)
-        .stream(primaryKey: ['id'])
+        .select()
         .eq('conversation_id', conversationId)
-        .order('created_at', ascending: true)
-        .map((rows) => rows.map(Message.fromJson).toList());
+        .order('created_at', ascending: true);
+    return rows.map(Message.fromJson).toList();
   }
 
   Future<void> sendMessage({
@@ -120,13 +135,17 @@ class MessagingRepository {
     required String body,
     String? imageUrl,
   }) async {
-    final uid = _client.auth.currentUser!.id;
+    final uid = requireUserId();
     await _client.from(_messages).insert({
       'conversation_id': conversationId,
       'sender_id': uid,
       'body': body,
       'image_url': imageUrl,
     });
+    // Show it right away, and send the other person's notification now
+    // rather than at the next minute.
+    _live.ping();
+    unawaited(_functions.nudgePush());
   }
 
   /// Uploads a chat photo to the conversation's private folder and returns
@@ -137,25 +156,22 @@ class MessagingRepository {
     required Uint8List bytes,
     required String ext,
   }) async {
-    final uid = _client.auth.currentUser!.id;
-    const uuid = Uuid();
-    final normalizedExt = ext == 'jpeg' ? 'jpg' : ext;
-    final path = '$conversationId/$uid/${uuid.v4()}.$normalizedExt';
-
-    await _client.storage.from(chatImagesBucket).uploadBinary(
-          path,
-          bytes,
-          fileOptions: FileOptions(
-            contentType:
-                'image/${normalizedExt == 'jpg' ? 'jpeg' : normalizedExt}',
-            upsert: false,
-          ),
-        );
-
-    return path;
+    // The media function checks the person is in this conversation and
+    // picks the folder ("<conversation>/<sender>/…") from the sign-in token.
+    final photo = await _functions.uploadPhoto(
+      kind: MediaKind.chat,
+      bytes: bytes,
+      contentType: imageContentType(ext),
+      conversationId: conversationId,
+    );
+    return photo.path;
   }
 }
 
 final messagingRepositoryProvider = Provider<MessagingRepository>((ref) {
-  return MessagingRepository(ref.watch(supabaseClientProvider));
+  return MessagingRepository(
+    ref.watch(dataClientProvider),
+    ref.watch(neonFunctionsProvider),
+    ref.watch(liveUpdatesProvider),
+  );
 });

@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
@@ -271,7 +271,7 @@ class _OrderActivityCard extends ConsumerWidget {
     }
   }
 
-  void _removeOptimisticArchived(WidgetRef ref, String key) {
+  void _removeOptimisticArchived(ProviderContainer ref, String key) {
     final current = ref.read(_optimisticArchivedOrdersProvider);
     ref.read(_optimisticArchivedOrdersProvider.notifier).state = {
       for (final item in current)
@@ -279,7 +279,7 @@ class _OrderActivityCard extends ConsumerWidget {
     };
   }
 
-  void _removeOptimisticRestored(WidgetRef ref, String key) {
+  void _removeOptimisticRestored(ProviderContainer ref, String key) {
     final current = ref.read(_optimisticRestoredOrdersProvider);
     ref.read(_optimisticRestoredOrdersProvider.notifier).state = {
       for (final entry in current.entries)
@@ -287,14 +287,14 @@ class _OrderActivityCard extends ConsumerWidget {
     };
   }
 
-  void _refreshOrderLists(WidgetRef ref) {
+  void _refreshOrderLists(ProviderContainer ref) {
     ref.invalidate(buyerOrdersProvider);
     ref.invalidate(sellerOrdersProvider);
     ref.invalidate(archivedBuyerOrdersProvider);
     ref.invalidate(archivedSellerOrdersProvider);
   }
 
-  Future<void> _archive(BuildContext context, WidgetRef ref) async {
+  Future<void> _archive(BuildContext context, ProviderContainer ref) async {
     final key = _activityKey(role, order.id);
     ref.read(_optimisticArchivedOrdersProvider.notifier).state = {
       ...ref.read(_optimisticArchivedOrdersProvider),
@@ -328,7 +328,7 @@ class _OrderActivityCard extends ConsumerWidget {
     }
   }
 
-  Future<void> _restore(BuildContext context, WidgetRef ref) async {
+  Future<void> _restore(BuildContext context, ProviderContainer ref) async {
     final key = _activityKey(role, order.id);
     _removeOptimisticArchived(ref, key);
     ref.read(_optimisticRestoredOrdersProvider.notifier).state = {
@@ -472,7 +472,8 @@ class _OrderActivityCard extends ConsumerWidget {
                   child: NosivaButton(
                     label: context.l10n.restore,
                     variant: NosivaButtonVariant.secondary,
-                    onPressed: () => _restore(context, ref),
+                    onPressed: () => _restore(
+                        context, ProviderScope.containerOf(context, listen: false)),
                   ),
                 )
               else if (role == OrderListRole.seller)
@@ -489,7 +490,8 @@ class _OrderActivityCard extends ConsumerWidget {
       key: ValueKey('archive-${role.name}-${order.id}'),
       direction: DismissDirection.endToStart,
       confirmDismiss: (_) async {
-        await _archive(context, ref);
+        await _archive(
+            context, ProviderScope.containerOf(context, listen: false));
         return false;
       },
       background: _ArchiveBackground(label: context.l10n.archive),
@@ -547,7 +549,10 @@ class _OfferActivityCard extends ConsumerWidget {
     }
   }
 
-  void _refreshOfferLists(WidgetRef ref) {
+  void _refreshOfferLists(WidgetRef ref) =>
+      _refreshOfferListsIn(ProviderScope.containerOf(ref.context, listen: false));
+
+  void _refreshOfferListsIn(ProviderContainer ref) {
     ref.invalidate(buyerOffersProvider);
     ref.invalidate(sellerOffersProvider);
     ref.invalidate(archivedBuyerOffersProvider);
@@ -585,7 +590,7 @@ class _OfferActivityCard extends ConsumerWidget {
     }
   }
 
-  void _removeOptimisticArchived(WidgetRef ref, String key) {
+  void _removeOptimisticArchived(ProviderContainer ref, String key) {
     final current = ref.read(_optimisticArchivedOffersProvider);
     ref.read(_optimisticArchivedOffersProvider.notifier).state = {
       for (final item in current)
@@ -593,7 +598,7 @@ class _OfferActivityCard extends ConsumerWidget {
     };
   }
 
-  void _removeOptimisticRestored(WidgetRef ref, String key) {
+  void _removeOptimisticRestored(ProviderContainer ref, String key) {
     final current = ref.read(_optimisticRestoredOffersProvider);
     ref.read(_optimisticRestoredOffersProvider.notifier).state = {
       for (final entry in current.entries)
@@ -601,7 +606,7 @@ class _OfferActivityCard extends ConsumerWidget {
     };
   }
 
-  Future<void> _archive(BuildContext context, WidgetRef ref) async {
+  Future<void> _archive(BuildContext context, ProviderContainer ref) async {
     final key = _activityKey(role, offer.id);
     ref.read(_optimisticArchivedOffersProvider.notifier).state = {
       ...ref.read(_optimisticArchivedOffersProvider),
@@ -611,7 +616,7 @@ class _OfferActivityCard extends ConsumerWidget {
 
     try {
       await ref.read(offersRepositoryProvider).archive(offer.id);
-      _refreshOfferLists(ref);
+      _refreshOfferListsIn(ref);
 
       if (context.mounted) {
         ScaffoldMessenger.of(context)
@@ -635,7 +640,7 @@ class _OfferActivityCard extends ConsumerWidget {
     }
   }
 
-  Future<void> _restore(BuildContext context, WidgetRef ref) async {
+  Future<void> _restore(BuildContext context, ProviderContainer ref) async {
     final key = _activityKey(role, offer.id);
     _removeOptimisticArchived(ref, key);
     ref.read(_optimisticRestoredOffersProvider.notifier).state = {
@@ -645,7 +650,7 @@ class _OfferActivityCard extends ConsumerWidget {
 
     try {
       await ref.read(offersRepositoryProvider).unarchive(offer.id);
-      _refreshOfferLists(ref);
+      _refreshOfferListsIn(ref);
       if (context.mounted) context.showSuccess(context.l10n.restored);
       Future<void>.delayed(const Duration(seconds: 1), () {
         _removeOptimisticRestored(ref, key);
@@ -783,7 +788,8 @@ class _OfferActivityCard extends ConsumerWidget {
                   child: NosivaButton(
                     label: context.l10n.restore,
                     variant: NosivaButtonVariant.secondary,
-                    onPressed: () => _restore(context, ref),
+                    onPressed: () => _restore(
+                        context, ProviderScope.containerOf(context, listen: false)),
                   ),
                 )
               else if (needsSellerAction)
@@ -829,7 +835,8 @@ class _OfferActivityCard extends ConsumerWidget {
       key: ValueKey('archive-offer-${role.name}-${offer.id}'),
       direction: DismissDirection.endToStart,
       confirmDismiss: (_) async {
-        await _archive(context, ref);
+        await _archive(
+            context, ProviderScope.containerOf(context, listen: false));
         return false;
       },
       background: _ArchiveBackground(label: context.l10n.archive),

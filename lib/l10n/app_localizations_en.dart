@@ -918,7 +918,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailNotConfirmed =>
-      'Please confirm your email first. Check your inbox for the link.';
+      'Please confirm your email first. We\'ve sent you a new code.';
 
   @override
   String get reportUser => 'Report user';
@@ -1650,4 +1650,66 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationChannelDescription =>
       'New messages, offers and updates on your orders.';
+
+  @override
+  String get resetCodeSubtitle =>
+      'Enter your account\'s email and we\'ll send you a 6-digit code.';
+
+  @override
+  String get sendResetCode => 'Send code';
+
+  @override
+  String get resetCodeSent =>
+      'We emailed you a 6-digit code. Enter it below with your new password.';
+
+  @override
+  String get resetCodeLabel => 'Code from the email';
+
+  @override
+  String get resetCodeInvalid => 'Enter the 6-digit code';
+
+  @override
+  String get passwordResetDone =>
+      'Your password was changed. Sign in with the new one.';
+
+  @override
+  String get errorWrongCode =>
+      'That code is wrong or has expired. Ask for a new one.';
+
+  @override
+  String get resendCode => 'Send a new code';
+
+  @override
+  String get verifyEmailTitle => 'Confirm your email';
+
+  @override
+  String verifyEmailSubtitle(String email) {
+    return 'We sent a 6-digit code to $email. Enter it below to finish creating your account.';
+  }
+
+  @override
+  String get verifyEmailCta => 'Confirm';
+
+  @override
+  String get emailConfirmed => 'Email confirmed. Welcome to Nosiva!';
+
+  @override
+  String get newCodeSent => 'We sent you a new code.';
+
+  @override
+  String resendCodeIn(int seconds) {
+    return 'Send a new code in $seconds s';
+  }
+
+  @override
+  String get verifyEmailSpamHint => 'Can\'t find it? Check your spam folder.';
+
+  @override
+  String get savedDeliveryDetails => 'Filled in from your last order';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get allMarkedRead => 'Everything marked as read';
 }

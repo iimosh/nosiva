@@ -9,10 +9,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/l10n/locale_controller.dart';
+import '../../core/live/live_updates.dart';
 import '../../core/router/app_router.dart';
 import '../../core/router/app_routes.dart';
 import '../../core/storage/app_preferences.dart';
-import '../../core/supabase/supabase_providers.dart';
+import '../../core/backend/backend_providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 import '../activity/presentation/activity_screen.dart'
@@ -210,6 +211,9 @@ class PushController extends Notifier<bool> {
   /// in the background; while it's open, show them here — except a message
   /// in the chat that's already on screen.
   void _showWhileOpen(RemoteMessage message) {
+    // Something changed for this person: refresh what's on screen now
+    // (there's no realtime connection; see LiveUpdates).
+    ref.read(liveUpdatesProvider).ping();
     final n = message.notification;
     if (n == null) return;
     final target = PushTarget.fromData(message.data);
@@ -275,6 +279,10 @@ class PushController extends Notifier<bool> {
           router.push(AppRoutes.chatPath(conversationId));
         case OrderTarget(:final orderId):
           router.push(AppRoutes.orderDetailPath(orderId));
+        case ReviewsTarget(:final userId):
+          router.push(AppRoutes.reviewsPath(userId));
+        case UserTarget(:final userId):
+          router.push(AppRoutes.userPath(userId));
         case ActivityTarget(:final selling):
           ref.read(activityTabRequestProvider.notifier).state = selling ? 1 : 0;
           router.go(AppRoutes.activity);

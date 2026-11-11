@@ -21,6 +21,14 @@ void main() {
     expect((buying as ActivityTarget).selling, isFalse);
   });
 
+  test('a review opens your reviews, a follower opens their profile', () {
+    final reviews = PushTarget.fromData({'target': 'reviews', 'id': id});
+    expect((reviews as ReviewsTarget).userId, id);
+    final user = PushTarget.fromData({'target': 'user', 'id': id});
+    expect((user as UserTarget).userId, id);
+    expect(PushTarget.fromData({'target': 'user', 'id': 'nope'}), isNull);
+  });
+
   test('anything else is ignored, never navigated to', () {
     expect(PushTarget.fromData({}), isNull);
     expect(PushTarget.fromData({'target': 'admin'}), isNull);

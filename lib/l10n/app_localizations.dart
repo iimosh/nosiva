@@ -1775,7 +1775,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailNotConfirmed.
   ///
   /// In en, this message translates to:
-  /// **'Please confirm your email first. Check your inbox for the link.'**
+  /// **'Please confirm your email first. We\'ve sent you a new code.'**
   String get emailNotConfirmed;
 
   /// No description provided for @reportUser.
@@ -3085,6 +3085,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New messages, offers and updates on your orders.'**
   String get notificationChannelDescription;
+
+  /// No description provided for @resetCodeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your account\'s email and we\'ll send you a 6-digit code.'**
+  String get resetCodeSubtitle;
+
+  /// No description provided for @sendResetCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send code'**
+  String get sendResetCode;
+
+  /// No description provided for @resetCodeSent.
+  ///
+  /// In en, this message translates to:
+  /// **'We emailed you a 6-digit code. Enter it below with your new password.'**
+  String get resetCodeSent;
+
+  /// No description provided for @resetCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Code from the email'**
+  String get resetCodeLabel;
+
+  /// No description provided for @resetCodeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit code'**
+  String get resetCodeInvalid;
+
+  /// No description provided for @passwordResetDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password was changed. Sign in with the new one.'**
+  String get passwordResetDone;
+
+  /// No description provided for @errorWrongCode.
+  ///
+  /// In en, this message translates to:
+  /// **'That code is wrong or has expired. Ask for a new one.'**
+  String get errorWrongCode;
+
+  /// No description provided for @resendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a new code'**
+  String get resendCode;
+
+  /// No description provided for @verifyEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your email'**
+  String get verifyEmailTitle;
+
+  /// No description provided for @verifyEmailSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a 6-digit code to {email}. Enter it below to finish creating your account.'**
+  String verifyEmailSubtitle(String email);
+
+  /// No description provided for @verifyEmailCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get verifyEmailCta;
+
+  /// No description provided for @emailConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Email confirmed. Welcome to Nosiva!'**
+  String get emailConfirmed;
+
+  /// No description provided for @newCodeSent.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent you a new code.'**
+  String get newCodeSent;
+
+  /// No description provided for @resendCodeIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a new code in {seconds} s'**
+  String resendCodeIn(int seconds);
+
+  /// No description provided for @verifyEmailSpamHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t find it? Check your spam folder.'**
+  String get verifyEmailSpamHint;
+
+  /// No description provided for @savedDeliveryDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled in from your last order'**
+  String get savedDeliveryDetails;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @allMarkedRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything marked as read'**
+  String get allMarkedRead;
 }
 
 class _AppLocalizationsDelegate

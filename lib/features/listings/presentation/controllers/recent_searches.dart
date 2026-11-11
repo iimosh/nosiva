@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/storage/app_preferences.dart';
-import '../../../../core/supabase/supabase_providers.dart';
+import '../../../../core/backend/backend_providers.dart';
 
 /// The last few searches, newest first, kept on this phone. Stored per
 /// account (or for the guest), so people sharing a phone don't see each

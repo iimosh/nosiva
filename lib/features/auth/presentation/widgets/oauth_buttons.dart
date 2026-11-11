@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../data/auth_repository.dart' show OAuthProvider;
 
 class OAuthButtons extends StatelessWidget {
   const OAuthButtons({super.key, required this.onProvider});
@@ -35,8 +35,8 @@ class OAuthButtons extends StatelessWidget {
                 onTap: () => onProvider(OAuthProvider.google),
               ),
             ),
-            // Apple OAuth requires an Apple Developer account and Apple provider
-            // credentials in Supabase, so it is hidden until those are available.
+            // Apple sign-in needs a paid Apple Developer account, so it's
+            // hidden until the iPhone version.
           ],
         ),
       ],
