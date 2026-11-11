@@ -29,7 +29,12 @@ class ListingsRepository {
     final from = page * pageSize;
     final to = from + pageSize - 1;
 
-    var query = _client.from(_table).select(_select);
+    // Hidden and removed items only show to the people in their orders
+    // (and admins) — never in the feed or search.
+    var query = _client
+        .from(_table)
+        .select(_select)
+        .not('status', 'in', '(hidden,removed)');
 
     final uid = currentUserId();
     if (uid != null) query = query.neq('seller_id', uid);
@@ -89,7 +94,7 @@ class ListingsRepository {
     final data = await _client
         .from(_table)
         .select(_select)
-        .neq('status', 'hidden')
+        .not('status', 'in', '(hidden,removed)')
         .inFilter('seller_id', sellerIds)
         .order('created_at', ascending: false)
         .order('position', ascending: true, referencedTable: 'images')
@@ -103,6 +108,7 @@ class ListingsRepository {
         .from(_table)
         .select(_select)
         .eq('seller_id', sellerId)
+        .neq('status', 'removed')
         .order('created_at', ascending: false)
         .order('position', ascending: true, referencedTable: 'images');
     final listings = data.map<Listing>((e) => Listing.fromJson(e)).toList();
@@ -220,6 +226,17 @@ Future<Set<String>> soldListingIds(List<String> ids) async {
     return data.map<String>((e) => e['id'] as String).toSet();
   }
 
+  /// The seller deletes their own listing (migration 0034). Returns true when
+  /// it had past orders and was removed rather than deleted. Throws a
+  /// [PostgrestException] whose message contains `listing_has_open_order`
+  /// while an order is still in progress.
+  Future<bool> deleteMyListing(String id) async {
+    final result =
+        await _client.rpc('delete_my_listing', params: {'p_listing': id});
+    return result == 'removed';
+  }
+
+  /// Admin moderation: deletes any listing outright.
   Future<void> deleteListing(String id) async {
     await _client.from(_table).delete().eq('id', id);
   }
@@ -245,6 +262,7 @@ int _statusRank(ListingStatus status) => switch (status) {
       ListingStatus.active => 0,
       ListingStatus.sold => 1,
       ListingStatus.hidden => 2,
+      ListingStatus.removed => 3,
     };
 
 List<Listing> sortAvailableFirst(List<Listing> listings) {

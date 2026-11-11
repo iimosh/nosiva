@@ -431,7 +431,9 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
                 spacing: AppSpacing.xs,
                 runSpacing: AppSpacing.xs,
                 children: [
-                  for (final status in ListingStatus.values)
+                  // "Removed" is only reached by deleting the listing.
+                  for (final status in ListingStatus.values
+                      .where((s) => s != ListingStatus.removed))
                     NosivaChip(
                       label: _statusLabel(status),
                       selected: _status == status,
@@ -507,6 +509,7 @@ class _EditListingFormState extends ConsumerState<_EditListingForm> {
       ListingStatus.active => context.l10n.active,
       ListingStatus.sold => context.l10n.sold,
       ListingStatus.hidden => context.l10n.hidden,
+      ListingStatus.removed => context.l10n.listingRemoved,
     };
   }
 }

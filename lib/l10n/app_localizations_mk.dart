@@ -1727,4 +1727,18 @@ class AppLocalizationsMk extends AppLocalizations {
 
   @override
   String get allMarkedRead => 'Сè е означено како прочитано';
+
+  @override
+  String get deleteListingBody =>
+      'Огласот засекогаш исчезнува од Nosiva, а секој што има понуда за него ќе биде известен. Ова не може да се врати.';
+
+  @override
+  String get deleteListingOpenOrder =>
+      'Овој предмет има нарачка во тек. Прво заврши ја или откажи ја.';
+
+  @override
+  String get listingRemoved => 'Отстранет';
+
+  @override
+  String get noLongerListed => 'Повеќе не е огласен';
 }

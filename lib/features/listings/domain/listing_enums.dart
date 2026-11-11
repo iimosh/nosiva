@@ -36,7 +36,11 @@ enum ItemCondition {
 enum ListingStatus {
   active('active'),
   sold('sold'),
-  hidden('hidden');
+  hidden('hidden'),
+
+  /// Deleted by its seller after it had orders: gone from the app, but still
+  /// readable in those orders' history (migration 0034).
+  removed('removed');
 
   const ListingStatus(this.value);
   final String value;

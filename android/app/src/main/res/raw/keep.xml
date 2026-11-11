@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Release builds strip resources that look unused. The notification icon
+     is only looked up by name at runtime (push_controller.dart and Firebase),
+     so keep it explicitly. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_notification,@color/notification_accent" />
