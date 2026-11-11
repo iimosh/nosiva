@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase/supabase.dart' show PostgrestException;
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/router/app_routes.dart';
@@ -710,7 +711,14 @@ class _ActionBar extends ConsumerWidget {
       ),
       child: SafeArea(
         top: false,
-        child: isOwn
+        child: isOwn && listing.statusEnum == ListingStatus.removed
+            ? NosivaButton(
+                label: context.l10n.listingRemoved,
+                icon: Icons.delete_outline_rounded,
+                variant: NosivaButtonVariant.secondary,
+                onPressed: null,
+              )
+            : isOwn
             ? Row(
                 children: [
                   Expanded(
@@ -747,9 +755,17 @@ class _ActionBar extends ConsumerWidget {
                       ),
                     ),
                   ],
+                  const SizedBox(width: AppSpacing.xs),
+                  IconButton.outlined(
+                    tooltip: context.l10n.deleteListing,
+                    iconSize: 24,
+                    icon: const Icon(Icons.delete_outline_rounded,
+                        color: AppColors.error),
+                    onPressed: () => _delete(context, ref),
+                  ),
                 ],
               )
-            : listing.isSold
+            : !listing.isAvailable
                 ? Row(
                     children: [
                       IconButton.filledTonal(
@@ -761,8 +777,12 @@ class _ActionBar extends ConsumerWidget {
                       const SizedBox(width: AppSpacing.xs),
                       Expanded(
                         child: NosivaButton(
-                          label: context.l10n.sold,
-                          icon: Icons.sell_outlined,
+                          label: listing.isSold
+                              ? context.l10n.sold
+                              : context.l10n.noLongerListed,
+                          icon: listing.isSold
+                              ? Icons.sell_outlined
+                              : Icons.block_rounded,
                           variant: NosivaButtonVariant.secondary,
                           onPressed: null,
                         ),
@@ -797,6 +817,52 @@ class _ActionBar extends ConsumerWidget {
                   ),
       ),
     );
+  }
+
+  /// The seller deletes their listing, after confirming. The database
+  /// decides what that safely means (migration 0034): refused while an order
+  /// is in progress; "removed" when it has past orders (they keep showing it
+  /// in their history); otherwise deleted for good.
+  Future<void> _delete(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    final sure = await showDialog<bool>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        title: Text(l10n.deleteListingQuestion),
+        content: Text(l10n.deleteListingBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialog, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialog, true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+    if (sure != true || !context.mounted) return;
+    try {
+      await ref.read(listingsRepositoryProvider).deleteMyListing(listing.id);
+      HapticFeedback.mediumImpact();
+      ref.invalidate(feedControllerProvider);
+      ref.invalidate(sellerListingsProvider(listing.sellerId));
+      ref.invalidate(listingDetailProvider(listing.id));
+      if (!context.mounted) return;
+      context.showSuccess(l10n.listingDeleted);
+      context.pop();
+    } on PostgrestException catch (e) {
+      if (!context.mounted) return;
+      context.showError(e.message.contains('listing_has_open_order')
+          ? l10n.deleteListingOpenOrder
+          : l10n.actionFailed(friendlyError(l10n, e)));
+    } catch (e) {
+      if (context.mounted) {
+        context.showError(l10n.actionFailed(friendlyError(l10n, e)));
+      }
+    }
   }
 
   /// The seller marks their own listing sold (after confirming) or available

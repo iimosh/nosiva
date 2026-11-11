@@ -44,4 +44,7 @@ class Listing with _$Listing {
   String? get coverImageUrl =>
       images.isNotEmpty ? images.first.imageUrl : null;
   bool get isSold => statusEnum == ListingStatus.sold;
+
+  /// Can still be ordered or offered on.
+  bool get isAvailable => statusEnum == ListingStatus.active;
 }

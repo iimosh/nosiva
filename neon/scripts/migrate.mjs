@@ -6,7 +6,10 @@
 //   npm run migrate -- --sql "select 1"   run one statement and print rows
 //
 // Reads DATABASE_URL_UNPOOLED from .env.local (written by `neon deploy`).
+// After applying new migrations it refreshes the Data API's schema cache,
+// so new tables and functions are callable from the app straight away.
 // The connection string is never printed.
+import { execSync } from "node:child_process";
 import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -55,6 +58,7 @@ try {
     .filter((f) => f.endsWith(".sql"))
     .sort();
 
+  let applied = 0;
   for (const file of files) {
     if (done.has(file)) continue;
     const sql = readFileSync(join(root, "migrations", file), "utf8");
@@ -64,6 +68,7 @@ try {
       await client.query(sql);
       await client.query("insert into public._migrations (name) values ($1)", [file]);
       await client.query("commit");
+      applied++;
       console.log("ok");
     } catch (e) {
       await client.query("rollback");
@@ -72,6 +77,13 @@ try {
       if (e.where) console.error(`  where: ${e.where}`);
       process.exit(1);
     }
+  }
+  // The Data API keeps a cached list of tables and functions: new ones are
+  // only callable from the app after a refresh.
+  if (applied > 0) {
+    process.stdout.write("→ refreshing the Data API schema cache … ");
+    execSync("neon data-api refresh-schema --no-color", { cwd: root, stdio: "ignore" });
+    console.log("ok");
   }
   console.log("Database is up to date.");
 } finally {

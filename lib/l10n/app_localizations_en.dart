@@ -1712,4 +1712,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allMarkedRead => 'Everything marked as read';
+
+  @override
+  String get deleteListingBody =>
+      'It disappears from Nosiva for good, and anyone with an offer on it is told. This can\'t be undone.';
+
+  @override
+  String get deleteListingOpenOrder =>
+      'This item has an order in progress. Finish or cancel it first.';
+
+  @override
+  String get listingRemoved => 'Removed';
+
+  @override
+  String get noLongerListed => 'No longer listed';
 }

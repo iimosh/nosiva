@@ -45,6 +45,7 @@ extension ListingStatusL10n on ListingStatus {
       ListingStatus.active => l10n.active,
       ListingStatus.sold => l10n.sold,
       ListingStatus.hidden => l10n.hidden,
+      ListingStatus.removed => l10n.listingRemoved,
     };
   }
 }

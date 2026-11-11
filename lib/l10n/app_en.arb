@@ -803,5 +803,9 @@
   "verifyEmailSpamHint": "Can't find it? Check your spam folder.",
   "savedDeliveryDetails": "Filled in from your last order",
   "clear": "Clear",
-  "allMarkedRead": "Everything marked as read"
+  "allMarkedRead": "Everything marked as read",
+  "deleteListingBody": "It disappears from Nosiva for good, and anyone with an offer on it is told. This can't be undone.",
+  "deleteListingOpenOrder": "This item has an order in progress. Finish or cancel it first.",
+  "listingRemoved": "Removed",
+  "noLongerListed": "No longer listed"
 }

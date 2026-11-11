@@ -29,8 +29,12 @@ class FavoritesRepository {
         .eq('user_id', uid)
         .order('created_at', ascending: false);
     return data
+        // A favourite whose item was hidden or deleted comes back without it.
+        .where((e) => e['listing'] is Map<String, dynamic>)
         .map<Listing>((e) => Listing.fromJson(e['listing'] as Map<String, dynamic>)
             .copyWith(isFavorited: true))
+        // Still readable to someone who ordered it, but no longer listed.
+        .where((l) => l.isAvailable || l.isSold)
         .toList();
   }
 

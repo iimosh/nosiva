@@ -3193,6 +3193,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Everything marked as read'**
   String get allMarkedRead;
+
+  /// No description provided for @deleteListingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It disappears from Nosiva for good, and anyone with an offer on it is told. This can\'t be undone.'**
+  String get deleteListingBody;
+
+  /// No description provided for @deleteListingOpenOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'This item has an order in progress. Finish or cancel it first.'**
+  String get deleteListingOpenOrder;
+
+  /// No description provided for @listingRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed'**
+  String get listingRemoved;
+
+  /// No description provided for @noLongerListed.
+  ///
+  /// In en, this message translates to:
+  /// **'No longer listed'**
+  String get noLongerListed;
 }
 
 class _AppLocalizationsDelegate
